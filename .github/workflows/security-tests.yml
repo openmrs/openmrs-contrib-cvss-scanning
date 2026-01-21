@@ -1,0 +1,199 @@
+name: Security Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  security-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install system dependencies
+      run: |
+        # Update package list
+        sudo apt-get update
+        
+        # Chrome is pre-installed on GitHub runners, verify version
+        google-chrome --version
+        
+    - name: Install Python dependencies
+      run: |
+        # Upgrade pip
+        python -m pip install --upgrade pip
+        
+        # Find and install all requirements.txt files
+        echo "Searching for requirements.txt files..."
+        find . -name "requirements.txt" -type f | while read req; do
+          echo "Installing dependencies from: $req"
+          pip install -r "$req"
+        done
+        
+        # Install additional dependencies for reporting
+        pip install pytest-json-report
+        
+    - name: Install ChromeDriver
+      run: |
+        # Get Chrome version
+        CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d'.' -f1)
+        echo "Chrome version: $CHROME_VERSION"
+        
+        # Install matching ChromeDriver using webdriver-manager
+        pip install webdriver-manager
+        
+    - name: Run Security Tests
+      run: |
+        # Run pytest with HTML and JSON reporting
+        pytest tests/ \
+          --html=report.html \
+          --self-contained-html \
+          --json-report \
+          --json-report-file=report.json \
+          -v
+      continue-on-error: true  # Don't fail workflow if tests fail
+      
+    - name: Generate Security Summary
+      if: always()
+      run: |
+        python3 << 'EOF'
+        import json
+        import os
+        from pathlib import Path
+        
+        # Read pytest JSON report
+        if Path('report.json').exists():
+            with open('report.json', 'r') as f:
+                data = json.load(f)
+            
+            # Extract summary
+            summary = {
+                'total_tests': data['summary']['total'],
+                'passed': data['summary'].get('passed', 0),
+                'failed': data['summary'].get('failed', 0),
+                'duration': data['duration'],
+                'tests': []
+            }
+            
+            # Extract individual test results
+            for test in data.get('tests', []):
+                test_info = {
+                    'name': test['nodeid'],
+                    'outcome': test['outcome'],
+                    'duration': test.get('call', {}).get('duration', 0)
+                }
+                summary['tests'].append(test_info)
+            
+            # Save summary
+            with open('summary.json', 'w') as f:
+                json.dump(summary, f, indent=2)
+            
+            # Print summary
+            print(f"\n{'='*60}")
+            print(f"SECURITY TEST SUMMARY")
+            print(f"{'='*60}")
+            print(f"Total Tests: {summary['total_tests']}")
+            print(f"Passed: {summary['passed']}")
+            print(f"Failed: {summary['failed']}")
+            print(f"Duration: {summary['duration']:.2f}s")
+            print(f"{'='*60}\n")
+        else:
+            print("No test results found")
+        EOF
+        
+    - name: Upload HTML Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-test-report-html
+        path: report.html
+        retention-days: 30
+        
+    - name: Upload JSON Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-test-report-json
+        path: |
+          report.json
+          summary.json
+        retention-days: 30
+        
+    - name: Prepare GitHub Pages Deployment
+      if: github.ref == 'refs/heads/main'
+      run: |
+        # Create deployment directory
+        mkdir -p gh-pages
+        
+        # Copy reports
+        cp report.html gh-pages/index.html
+        cp summary.json gh-pages/summary.json
+        
+        # Create a simple landing page
+        cat > gh-pages/README.md << 'MDEOF'
+        # OpenMRS Security Test Results
+        
+        Latest security test results for OpenMRS O3.
+        
+        - [View HTML Report](index.html)
+        - [View JSON Summary](summary.json)
+        
+        Last updated: $(date)
+        MDEOF
+        
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heaLds/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./gh-pages
+        destination_dir: security
+        keep_files: false
+        
+    - name: Comment on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          let summary = '## Security Test Results\n\n';
+          
+          if (fs.existsSync('summary.json')) {
+            const data = JSON.parse(fs.readFileSync('summary.json', 'utf8'));
+            
+            summary += `- **Total Tests:** ${data.total_tests}\n`;
+            summary += `- **Passed:** ✅ ${data.passed}\n`;
+            summary += `- **Failed:** ❌ ${data.failed}\n`;
+            summary += `- **Duration:** ${data.duration.toFixed(2)}s\n\n`;
+            
+            summary += '### Test Details\n\n';
+            summary += '| Test | Status | Duration |\n';
+            summary += '|------|--------|----------|\n';
+            
+            data.tests.forEach(test => {
+              const icon = test.outcome === 'passed' ? '✅' : '❌';
+              const name = test.name.split('::').pop();
+              summary += `| ${name} | ${icon} ${test.outcome} | ${test.duration.toFixed(2)}s |\n`;
+            });
+          } else {
+            summary += '❌ No test results available\n';
+          }
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: summary
+           });
+
