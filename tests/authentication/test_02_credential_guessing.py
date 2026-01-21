@@ -22,7 +22,7 @@ def browser():
     yield driver
     driver.quit()
 
-@pytest_bdd.scenario('o3_authentication_security.feature', 
+@pytest_bdd.scenario('tests/authentication/o3_authentication_security.feature', 
                      'Complete credential guessing with wrong username and password',
                      features_base_dir='')
 def test_credential_guessing():
