@@ -55,6 +55,7 @@ jobs:
         import re
         import json
         from datetime import datetime
+        from zoneinfo import ZoneInfo
         from pathlib import Path
         
         # Read test output log
@@ -273,8 +274,8 @@ jobs:
             <div class="container">
                 <h1>🔒 OpenMRS O3 Security Testing</h1>
                 <p class="subtitle">Automated BDD Security Tests with CVSS Vulnerability Scoring</p>
-                <p class="timestamp">Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}</p>
-                
+                <p class="timestamp">Last updated: {datetime.now(ZoneInfo('America/Indiana/Indianapolis')).strftime('%Y-%m-%d %I:%M:%S %p EST')}</p> 
+                                
                 <div class="summary">
                     <div class="stat-card passed">
                         <h3>Passed</h3>
