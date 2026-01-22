@@ -9,7 +9,7 @@ Feature: Session Management Testing
         When the attacker steals the session ID and tries to use it from a different IP address
         Then the session should be denied access
     
-    Scenario: Session expiration on time
+    Scenario: Session expiration after idle time
         When the user stays idle
         Then the session should be checked if it is idle after every five minutes
     
