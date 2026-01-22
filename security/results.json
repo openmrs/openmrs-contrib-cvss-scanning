@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-01-22T04:10:24.800329",
+  "total_tests": 5,
+  "passed": 5,
+  "failed": 0,
+  "tests": [
+    {
+      "name": "test_username_enumeration",
+      "full_name": "tests/authentication/test_01_username_enumeration.py::test_username_enumeration",
+      "outcome": "passed",
+      "duration": 101.399391064,
+      "cvss_score": 8.1
+    },
+    {
+      "name": "test_credential_guessing",
+      "full_name": "tests/authentication/test_02_credential_guessing.py::test_credential_guessing",
+      "outcome": "passed",
+      "duration": 95.350310468,
+      "cvss_score": 8.1
+    },
+    {
+      "name": "test_password_attack_6",
+      "full_name": "tests/authentication/test_03_password_attack_6_attempts.py::test_password_attack_6",
+      "outcome": "passed",
+      "duration": 62.39843381600002,
+      "cvss_score": 8.1
+    },
+    {
+      "name": "test_password_attack_7",
+      "full_name": "tests/authentication/test_04_password_attack_7_attempts.py::test_password_attack_7",
+      "outcome": "passed",
+      "duration": 70.66475812200002,
+      "cvss_score": 8.1
+    },
+    {
+      "name": "test_password_attack_8",
+      "full_name": "tests/authentication/test_05_password_attack_8_attempts.py::test_password_attack_8",
+      "outcome": "passed",
+      "duration": 78.974570852,
+      "cvss_score": 8.1
+    }
+  ]
+}
