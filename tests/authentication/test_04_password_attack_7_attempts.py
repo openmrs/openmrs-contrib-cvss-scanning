@@ -1,40 +1,25 @@
 import pytest
 import pytest_bdd
-from selenium.webdriver import Chrome
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import time
-
-options = Options()
-options.add_argument('--headless')
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-dev-shm-usage')
 
 O3_LOGIN_URL = 'https://o3.openmrs.org/openmrs/spa/login'
 O3_HOME_URL = 'https://o3.openmrs.org/openmrs/spa/home'
-
-@pytest.fixture
-def browser():
-    driver = Chrome(options=options)
-    driver.implicitly_wait(10)
-    yield driver
-    driver.quit()
 
 @pytest_bdd.scenario('tests/authentication/o3_authentication_security.feature', 
                      'Password attack with 7 wrong password attempts',
                      features_base_dir='')
 def test_password_attack_7():
+    """Test Case 4: Password attack with 7 attempts"""
     pass
 
 @pytest_bdd.given('the OpenMRS 3 login page is displayed')
 def navigate_to_login(browser):
-    browser.get(O3_LOGIN_URL)
-    time.sleep(3)
+    """Navigate to O3 login page"""
+    browser.goto(O3_LOGIN_URL)
+    browser.wait_for_timeout(3000)
 
 @pytest_bdd.when('the attacker tries to login with valid username and invalid "password"')
 def store_attack_type(browser):
+    """Store the attack configuration"""
     browser.attack_type = 'password_attack'
     browser.invalid_credential = 'password'
     browser.valid_credential = 'username'
@@ -44,18 +29,20 @@ def store_attack_type(browser):
 @pytest_bdd.then(pytest_bdd.parsers.parse(
     'check after {num:d} incorrect attempts, the CVSS score for {attack_name} should be calculated'))
 def perform_attack_and_calculate_cvss(browser, num, attack_name):
-    AV = 0.85
-    PR = 0.85
-    UI = 0.85
-    S = 0.85
-    C = 0.56
-    I = 0.56
-    A = 0.56
+    """Perform password attack and calculate CVSS"""
+    
+    # CVSS Base Metrics
+    AV = 0.85  # Attack Vector: Network
+    PR = 0.85  # Privileges Required: None
+    UI = 0.85  # User Interaction: None
+    S = 0.85   # Scope: Unchanged
+    C = 0.56   # Confidentiality Impact: High
+    I = 0.56   # Integrity Impact: High
+    A = 0.0    # Availability Impact: None
     
     ISS = 1 - ((1 - C) * (1 - I) * (1 - A))
     Impact = 6.42 * ISS
     
-    wait = WebDriverWait(browser, 10)
     fail_count = 0
     
     print("")
@@ -66,53 +53,43 @@ def perform_attack_and_calculate_cvss(browser, num, attack_name):
     print("Final attempt: 1 (correct credentials)")
     print("-"*60)
     
+    # Generate wrong passwords
     wrong_passwords = []
     for i in range(num):
         wrong_passwords.append('wrongpass' + str(i+1))
     
+    # PART 1: Perform N incorrect attempts (correct username, wrong password)
     for i, password in enumerate(wrong_passwords, 1):
         print("Attempt " + str(i) + "/" + str(num) + 
               ": username='admin', password='" + password + "'")
         
-        time.sleep(2)
+        # STEP 1: Fill username and click Continue
+        browser.wait_for_selector('input[id="username"]', state='visible')
+        browser.fill('input[id="username"]', 'admin')
+        browser.wait_for_timeout(500)
         
-        username_field = wait.until(EC.presence_of_element_located((By.ID, 'username')))
-        username_field.clear()
-        username_field.send_keys('admin')
+        browser.click('button:has-text("Continue")')
+        browser.wait_for_timeout(2000)
         
-        try:
-            button = wait.until(EC.element_to_be_clickable(
-                (By.XPATH, "//button[contains(text(), 'Continue') or contains(text(), 'Log in')]")))
-            button.click()
-        except:
-            button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.cds--btn--primary")))
-            button.click()
+        # STEP 2: Fill wrong password
+        browser.wait_for_selector('input[id="password"]', state='visible')
+        browser.fill('input[id="password"]', password)
+        browser.wait_for_timeout(500)
         
-        time.sleep(3)
+        browser.click('button[type="submit"]')
+        browser.wait_for_timeout(3000)
         
-        try:
-            password_field = browser.find_element(By.ID, 'password')
-            if password_field.is_displayed():
-                password_field.clear()
-                password_field.send_keys(password)
-                
-                login_btn = wait.until(EC.element_to_be_clickable(
-                    (By.XPATH, "//button[contains(text(), 'Log in')]")))
-                login_btn.click()
-                
-                time.sleep(3)
-        except:
-            pass
-        
-        if O3_HOME_URL in browser.current_url:
+        current_url = browser.url
+        if 'home' in current_url or 'dashboard' in current_url:
             print("  Result: Login SUCCEEDED (unexpected!)")
             break
         else:
             print("  Result: Login FAILED")
             fail_count += 1
-            browser.get(O3_LOGIN_URL)
-            time.sleep(2)
+            browser.goto(O3_LOGIN_URL)
+            browser.wait_for_timeout(2000)
     
+    # PART 2: Attempt correct credentials
     print("")
     print("-"*60)
     print("Now attempting login with CORRECT credentials...")
@@ -121,44 +98,33 @@ def perform_attack_and_calculate_cvss(browser, num, attack_name):
     attempt_number = fail_count + 1
     print("Attempt " + str(attempt_number) + ": username='admin', password='Admin123'")
     
-    time.sleep(2)
+    # STEP 1: Fill username and click Continue
+    browser.wait_for_selector('input[id="username"]', state='visible')
+    browser.fill('input[id="username"]', 'admin')
+    browser.wait_for_timeout(500)
     
-    username_field = wait.until(EC.presence_of_element_located((By.ID, 'username')))
-    username_field.clear()
-    username_field.send_keys('admin')
+    browser.click('button:has-text("Continue")')
+    browser.wait_for_timeout(2000)
     
-    try:
-        button = wait.until(EC.element_to_be_clickable(
-            (By.XPATH, "//button[contains(text(), 'Continue') or contains(text(), 'Log in')]")))
-        button.click()
-    except:
-        button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.cds--btn--primary")))
-        button.click()
+    # STEP 2: Fill correct password
+    browser.wait_for_selector('input[id="password"]', state='visible')
+    browser.fill('input[id="password"]', 'Admin123')
+    browser.wait_for_timeout(500)
     
-    time.sleep(3)
+    browser.click('button[type="submit"]')
+    browser.wait_for_timeout(5000)
     
-    try:
-        password_field = browser.find_element(By.ID, 'password')
-        if password_field.is_displayed():
-            password_field.clear()
-            password_field.send_keys('Admin123')
-            
-            login_btn = wait.until(EC.element_to_be_clickable(
-                (By.XPATH, "//button[contains(text(), 'Log in')]")))
-            login_btn.click()
-            
-            time.sleep(3)
-    except:
-        pass
-    
+    final_url = browser.url
     final_attempt_blocked = False
-    if O3_HOME_URL in browser.current_url:
+    
+    if 'home' in final_url or 'dashboard' in final_url:
         print("  Result: Login SUCCEEDED")
     else:
         print("  Result: Login FAILED (System blocked correct credentials)")
         fail_count += 1
         final_attempt_blocked = True
     
+    # PART 3: Calculate CVSS with dynamic AC
     if final_attempt_blocked:
         AC = 0.44
         security_status = "System blocked ALL attempts (including correct credentials)"
@@ -180,6 +146,7 @@ def perform_attack_and_calculate_cvss(browser, num, attack_name):
         Base_score = min((Impact + Exploitability), 10)
         Base_score = round(Base_score, 1)
     
+    # PART 4: Display results
     print("")
     print("="*60)
     print("CVSS VULNERABILITY SCORE CALCULATION")

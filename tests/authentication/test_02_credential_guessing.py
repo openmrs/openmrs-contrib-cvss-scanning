@@ -1,62 +1,54 @@
 import pytest
 import pytest_bdd
-from selenium.webdriver import Chrome
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import time
 
-options = Options()
-options.add_argument('--headless')
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-dev-shm-usage')
-
+# Test configuration
 O3_LOGIN_URL = 'https://o3.openmrs.org/openmrs/spa/login'
 O3_HOME_URL = 'https://o3.openmrs.org/openmrs/spa/home'
 
-@pytest.fixture
-def browser():
-    driver = Chrome(options=options)
-    driver.implicitly_wait(10)
-    yield driver
-    driver.quit()
-
-@pytest_bdd.scenario('tests/authentication/o3_authentication_security.feature', 
+@pytest_bdd.scenario('tests/authentication/o3_authentication_security.feature',
                      'Complete credential guessing with wrong username and password',
                      features_base_dir='')
 def test_credential_guessing():
+    """Test Case 2: Credential guessing attack"""
     pass
 
 @pytest_bdd.given('the OpenMRS 3 login page is displayed')
 def navigate_to_login(browser):
-    browser.get(O3_LOGIN_URL)
-    time.sleep(3)
+    """Navigate to O3 login page"""
+    browser.goto(O3_LOGIN_URL)
+    browser.wait_for_timeout(3000)
 
 @pytest_bdd.when('the attacker tries to login with invalid "username" and invalid "password"')
 def store_attack_type(browser):
+    """Store the attack configuration"""
     browser.attack_type = 'credential_guessing'
     browser.invalid_credential = 'username_password'
+    
     print("Attack type configured: Credential Guessing")
     print("Invalid: username AND password")
 
 @pytest_bdd.then(pytest_bdd.parsers.parse(
     'check after {num:d} incorrect attempts, the CVSS score for {attack_name} should be calculated'))
 def perform_attack_and_calculate_cvss(browser, num, attack_name):
-    AV = 0.85
-    PR = 0.85
-    UI = 0.85
-    S = 0.85
-    C = 0.56
-    I = 0.56
-    A = 0.56
-    
+    """
+    Perform credential guessing attack and calculate CVSS
+    """
+
+    # CVSS Base Metrics
+    AV = 0.85  # Attack Vector: Network
+    PR = 0.85  # Privileges Required: None
+    UI = 0.85  # User Interaction: None
+    S = 0.85   # Scope: Unchanged
+    C = 0.56   # Confidentiality Impact: High
+    I = 0.56   # Integrity Impact: High
+    A = 0.0    # Availability Impact: None
+
+    # Calculate Impact Score
     ISS = 1 - ((1 - C) * (1 - I) * (1 - A))
     Impact = 6.42 * ISS
-    
-    wait = WebDriverWait(browser, 10)
+
     fail_count = 0
-    
+
     print("")
     print("="*60)
     print("STARTING ATTACK: " + attack_name)
@@ -64,148 +56,162 @@ def perform_attack_and_calculate_cvss(browser, num, attack_name):
     print("Total attempts to perform: " + str(num) + " (wrong credentials)")
     print("Final attempt: 1 (correct credentials)")
     print("-"*60)
-    
-    # Generate wrong credentials
+
+    # ===================================================================
+    # PART 1: PERFORM N INCORRECT LOGIN ATTEMPTS
+    # ===================================================================
+
+    # Generate wrong credentials (both username and password wrong)
     wrong_credentials = []
     for i in range(num):
         wrong_credentials.append(('user' + str(i+1), 'pass' + str(i+1)))
-    
-    # PART 1: Perform N incorrect attempts (both username and password wrong)
+
     for i, (username, password) in enumerate(wrong_credentials, 1):
-        print("Attempt " + str(i) + "/" + str(num) + 
+        print("Attempt " + str(i) + "/" + str(num) +
               ": username='" + username + "', password='" + password + "'")
         
-        time.sleep(2)
+        # STEP 1: Fill username and click Continue
+        browser.wait_for_selector('input[id="username"]', state='visible')
+        browser.fill('input[id="username"]', username)
+        browser.wait_for_timeout(500)
         
-        username_field = wait.until(EC.presence_of_element_located((By.ID, 'username')))
-        username_field.clear()
-        username_field.send_keys(username)
+        # Click Continue button
+        browser.click('button:has-text("Continue")')
+        browser.wait_for_timeout(2000)
         
-        try:
-            button = wait.until(EC.element_to_be_clickable(
-                (By.XPATH, "//button[contains(text(), 'Continue') or contains(text(), 'Log in')]")))
-            button.click()
-        except:
-            button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.cds--btn--primary")))
-            button.click()
+        # STEP 2: Fill password (now it should be visible)
+        browser.wait_for_selector('input[id="password"]', state='visible')
+        browser.fill('input[id="password"]', password)
+        browser.wait_for_timeout(500)
         
-        time.sleep(3)
+        # Click login/submit button
+        browser.click('button[type="submit"]')
+        browser.wait_for_timeout(3000)
         
-        try:
-            password_field = browser.find_element(By.ID, 'password')
-            if password_field.is_displayed():
-                password_field.clear()
-                password_field.send_keys(password)
-                
-                login_btn = wait.until(EC.element_to_be_clickable(
-                    (By.XPATH, "//button[contains(text(), 'Log in')]")))
-                login_btn.click()
-                
-                time.sleep(3)
-        except:
-            pass
-        
-        if O3_HOME_URL in browser.current_url:
-            print("  Result: Login SUCCEEDED (unexpected!)")
-            break
-        else:
+        # Check if still on login page (failed)
+        current_url = browser.url
+        if 'login' in current_url:
             print("  Result: Login FAILED")
-            fail_count += 1
-            browser.get(O3_LOGIN_URL)
-            time.sleep(2)
-    
-    # PART 2: Attempt correct credentials
+            fail_count = fail_count + 1
+            
+            try:
+                error_element = browser.locator('div[class*="error"], div[class*="notification"], [role="alert"]').first
+                if error_element.is_visible():
+                    error_text = error_element.inner_text()
+                    print("  Error message: " + error_text)
+            except:
+                print("  No error message displayed")
+        else:
+            print("  Result: Login SUCCEEDED (unexpected!)")
+        
+        # Go back to login page for next attempt
+        browser.goto(O3_LOGIN_URL)
+        browser.wait_for_timeout(2000)
+
+    print("-"*60)
+    print("Summary: " + str(fail_count) + "/" + str(num) + " attempts failed as expected")
+    print("-"*60)
+
+    # ===================================================================
+    # PART 2: ATTEMPT LOGIN WITH CORRECT CREDENTIALS
+    # ===================================================================
+
     print("")
-    print("-"*60)
-    print("Now attempting login with CORRECT credentials...")
-    print("-"*60)
+    print("FINAL ATTEMPT: Correct credentials")
+    print("Username: 'admin' | Password: 'Admin123'")
     
-    attempt_number = fail_count + 1
-    print("Attempt " + str(attempt_number) + ": username='admin', password='Admin123'")
+    current_url = browser.url
+    if 'login' not in current_url:
+        browser.goto(O3_LOGIN_URL)
+        browser.wait_for_timeout(2000)
     
-    time.sleep(2)
+    # STEP 1: Fill username and click Continue
+    browser.wait_for_selector('input[id="username"]', state='visible')
+    browser.fill('input[id="username"]', 'admin')
+    browser.wait_for_timeout(500)
     
-    username_field = wait.until(EC.presence_of_element_located((By.ID, 'username')))
-    username_field.clear()
-    username_field.send_keys('admin')
+    # Click Continue button
+    browser.click('button:has-text("Continue")')
+    browser.wait_for_timeout(2000)
     
-    try:
-        button = wait.until(EC.element_to_be_clickable(
-            (By.XPATH, "//button[contains(text(), 'Continue') or contains(text(), 'Log in')]")))
-        button.click()
-    except:
-        button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.cds--btn--primary")))
-        button.click()
+    # STEP 2: Fill password
+    browser.wait_for_selector('input[id="password"]', state='visible')
+    browser.fill('input[id="password"]', 'Admin123')
+    browser.wait_for_timeout(500)
     
-    time.sleep(3)
+    # Click login/submit button
+    browser.click('button[type="submit"]')
+    browser.wait_for_timeout(5000)
     
-    try:
-        password_field = browser.find_element(By.ID, 'password')
-        if password_field.is_displayed():
-            password_field.clear()
-            password_field.send_keys('Admin123')
-            
-            login_btn = wait.until(EC.element_to_be_clickable(
-                (By.XPATH, "//button[contains(text(), 'Log in')]")))
-            login_btn.click()
-            
-            time.sleep(3)
-    except:
-        pass
+    final_url = browser.url
     
-    final_attempt_blocked = False
-    if O3_HOME_URL in browser.current_url:
-        print("  Result: Login SUCCEEDED")
+    if 'home' in final_url or 'dashboard' in final_url:
+        print("Result: Login SUCCEEDED with correct credentials")
+        correct_login_succeeded = True
     else:
-        print("  Result: Login FAILED (System blocked correct credentials)")
-        fail_count += 1
-        final_attempt_blocked = True
-    
-    # PART 3: Calculate CVSS
-    if final_attempt_blocked:
-        AC = 0.44
-        security_status = "System blocked ALL attempts (including correct credentials)"
-        complexity_level = "HIGH (0.44)"
-    elif fail_count >= num:
+        print("Result: Login FAILED even with correct credentials")
+        correct_login_succeeded = False
+
+    print("="*60)
+
+    # ===================================================================
+    # PART 3: CALCULATE CVSS SCORE
+    # ===================================================================
+
+    if fail_count == num:
         AC = 0.77
-        security_status = "System allowed " + str(num) + "+ attempts without blocking"
-        complexity_level = "LOW (0.77)"
+        print("Attack Complexity: LOW (all attempts failed as expected)")
     else:
         AC = 0.44
-        security_status = "System blocked after " + str(fail_count) + " attempts"
-        complexity_level = "HIGH (0.44)"
-    
+        print("Attack Complexity: MEDIUM (some attempts unexpectedly succeeded)")
+
     Exploitability = 8.22 * AV * AC * PR * UI
-    
+
     if Impact <= 0:
         Base_score = 0
     else:
-        Base_score = min((Impact + Exploitability), 10)
-        Base_score = round(Base_score, 1)
-    
-    # PART 4: Display results
+        if S == 0.85:
+            Base_score = min(Impact + Exploitability, 10)
+        else:
+            Base_score = min(1.08 * (Impact + Exploitability), 10)
+
+    Base_score = round(Base_score, 1)
+
+    # ===================================================================
+    # PART 4: DISPLAY RESULTS
+    # ===================================================================
+
     print("")
-    print("="*60)
     print("CVSS VULNERABILITY SCORE CALCULATION")
     print("="*60)
-    print("Test: " + attack_name)
-    print("Security Status: " + security_status)
-    print("Attack Complexity: " + complexity_level)
+    print("Attack: " + attack_name)
+    print("Failed attempts: " + str(fail_count) + "/" + str(num))
+    print("Correct credentials: " + ("SUCCESS" if correct_login_succeeded else "FAILED"))
     print("-"*60)
     print("CVSS Base Score: " + str(Base_score))
     print("-"*60)
-    print("Total login attempts: " + str(attempt_number))
-    print("Failed attempts: " + str(fail_count))
-    print("Correct credentials blocked: " + ("YES" if final_attempt_blocked else "NO"))
-    print("")
-    print("CVSS Metrics:")
-    print("  Attack Vector (AV): " + str(AV) + " (Network)")
-    print("  Attack Complexity (AC): " + str(AC))
-    print("  Privileges Required (PR): " + str(PR) + " (None)")
-    print("  User Interaction (UI): " + str(UI) + " (None)")
-    print("  Impact Score: " + str(round(Impact, 2)))
-    print("  Exploitability Score: " + str(round(Exploitability, 2)))
-    print("="*60)
     
-    assert Base_score is not None
-    assert 0.0 <= Base_score <= 10.0
+    if Base_score >= 9.0:
+        severity = "CRITICAL"
+    elif Base_score >= 7.0:
+        severity = "HIGH"
+    elif Base_score >= 4.0:
+        severity = "MEDIUM"
+    else:
+        severity = "LOW"
+    
+    print("CVSS Metrics:")
+    print("  Attack Vector (AV): Network")
+    print("  Attack Complexity (AC): " + ("Low" if AC == 0.77 else "Medium"))
+    print("  Privileges Required (PR): None")
+    print("  User Interaction (UI): None")
+    print("  Scope (S): Unchanged")
+    print("  Impact (CIA): High/High/None")
+    print("")
+    print("Severity Rating: " + severity)
+    print("="*60)
+    print("")
+
+    assert Base_score is not None, "CVSS score calculation failed"
+    assert 0.0 <= Base_score <= 10.0, "Invalid CVSS score: " + str(Base_score)
+    assert correct_login_succeeded, "Attack failed - correct credentials did not work"
