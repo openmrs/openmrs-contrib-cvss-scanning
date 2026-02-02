@@ -1,30 +1,34 @@
 import pytest
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+from playwright.sync_api import sync_playwright
 import os
 
 @pytest.fixture(scope="function")
 def browser():
-    """Setup Chrome browser for testing"""
-    chrome_options = Options()
-    
-    # Check if running in CI environment
-    if os.getenv('CI'):
-        chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--disable-dev-shm-usage')
-        chrome_options.add_argument('--disable-gpu')
-    
-    # Create driver
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-    
-    # Set implicit wait
-    driver.implicitly_wait(10)
-    
-    yield driver
-    
-    # Cleanup
-    driver.quit()
+    """Setup Playwright browser for testing"""
+    with sync_playwright() as p:
+        # Launch browser
+        browser = p.chromium.launch(
+            headless=True,  # Headless in CI, visible locally
+            args=[
+                '--no-sandbox',
+                '--disable-dev-shm-usage',
+            ] if os.getenv('CI') else []
+        )
+        
+        # Create context and page
+        context = browser.new_context()
+        page = context.new_page()
+        
+        # Set default timeout (equivalent to implicit wait)
+        page.set_default_timeout(30000)  # 30 seconds
+        
+        # Add helper attribute for test data storage
+        page.attack_type = None
+        page.invalid_credential = None
+        page.valid_credential = None
+        
+        yield page
+        
+        # Cleanup
+        context.close()
+        browser.close()
