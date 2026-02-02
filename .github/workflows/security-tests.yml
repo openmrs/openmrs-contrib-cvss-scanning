@@ -19,7 +19,7 @@ jobs:
     # Starting early since OpenMRS takes time to spin up; this allows it to initialize
     # in the background while dependencies are being installed.
     - name: Start an OpenMRS instance
-      run: docker compose -f src/test/resources/docker-compose.yml up -d
+      run: docker compose -f docker-compose.yml up -d
 
     - name: Set up Python
       uses: actions/setup-python@v5
