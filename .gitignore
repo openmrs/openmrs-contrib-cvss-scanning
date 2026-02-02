@@ -16,6 +16,9 @@ security_results.json
 *.ipr
 out/
 
+# Environment variables
+.env
+
 # VS Code
 .vscode/
 
