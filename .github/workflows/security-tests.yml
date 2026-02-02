@@ -26,11 +26,6 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        google-chrome --version
-
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
@@ -40,8 +35,6 @@ jobs:
           echo "Installing dependencies from: $req"
           pip install -r "$req"
         done
-
-        pip install pytest-json-report webdriver-manager
 
     - name: Install Playwright browsers
       run: |
