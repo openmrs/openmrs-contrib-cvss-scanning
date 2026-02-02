@@ -2,7 +2,6 @@ import re
 import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from pathlib import Path
 
 # Read test output log
 try:

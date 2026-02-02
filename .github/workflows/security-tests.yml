@@ -5,25 +5,28 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  schedule:
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 jobs:
   security-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    # Starting early since OpenMRS takes time to spin up; this allows it to initialize
+    # in the background while dependencies are being installed.
+    - name: Start an OpenMRS instance
+      run: docker compose -f docker-compose.yml up -d
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        google-chrome --version
 
     - name: Install Python dependencies
       run: |
@@ -35,13 +38,16 @@ jobs:
           pip install -r "$req"
         done
 
-        pip install pytest-json-report webdriver-manager
-
     - name: Install Playwright browsers
       run: |
         python -m playwright install chromium
 
+    - name: Wait for the OpenMRS instance to start
+      id: wait-for-omrs-instance
+      run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
+
     - name: Run Security Tests
+      if: always() && (steps.wait-for-omrs-instance.outcome == 'success')
       run: |
         # Run pytest and capture ALL output (including CVSS scores)
         pytest tests/ \
@@ -96,11 +102,11 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./gh-pages
-        destination_dir: security
         keep_files: false
 
     - name: Comment on PR
-      if: github.event_name == 'pull_request'
+      if: ${{ github.event_name == 'pull_request' && github.repository_owner == 'openmrs' }}
+      continue-on-error: true
       uses: actions/github-script@v7
       with:
         script: |
@@ -145,3 +151,18 @@ jobs:
             repo: context.repo.repo,
             body: summary
           });
+
+    - name: Capture Server Logs
+      if: always()
+      uses: jwalton/gh-docker-logs@v2
+      with:
+        dest: "./logs"
+
+    - name: Upload Logs as Artifact
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: server-logs
+        path: "./logs"
+        retention-days: 2
+        overwrite: true
