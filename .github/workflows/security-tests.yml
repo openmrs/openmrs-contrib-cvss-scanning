@@ -105,7 +105,8 @@ jobs:
         keep_files: false
 
     - name: Comment on PR
-      if: github.event_name == 'pull_request'
+      if: ${{ github.event_name == 'pull_request' && github.repository_owner == 'openmrs' }}
+      continue-on-error: true
       uses: actions/github-script@v7
       with:
         script: |
