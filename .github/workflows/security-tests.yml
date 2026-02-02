@@ -10,10 +10,16 @@ on:
 jobs:
   security-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    # Starting early since OpenMRS takes time to spin up; this allows it to initialize
+    # in the background while dependencies are being installed.
+    - name: Start an OpenMRS instance
+      run: docker compose -f src/test/resources/docker-compose.yml up -d
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -41,7 +47,12 @@ jobs:
       run: |
         python -m playwright install chromium
 
+    - name: Wait for the OpenMRS instance to start
+      id: wait-for-omrs-instance
+      run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
+
     - name: Run Security Tests
+      if: always() && (steps.wait-for-omrs-instance.outcome == 'success')
       run: |
         # Run pytest and capture ALL output (including CVSS scores)
         pytest tests/ \
@@ -145,3 +156,18 @@ jobs:
             repo: context.repo.repo,
             body: summary
           });
+
+    - name: Capture Server Logs
+      if: always()
+      uses: jwalton/gh-docker-logs@v2
+      with:
+        dest: "./logs"
+
+    - name: Upload Logs as Artifact
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: server-logs
+        path: "./logs"
+        retention-days: 2
+        overwrite: true

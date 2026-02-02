@@ -1,6 +1,13 @@
 import pytest
 from playwright.sync_api import sync_playwright
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# URL configuration
+O3_BASE_URL = os.getenv('O3_BASE_URL', 'http://localhost/openmrs/spa')
 
 @pytest.fixture(scope="function")
 def browser():
@@ -11,7 +18,7 @@ def browser():
             headless=True,  # Headless in CI, visible locally
             args=[
                 '--no-sandbox',
-                '--disable-dev-shm-usage',
+                '--disable-dev-shm-usage'
             ] if os.getenv('CI') else []
         )
         
