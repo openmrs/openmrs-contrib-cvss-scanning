@@ -1,0 +1,33 @@
+services:
+  gateway:
+    image: openmrs/openmrs-reference-application-3-gateway:${TAG:-nightly}
+    restart: "unless-stopped"
+    depends_on:
+      - frontend
+      - backend
+    ports:
+      - "80:80"
+
+  frontend:
+    image: openmrs/openmrs-reference-application-3-frontend:${TAG:-nightly}
+    restart: "unless-stopped"
+    environment:
+      SPA_PATH: /openmrs/spa
+      API_URL: /openmrs
+      SPA_CONFIG_URLS: /openmrs/spa/config-core_demo.json
+      SPA_DEFAULT_LOCALE:
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost/" ]
+      timeout: 5s
+    depends_on:
+      - backend
+
+  backend:
+    image: openmrs/openmrs-reference-application-3-backend:${TAG:-nightly-with-data}
+    restart: "unless-stopped"
+    depends_on:
+      - db
+
+  db:
+    image: openmrs/openmrs-reference-application-3-db:nightly-with-data
+    restart: "unless-stopped"

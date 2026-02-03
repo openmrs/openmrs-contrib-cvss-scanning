@@ -1,2 +1,30 @@
+# Python
 .pytest_cache/
 __pycache__/
+
+# Generated test reports and artifacts
+report.html
+report.json
+security_dashboard.html
+debug_output.txt
+security_results.json
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db

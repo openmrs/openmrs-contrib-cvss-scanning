@@ -1,8 +1,7 @@
 import pytest
 import pytest_bdd
-
-O3_LOGIN_URL = 'https://o3.openmrs.org/openmrs/spa/login'
-O3_HOME_URL = 'https://o3.openmrs.org/openmrs/spa/home'
+from conftest import O3_BASE_URL
+O3_LOGIN_URL = f'{O3_BASE_URL}/login'
 
 @pytest_bdd.scenario('tests/authentication/o3_authentication_security.feature', 
                      'Password attack with 8 wrong password attempts',
