@@ -1,5 +1,6 @@
 import pytest_bdd
 from conftest import O3_BASE_URL, O3_LOGIN_URL, O3_HOME_URL
+from login_helper import perform_login
 from playwright.sync_api import sync_playwright
 import os
 
@@ -21,25 +22,15 @@ def user_logged_in(browser):
     browser.goto(O3_LOGIN_URL)
     browser.wait_for_timeout(2000)
     
-    # Perform login
-    browser.fill('input[id="username"]', 'admin')
-    browser.wait_for_timeout(500)
-    browser.fill('input[id="password"]', 'Admin123')
-    browser.wait_for_timeout(500)
+    # Perform two-step login
+    success = perform_login(browser)
+    assert success, f"Login failed - URL: {browser.url}"
     
-    # Click login button
-    browser.click('button[type="submit"]')
-    browser.wait_for_timeout(3000)
-    
-    # Verify login success
-    current_url = browser.url
-    assert 'home' in current_url.lower(), f"Login failed - URL: {current_url}"
-    
-    # Store cookies in browser object for later use
+    # Store cookies for later use
     browser.session_cookies = browser.context.cookies()
     
     print(f"✓ Login successful")
-    print(f"  URL: {current_url}")
+    print(f"  URL: {browser.url}")
     print(f"  Cookies captured: {len(browser.session_cookies)}")
     print("="*60)
 
@@ -50,7 +41,6 @@ def simulate_session_hijacking(browser):
     print("ATTACK: Session Hijacking Simulation")
     print("-"*60)
     
-    # Get the stolen cookies
     stolen_cookies = browser.session_cookies
     
     print(f"\nAttacker stole {len(stolen_cookies)} cookies")
@@ -77,7 +67,6 @@ def simulate_session_hijacking(browser):
         
         # Check if access granted or denied
         final_url = attacker_page.url
-        page_content = attacker_page.content()
         
         print(f"  Final URL: {final_url}")
         
@@ -110,47 +99,35 @@ def verify_hijacking_prevented(browser):
     
     access_denied = (result == 'rejected')
     
-    # ===================================================================
-    # CVSS CALCULATION for Session Hijacking
-    # ===================================================================
-    
     # CVSS v3.1 Base Metrics for Session Hijacking
-    AV = 0.85   # Attack Vector: Network (can be done remotely)
-    AC = 0.44   # Attack Complexity: High (requires stealing session first)
-    PR = 0.62   # Privileges Required: Low (need user session)
-    UI = 0.85   # User Interaction: None (once cookie stolen)
+    AV = 0.85   # Attack Vector: Network
+    AC = 0.44   # Attack Complexity: High
+    PR = 0.62   # Privileges Required: Low
+    UI = 0.85   # User Interaction: None
     S = 0       # Scope: Unchanged
     
-    # Impact Metrics
-    C = 0.56    # Confidentiality: High (access to user data)
-    I = 0.56    # Integrity: High (can modify user data)
-    A = 0.00    # Availability: None (doesn't crash system)
+    C = 0.56    # Confidentiality: High
+    I = 0.56    # Integrity: High
+    A = 0.00    # Availability: None
     
-    # Calculate Impact Sub-Score
     ISS_Base = 1 - ((1 - C) * (1 - I) * (1 - A))
     
-    if S == 0:  # Scope Unchanged
+    if S == 0:
         Impact = 6.42 * ISS_Base
-    else:  # Scope Changed
+    else:
         Impact = 7.52 * (ISS_Base - 0.029) - 3.25 * ((ISS_Base - 0.02) ** 15)
     
-    # Calculate Exploitability Sub-Score
     Exploitability = 8.22 * AV * AC * PR * UI
     
-    # Calculate Base Score
     if Impact <= 0:
         Base_score = 0
     else:
-        if S == 0:  # Scope Unchanged
+        if S == 0:
             Base_score = min(1.08 * (Impact + Exploitability), 10)
         else:
             Base_score = min(1.08 * (Impact + Exploitability), 10)
     
     Base_score = round(Base_score, 1)
-    
-    # ===================================================================
-    # DISPLAY RESULTS
-    # ===================================================================
     
     print("\nCVSS VULNERABILITY SCORE CALCULATION")
     print("="*60)
@@ -181,11 +158,9 @@ def verify_hijacking_prevented(browser):
     print("="*60)
     print("")
     
-    # Assertions
     assert Base_score is not None, "CVSS score calculation failed"
     assert 0.0 <= Base_score <= 10.0, f"Invalid CVSS score: {Base_score}"
     
-    # Note about result
     if not access_denied:
         print("NOTE: Session hijacking was successful")
         print("This indicates a vulnerability in session management")

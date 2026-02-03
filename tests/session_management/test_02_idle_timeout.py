@@ -1,5 +1,6 @@
 import pytest_bdd
 from conftest import O3_BASE_URL, O3_LOGIN_URL, O3_HOME_URL
+from login_helper import perform_login
 import time
 
 @pytest_bdd.scenario('tests/session_management/session_management.feature',
@@ -20,22 +21,12 @@ def user_logged_in(browser):
     browser.goto(O3_LOGIN_URL)
     browser.wait_for_timeout(2000)
     
-    # Perform login
-    browser.fill('input[id="username"]', 'admin')
-    browser.wait_for_timeout(500)
-    browser.fill('input[id="password"]', 'Admin123')
-    browser.wait_for_timeout(500)
-    
-    # Click login button
-    browser.click('button[type="submit"]')
-    browser.wait_for_timeout(3000)
-    
-    # Verify login success
-    current_url = browser.url
-    assert 'home' in current_url.lower(), f"Login failed - URL: {current_url}"
+    # Perform two-step login
+    success = perform_login(browser)
+    assert success, f"Login failed - URL: {browser.url}"
     
     print(f"✓ Login successful")
-    print(f"  URL: {current_url}")
+    print(f"  URL: {browser.url}")
     print("="*60)
 
 @pytest_bdd.when('the user stays idle')
@@ -45,12 +36,9 @@ def user_stays_idle(browser):
     print("ACTION: User Stays Idle")
     print("-"*60)
     
-    # Record idle start time
     browser.idle_start = time.time()
     
-    # NOTE: In production, idle timeout is typically 15-30 minutes
-    # For testing purposes, we'll simulate with a shorter wait
-    idle_duration_seconds = 30  # Test duration
+    idle_duration_seconds = 30
     
     print(f"Simulating idle period: {idle_duration_seconds} seconds")
     print("NOTE: Production timeout is typically 15-30 minutes")
@@ -70,7 +58,6 @@ def check_session_timeout(browser):
     print("VERIFICATION: Session Timeout Check")
     print("="*60)
     
-    # Try to access a protected page after idle period
     print(f"Attempting to access: {O3_HOME_URL}")
     
     try:
@@ -80,7 +67,6 @@ def check_session_timeout(browser):
         final_url = browser.url
         print(f"  Final URL: {final_url}")
         
-        # Check if session expired (redirected to login)
         if 'login' in final_url.lower():
             browser.session_expired = True
             print("→ Session EXPIRED - Redirected to login")
@@ -92,26 +78,20 @@ def check_session_timeout(browser):
         print(f"  Error checking session: {e}")
         browser.session_expired = False
     
-    # ===================================================================
-    # CVSS CALCULATION for Session Timeout
-    # ===================================================================
-    
     session_expired = getattr(browser, 'session_expired', False)
     idle_duration = getattr(browser, 'idle_duration', 0)
     
     # CVSS v3.1 Base Metrics for Session Timeout Vulnerability
-    AV = 0.62   # Attack Vector: Adjacent (physical access or local network)
-    AC = 0.44   # Attack Complexity: High (requires unattended session)
-    PR = 0.62   # Privileges Required: Low (need initial login)
+    AV = 0.62   # Attack Vector: Adjacent
+    AC = 0.44   # Attack Complexity: High
+    PR = 0.62   # Privileges Required: Low
     UI = 0.85   # User Interaction: None
     S = 0       # Scope: Unchanged
     
-    # Impact Metrics (if no timeout)
-    C = 0.56    # Confidentiality: High (access to user data)
-    I = 0.22    # Integrity: Low (limited time window)
+    C = 0.56    # Confidentiality: High
+    I = 0.22    # Integrity: Low
     A = 0.00    # Availability: None
     
-    # Calculate Impact Sub-Score
     ISS_Base = 1 - ((1 - C) * (1 - I) * (1 - A))
     
     if S == 0:
@@ -119,10 +99,8 @@ def check_session_timeout(browser):
     else:
         Impact = 7.52 * (ISS_Base - 0.029) - 3.25 * ((ISS_Base - 0.02) ** 15)
     
-    # Calculate Exploitability Sub-Score
     Exploitability = 8.22 * AV * AC * PR * UI
     
-    # Calculate Base Score
     if Impact <= 0:
         Base_score = 0
     else:
@@ -132,10 +110,6 @@ def check_session_timeout(browser):
             Base_score = min(1.08 * (Impact + Exploitability), 10)
     
     Base_score = round(Base_score, 1)
-    
-    # ===================================================================
-    # DISPLAY RESULTS
-    # ===================================================================
     
     print("\nCVSS VULNERABILITY SCORE CALCULATION")
     print("="*60)
@@ -167,11 +141,9 @@ def check_session_timeout(browser):
     print("="*60)
     print("")
     
-    # Assertions
     assert Base_score is not None, "CVSS score calculation failed"
     assert 0.0 <= Base_score <= 10.0, f"Invalid CVSS score: {Base_score}"
     
-    # Note about result
     if session_expired:
         print("NOTE: Session timeout is working")
         print("This is expected security behavior")
