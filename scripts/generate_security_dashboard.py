@@ -290,8 +290,8 @@ html += f"""
                 </table>
 
                 <div class="footer">
-                    <p><a href="report.html">📊 View Detailed pytest Report</a> |
-                    <a href="security_results.json">📄 Download JSON Data</a></p>
+                    <p><a href="detailed-report.html">📊 View Detailed pytest Report</a> |
+                    <a href="results.json">📄 Download JSON Data</a></p>
                     <p style="margin-top: 10px; font-size: 12px;">
                         OpenMRS Continuous Security Testing | NSF-Funded Research
                     </p>
