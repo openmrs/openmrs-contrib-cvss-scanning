@@ -102,6 +102,7 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./gh-pages
+        cname: cvss-report.openmrs.org
         keep_files: false
 
     - name: Comment on PR
