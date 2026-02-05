@@ -18,7 +18,7 @@ def browser():
             headless=True,  # Headless in CI, visible locally
             args=[
                 '--no-sandbox',
-                '--disable-dev-shm-usage',
+                '--disable-dev-shm-usage'
             ] if os.getenv('CI') else []
         )
         

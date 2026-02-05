@@ -1,6 +1,7 @@
 import pytest_bdd
 
 from conftest import O3_BASE_URL
+
 O3_LOGIN_URL = f'{O3_BASE_URL}/login'
 @pytest_bdd.scenario('tests/authentication/o3_authentication_security.feature', 
                      'Password attack with 7 wrong password attempts',
