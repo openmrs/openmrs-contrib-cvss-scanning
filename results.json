@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-02-04T01:51:28.014063",
+  "timestamp": "2026-02-05T01:52:15.898174",
   "total_tests": 14,
   "passed": 5,
   "failed": 9,
@@ -8,98 +8,98 @@
       "name": "test_username_enumeration",
       "full_name": "tests/authentication/test_01_username_enumeration.py::test_username_enumeration",
       "outcome": "passed",
-      "duration": 94.612305595,
+      "duration": 93.83125763500001,
       "cvss_score": 9.1
     },
     {
       "name": "test_credential_guessing",
       "full_name": "tests/authentication/test_02_credential_guessing.py::test_credential_guessing",
       "outcome": "passed",
-      "duration": 93.72245521300002,
+      "duration": 93.740534304,
       "cvss_score": 9.1
     },
     {
       "name": "test_password_attack_6",
       "full_name": "tests/authentication/test_03_password_attack_6_attempts.py::test_password_attack_6",
       "outcome": "passed",
-      "duration": 60.95211713200001,
+      "duration": 60.97085910199996,
       "cvss_score": 7.4
     },
     {
       "name": "test_password_attack_7",
       "full_name": "tests/authentication/test_04_password_attack_7_attempts.py::test_password_attack_7",
       "outcome": "passed",
-      "duration": 69.103919324,
+      "duration": 69.15927098800006,
       "cvss_score": 7.4
     },
     {
       "name": "test_password_attack_8",
       "full_name": "tests/authentication/test_05_password_attack_8_attempts.py::test_password_attack_8",
       "outcome": "passed",
-      "duration": 77.30372691699995,
+      "duration": 77.2940196720001,
       "cvss_score": 7.4
     },
     {
       "name": "test_session_id_use_on_a_different_ip_address",
       "full_name": "tests/session_management/test_reuse_expired_session.py::test_session_id_use_on_a_different_ip_address",
       "outcome": "failed",
-      "duration": 0.37795591500002956,
+      "duration": 0.19494432200008305,
       "cvss_score": null
     },
     {
       "name": "test_session_expiration_after_idle_time",
       "full_name": "tests/session_management/test_reuse_expired_session.py::test_session_expiration_after_idle_time",
       "outcome": "failed",
-      "duration": 0.44782666000003246,
+      "duration": 0.18566782699997475,
       "cvss_score": null
     },
     {
       "name": "test_cannot_resuse_expired_session",
       "full_name": "tests/session_management/test_reuse_expired_session.py::test_cannot_resuse_expired_session",
       "outcome": "failed",
-      "duration": 0.3140214070000411,
+      "duration": 0.16007285399996363,
       "cvss_score": null
     },
     {
       "name": "test_session_id_use_on_a_different_ip_address",
       "full_name": "tests/session_management/test_session_expired_idle.py::test_session_id_use_on_a_different_ip_address",
       "outcome": "failed",
-      "duration": 0.2868287370000644,
+      "duration": 0.15867750299992167,
       "cvss_score": null
     },
     {
       "name": "test_session_expiration_after_idle_time",
       "full_name": "tests/session_management/test_session_expired_idle.py::test_session_expiration_after_idle_time",
       "outcome": "failed",
-      "duration": 0.3367820290000054,
+      "duration": 0.1601606599999741,
       "cvss_score": null
     },
     {
       "name": "test_cannot_resuse_expired_session",
       "full_name": "tests/session_management/test_session_expired_idle.py::test_cannot_resuse_expired_session",
       "outcome": "failed",
-      "duration": 0.31580060399994636,
+      "duration": 0.31746651900004963,
       "cvss_score": null
     },
     {
       "name": "test_session_id_use_on_a_different_ip_address",
       "full_name": "tests/session_management/test_session_id_ip_address.py::test_session_id_use_on_a_different_ip_address",
       "outcome": "failed",
-      "duration": 0.2849710550000282,
+      "duration": 0.14715905200000634,
       "cvss_score": null
     },
     {
       "name": "test_session_expiration_after_idle_time",
       "full_name": "tests/session_management/test_session_id_ip_address.py::test_session_expiration_after_idle_time",
       "outcome": "failed",
-      "duration": 0.3150163849999217,
+      "duration": 0.28773197399993933,
       "cvss_score": null
     },
     {
       "name": "test_cannot_resuse_expired_session",
       "full_name": "tests/session_management/test_session_id_ip_address.py::test_cannot_resuse_expired_session",
       "outcome": "failed",
-      "duration": 0.36340554299999894,
+      "duration": 0.18879301399999804,
       "cvss_score": null
     }
   ]
