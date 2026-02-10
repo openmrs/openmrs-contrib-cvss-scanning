@@ -3,6 +3,29 @@ import json
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+# Test descriptions mapping
+TEST_DESCRIPTIONS = {
+    'test_brute_force_password': 'Brute force password attack using known admin username with 7 random password attempts. OpenMRS triggers account lockout after 7 failures with 5-minute cooldown before access is restored.',
+    'test_credential_guessing': 'Complete credential guessing attack with both random usernames and random passwords over 10 attempts. Evaluates rate limiting when attacker has no valid credentials.',
+    'test_password_attack_6': 'Password brute force attack with valid username and 6 random password attempts. Tests authentication behavior before reaching the 7-attempt lockout threshold.',
+    'test_password_attack_7': 'Password brute force attack with valid username and 7 random password attempts. Verifies lockout mechanism triggers at the default threshold.',
+    'test_password_attack_8': 'Password brute force attack with valid username and 8 random password attempts. Evaluates post-lockout protection after threshold is exceeded.',
+}
+
+def get_test_description(test_name):
+    """Get description for a test, with fallback"""
+    # Try exact match first
+    if test_name in TEST_DESCRIPTIONS:
+        return TEST_DESCRIPTIONS[test_name]
+    
+    # Try partial matches for various test naming conventions
+    for key, desc in TEST_DESCRIPTIONS.items():
+        if key in test_name or test_name in key:
+            return desc
+    
+    # Default fallback
+    return 'Security test for authentication vulnerabilities.'
+
 # Read test output log
 try:
     with open('test_output.log', 'r') as f:
@@ -84,7 +107,7 @@ html = f"""<!DOCTYPE html>
                     min-height: 100vh;
                 }}
                 .container {{
-                    max-width: 1200px;
+                    max-width: 1400px;
                     margin: 0 auto;
                     background: white;
                     padding: 40px;
@@ -163,12 +186,24 @@ html = f"""<!DOCTYPE html>
                 td {{
                     padding: 15px;
                     border-bottom: 1px solid #e2e8f0;
+                    vertical-align: top;
                 }}
                 tr:hover {{
                     background: #f7fafc;
                 }}
                 tr:last-child td {{
                     border-bottom: none;
+                }}
+                .test-name {{
+                    font-weight: 600;
+                    color: #2d3748;
+                    min-width: 180px;
+                }}
+                .test-description {{
+                    color: #4a5568;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    max-width: 500px;
                 }}
                 .status-badge {{
                     display: inline-block;
@@ -204,6 +239,10 @@ html = f"""<!DOCTYPE html>
                 .severity-medium {{ background: #d69e2e; color: white; }}
                 .severity-low {{ background: #38a169; color: white; }}
                 .severity-unknown {{ background: #a0aec0; color: white; }}
+                .duration {{
+                    color: #718096;
+                    font-size: 14px;
+                }}
                 .footer {{
                     margin-top: 40px;
                     padding-top: 20px;
@@ -247,6 +286,7 @@ html = f"""<!DOCTYPE html>
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Description</th>
                             <th>Test Execution</th>
                             <th>CVSS Score</th>
                             <th>Severity</th>
@@ -257,11 +297,11 @@ html = f"""<!DOCTYPE html>
         """
 
 for r in results:
-    # Status badge - CHANGED: "Completed" / "Error"
+    # Status badge - "Completed" / "Error"
     status_class = "status-completed" if r['outcome'] == 'passed' else "status-error"
     status_text = "Completed" if r['outcome'] == 'passed' else "Error"
 
-    # CVSS score and severity - SPLIT INTO TWO COLUMNS
+    # CVSS score and severity
     cvss = r.get('cvss_score')
     severity_class, severity_text = get_cvss_severity(cvss)
 
@@ -274,14 +314,21 @@ for r in results:
 
     # Clean test name
     test_name = r['name'].replace('_', ' ').replace('test ', '').title()
+    
+    # Get test description
+    description = get_test_description(r['name'])
+    
+    # Format duration
+    duration_formatted = f'{r["duration"]:.2f}s' if r['duration'] < 60 else f'{int(r["duration"]//60)}m {int(r["duration"]%60)}s'
 
     html += f"""
                         <tr>
-                            <td><strong>{test_name}</strong></td>
+                            <td class="test-name">{test_name}</td>
+                            <td class="test-description">{description}</td>
                             <td><span class="status-badge {status_class}">{status_text}</span></td>
                             <td>{cvss_display}</td>
                             <td>{severity_display}</td>
-                            <td>{r['duration']:.2f}s</td>
+                            <td class="duration">{duration_formatted}</td>
                         </tr>
             """
 
