@@ -93,6 +93,7 @@ Generate security dashboard:
 pytest tests/ -v --json-report --json-report-file=report.json | tee test_output.log
 python scripts/generate_security_dashboard.py
 ```
+This will generate an HTML file named `security_dashboard.html` in the project root.
 
 ## Test Structure
 
