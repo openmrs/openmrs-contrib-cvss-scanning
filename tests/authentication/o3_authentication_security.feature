@@ -6,9 +6,18 @@ Feature: O3 Authentication Security Testing
   Background:
     Given the OpenMRS 3 login page is displayed
 
-  Scenario: Username enumeration with wrong usernames
-    When the attacker tries to login with invalid "username" and valid password
-    Then check after 10 incorrect attempts, the CVSS score for username enumeration attack should be calculated
+# Test Case 1: Brute Force Password Attack
+# Attack: known username admin + randomly generated passwords
+# Expected: Account lockout after 7 failed attempts, 5 mins cooldown before having access to attempt login again
+# Testing: 
+# 1. if brute force password attack vulnerability exist
+# 2. if account lockout works
+# 3. if 5 mins cooldown period works
+  Scenario: Brute force password attack with known admin username
+    When the attacker tries to login with known username "admin" and random passwords
+    Then check after 7 incorrect attempts, the CVSS score for brute force password attack should be calculated
+    And verify account lockout triggers after 7 failures
+    And verify account becomes accessible after 5-minute cooldown period
 
   Scenario: Complete credential guessing with wrong username and password
     When the attacker tries to login with invalid "username" and invalid "password"
