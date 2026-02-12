@@ -12,7 +12,7 @@
                     min-height: 100vh;
                 }
                 .container {
-                    max-width: 1200px;
+                    max-width: 1400px;
                     margin: 0 auto;
                     background: white;
                     padding: 40px;
@@ -91,12 +91,24 @@
                 td {
                     padding: 15px;
                     border-bottom: 1px solid #e2e8f0;
+                    vertical-align: top;
                 }
                 tr:hover {
                     background: #f7fafc;
                 }
                 tr:last-child td {
                     border-bottom: none;
+                }
+                .test-name {
+                    font-weight: 600;
+                    color: #2d3748;
+                    min-width: 180px;
+                }
+                .test-description {
+                    color: #4a5568;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    max-width: 500px;
                 }
                 .status-badge {
                     display: inline-block;
@@ -132,6 +144,10 @@
                 .severity-medium { background: #d69e2e; color: white; }
                 .severity-low { background: #38a169; color: white; }
                 .severity-unknown { background: #a0aec0; color: white; }
+                .duration {
+                    color: #718096;
+                    font-size: 14px;
+                }
                 .footer {
                     margin-top: 40px;
                     padding-top: 20px;
@@ -153,7 +169,7 @@
             <div class="container">
                 <h1>🔒 OpenMRS O3 Security Testing</h1>
                 <p class="subtitle">Automated BDD Security Tests with CVSS Vulnerability Scoring</p>
-                <p class="timestamp">Last updated: February 11, 2026 at 08:58 PM EST</p>
+                <p class="timestamp">Last updated: February 12, 2026 at 08:21 AM EST</p>
 
                 <div class="summary">
                     <div class="stat-card passed">
@@ -175,6 +191,7 @@
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Description</th>
                             <th>Test Execution</th>
                             <th>CVSS Score</th>
                             <th>Severity</th>
@@ -184,67 +201,75 @@
                     <tbody>
         
                         <tr>
-                            <td><strong>Username Enumeration</strong></td>
+                            <td class="test-name">Brute Force Password</td>
+                            <td class="test-description">Brute force password attack using known admin username with 7 random password attempts. OpenMRS triggers account lockout after 7 failures with 5-minute cooldown before access is restored.</td>
+                            <td><span class="status-badge status-completed">Completed</span></td>
+                            <td><span class="cvss-score">7.4</span></td>
+                            <td><span class="severity-badge severity-high">HIGH</span></td>
+                            <td class="duration">6m 19s</td>
+                        </tr>
+            
+                        <tr>
+                            <td class="test-name">Credential Guessing</td>
+                            <td class="test-description">Complete credential guessing attack with both random usernames and random passwords over 10 attempts. Evaluates rate limiting when attacker has no valid credentials.</td>
                             <td><span class="status-badge status-completed">Completed</span></td>
                             <td><span class="cvss-score">9.1</span></td>
                             <td><span class="severity-badge severity-critical">CRITICAL</span></td>
-                            <td>94.91s</td>
+                            <td class="duration">1m 33s</td>
                         </tr>
             
                         <tr>
-                            <td><strong>Credential Guessing</strong></td>
-                            <td><span class="status-badge status-completed">Completed</span></td>
-                            <td><span class="cvss-score">9.1</span></td>
-                            <td><span class="severity-badge severity-critical">CRITICAL</span></td>
-                            <td>93.77s</td>
-                        </tr>
-            
-                        <tr>
-                            <td><strong>Password Attack 6</strong></td>
+                            <td class="test-name">Password Attack 6</td>
+                            <td class="test-description">Password brute force attack with valid username and 6 random password attempts. Tests authentication behavior before reaching the 7-attempt lockout threshold.</td>
                             <td><span class="status-badge status-completed">Completed</span></td>
                             <td><span class="cvss-score">7.4</span></td>
                             <td><span class="severity-badge severity-high">HIGH</span></td>
-                            <td>60.92s</td>
+                            <td class="duration">1m 1s</td>
                         </tr>
             
                         <tr>
-                            <td><strong>Password Attack 7</strong></td>
+                            <td class="test-name">Password Attack 7</td>
+                            <td class="test-description">Password brute force attack with valid username and 7 random password attempts. Verifies lockout mechanism triggers at the default threshold.</td>
                             <td><span class="status-badge status-completed">Completed</span></td>
                             <td><span class="cvss-score">7.4</span></td>
                             <td><span class="severity-badge severity-high">HIGH</span></td>
-                            <td>69.19s</td>
+                            <td class="duration">1m 9s</td>
                         </tr>
             
                         <tr>
-                            <td><strong>Password Attack 8</strong></td>
+                            <td class="test-name">Password Attack 8</td>
+                            <td class="test-description">Password brute force attack with valid username and 8 random password attempts. Evaluates post-lockout protection after threshold is exceeded.</td>
                             <td><span class="status-badge status-completed">Completed</span></td>
                             <td><span class="cvss-score">7.4</span></td>
                             <td><span class="severity-badge severity-high">HIGH</span></td>
-                            <td>77.48s</td>
+                            <td class="duration">1m 17s</td>
                         </tr>
             
                         <tr>
-                            <td><strong>Session Hijacking</strong></td>
+                            <td class="test-name">Session Hijacking</td>
+                            <td class="test-description">Security test for authentication vulnerabilities.</td>
                             <td><span class="status-badge status-error">Error</span></td>
                             <td><span class="cvss-score">N/A</span></td>
                             <td><span class="severity-badge severity-unknown">N/A</span></td>
-                            <td>8.82s</td>
+                            <td class="duration">8.85s</td>
                         </tr>
             
                         <tr>
-                            <td><strong>Idle Timeout</strong></td>
+                            <td class="test-name">Idle Timeout</td>
+                            <td class="test-description">Security test for authentication vulnerabilities.</td>
                             <td><span class="status-badge status-error">Error</span></td>
                             <td><span class="cvss-score">N/A</span></td>
                             <td><span class="severity-badge severity-unknown">N/A</span></td>
-                            <td>8.84s</td>
+                            <td class="duration">8.85s</td>
                         </tr>
             
                         <tr>
-                            <td><strong>Expired Session Reuse</strong></td>
+                            <td class="test-name">Expired Session Reuse</td>
+                            <td class="test-description">Security test for authentication vulnerabilities.</td>
                             <td><span class="status-badge status-error">Error</span></td>
                             <td><span class="cvss-score">N/A</span></td>
                             <td><span class="severity-badge severity-unknown">N/A</span></td>
-                            <td>8.86s</td>
+                            <td class="duration">8.87s</td>
                         </tr>
             
                     </tbody>
