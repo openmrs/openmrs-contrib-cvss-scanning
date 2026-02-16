@@ -1,354 +1,506 @@
-import re
+#!/usr/bin/env python3
+"""
+OpenMRS O3 Security Dashboard Generator
+Parses test results and generates HTML dashboard with CVSS scores
+
+CVSS 4.0 Migration: Automatically extracts test descriptions from docstrings
+"""
+
 import json
+import re
+import sys
 from datetime import datetime
-from zoneinfo import ZoneInfo
+from pathlib import Path
+import inspect
+import importlib.util
 
-# Test descriptions mapping
-TEST_DESCRIPTIONS = {
-    'test_brute_force_password': 'Brute force password attack using known admin username with 7 random password attempts. OpenMRS triggers account lockout after 7 failures with 5-minute cooldown before access is restored.',
-    'test_credential_guessing': 'Complete credential guessing attack with both random usernames and random passwords over 10 attempts. Evaluates rate limiting when attacker has no valid credentials.',
-    'test_password_attack_6': 'Password brute force attack with valid username and 6 random password attempts. Tests authentication behavior before reaching the 7-attempt lockout threshold.',
-    'test_password_attack_7': 'Password brute force attack with valid username and 7 random password attempts. Verifies lockout mechanism triggers at the default threshold.',
-    'test_password_attack_8': 'Password brute force attack with valid username and 8 random password attempts. Evaluates post-lockout protection after threshold is exceeded.',
-}
-
-def get_test_description(test_name):
-    """Get description for a test, with fallback"""
-    # Try exact match first
-    if test_name in TEST_DESCRIPTIONS:
-        return TEST_DESCRIPTIONS[test_name]
+def get_test_description_from_docstring(test_nodeid):
+    """
+    Extract description from test function docstring.
+    Falls back to manual mapping if docstring not found.
     
-    # Try partial matches for various test naming conventions
-    for key, desc in TEST_DESCRIPTIONS.items():
-        if key in test_name or test_name in key:
+    This makes the dashboard adaptive - contributors can add new tests
+    without modifying the dashboard code. Just add a docstring!
+    
+    Example nodeid: 'tests/authentication/test_01_brute_force_password.py::test_brute_force_password'
+    
+    Args:
+        test_nodeid: Full pytest node ID (filepath::function_name)
+        
+    Returns:
+        String description of the test
+    """
+    try:
+        # Parse the nodeid to get file path and test function name
+        if '::' not in test_nodeid:
+            return get_test_description_fallback(test_nodeid)
+        
+        file_path, test_name = test_nodeid.split('::')
+        
+        # Convert relative path to absolute
+        abs_path = Path(file_path).resolve()
+        
+        if not abs_path.exists():
+            print(f"Warning: Test file not found: {abs_path}")
+            return get_test_description_fallback(test_name)
+        
+        # Load the test module dynamically
+        spec = importlib.util.spec_from_file_location("test_module", abs_path)
+        if spec is None or spec.loader is None:
+            print(f"Warning: Could not load module spec for {abs_path}")
+            return get_test_description_fallback(test_name)
+        
+        module = importlib.util.module_from_spec(spec)
+        sys.modules['test_module'] = module
+        spec.loader.exec_module(module)
+        
+        # Get the test function
+        test_func = getattr(module, test_name, None)
+        
+        if test_func and test_func.__doc__:
+            # Clean up the docstring
+            docstring = inspect.cleandoc(test_func.__doc__)
+            
+            # Return first paragraph (before first blank line)
+            first_paragraph = docstring.split('\n\n')[0]
+            
+            # Join lines and clean up whitespace
+            description = ' '.join(first_paragraph.split('\n')).strip()
+            
+            # Limit length for dashboard display
+            if len(description) > 200:
+                description = description[:197] + '...'
+            
+            return description
+        else:
+            print(f"Warning: No docstring found for {test_name}")
+            return get_test_description_fallback(test_name)
+        
+    except Exception as e:
+        print(f"Warning: Could not extract docstring for {test_nodeid}: {e}")
+        return get_test_description_fallback(test_nodeid.split('::')[-1] if '::' in test_nodeid else test_nodeid)
+
+
+def get_test_description_fallback(test_name):
+    """
+    Fallback manual mapping if docstring extraction fails.
+    This ensures backwards compatibility.
+    """
+    # Manual mapping for existing tests
+    descriptions = {
+        'test_brute_force_password': 'Brute force password attack with known admin username',
+        'test_credential_guessing': 'Complete credential guessing attack (random username + password)',
+        'test_password_attack_6_attempts': 'Password attack with 6 incorrect attempts',
+        'test_password_attack_7_attempts': 'Password attack with 7 incorrect attempts',
+        'test_password_attack_8_attempts': 'Password attack with 8 incorrect attempts',
+        'test_session_hijacking': 'Session hijacking attack using stolen session token',
+        'test_idle_timeout': 'Idle session timeout verification',
+        'test_expired_session_reuse': 'Expired session token reuse attempt',
+    }
+    
+    # Try to match test name
+    for key, desc in descriptions.items():
+        if key in test_name:
             return desc
     
-    # Default fallback
-    return 'Security test for authentication vulnerabilities.'
+    # Last resort: make it readable from function name
+    readable_name = test_name.replace('test_', '').replace('_', ' ').title()
+    return f'{readable_name} security test'
 
-# Read test output log
-try:
-    with open('test_output.log', 'r') as f:
-        output = f.read()
-except:
-    print("No test output found")
-    output = ""
 
-# Parse CVSS scores from output
-# Looking for pattern: "CVSS Base Score: X.X"
-cvss_pattern = r'CVSS Base Score: ([\d.]+)'
-cvss_scores = re.findall(cvss_pattern, output)
-
-print(f"Found {len(cvss_scores)} CVSS scores in output")
-
-# Read pytest JSON report
-results = []
-try:
-    with open('report.json', 'r') as f:
-        data = json.load(f)
-
-    # Combine test results with CVSS scores
-    for i, test in enumerate(data.get('tests', [])):
-        result = {
-            'name': test['nodeid'].split('::')[-1],
-            'full_name': test['nodeid'],
-            'outcome': test['outcome'],
-            'duration': test.get('call', {}).get('duration', 0),
-            'cvss_score': float(cvss_scores[i]) if i < len(cvss_scores) else None
-        }
-        results.append(result)
-except Exception as e:
-    print(f"Error reading report.json: {e}")
-
-# Save enhanced results
-with open('security_results.json', 'w') as f:
-    json.dump({
-        'timestamp': datetime.now().isoformat(),
-        'total_tests': len(results),
-        'passed': sum(1 for r in results if r['outcome'] == 'passed'),
-        'failed': sum(1 for r in results if r['outcome'] != 'passed'),
-        'tests': results
-    }, f, indent=2)
-
-# Print summary to console
-print("\n" + "="*70)
-print("SECURITY TEST RESULTS WITH CVSS SCORES")
-print("="*70)
-for r in results:
-    status = "✅ PASS" if r['outcome'] == 'passed' else "❌ FAIL"
-    cvss = f"CVSS: {r['cvss_score']:.1f}" if r['cvss_score'] else "CVSS: N/A"
-    print(f"{status} | {cvss:12} | {r['name']}")
-print("="*70 + "\n")
-
-# Generate HTML Security Dashboard
-def get_cvss_severity(score):
-    if score is None:
-        return "unknown", "N/A"
-    if score >= 9.0:
-        return "critical", "CRITICAL"
-    elif score >= 7.0:
-        return "high", "HIGH"
-    elif score >= 4.0:
-        return "medium", "MEDIUM"
-    else:
-        return "low", "LOW"
-
-html = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>OpenMRS Security Test Results</title>
-            <style>
-                * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-                body {{
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    padding: 20px;
-                    min-height: 100vh;
-                }}
-                .container {{
-                    max-width: 1400px;
-                    margin: 0 auto;
-                    background: white;
-                    padding: 40px;
-                    border-radius: 12px;
-                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                }}
-                h1 {{
-                    color: #2d3748;
-                    margin-bottom: 10px;
-                    font-size: 32px;
-                }}
-                .subtitle {{
-                    color: #718096;
-                    margin-bottom: 30px;
-                    font-size: 16px;
-                }}
-                .timestamp {{
-                    color: #a0aec0;
-                    font-size: 14px;
-                    margin-bottom: 30px;
-                }}
-                .summary {{
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                    gap: 20px;
-                    margin: 30px 0;
-                }}
-                .stat-card {{
-                    padding: 25px;
-                    border-radius: 8px;
-                    text-align: center;
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                }}
-                .stat-card.passed {{
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
-                }}
-                .stat-card.failed {{
-                    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                    color: white;
-                }}
-                .stat-card.total {{
-                    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-                    color: white;
-                }}
-                .stat-card h3 {{
-                    font-size: 14px;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    opacity: 0.9;
-                    margin-bottom: 10px;
-                }}
-                .stat-card .number {{
-                    font-size: 48px;
-                    font-weight: bold;
-                    margin: 10px 0;
-                }}
-                table {{
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin: 30px 0;
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                    border-radius: 8px;
-                    overflow: hidden;
-                }}
-                th {{
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
-                    padding: 15px;
-                    text-align: left;
-                    font-weight: 600;
-                    text-transform: uppercase;
-                    font-size: 12px;
-                    letter-spacing: 1px;
-                }}
-                td {{
-                    padding: 15px;
-                    border-bottom: 1px solid #e2e8f0;
-                    vertical-align: top;
-                }}
-                tr:hover {{
-                    background: #f7fafc;
-                }}
-                tr:last-child td {{
-                    border-bottom: none;
-                }}
-                .test-name {{
-                    font-weight: 600;
-                    color: #2d3748;
-                    min-width: 180px;
-                }}
-                .test-description {{
-                    color: #4a5568;
-                    font-size: 14px;
-                    line-height: 1.6;
-                    max-width: 500px;
-                }}
-                .status-badge {{
-                    display: inline-block;
-                    padding: 6px 12px;
-                    border-radius: 20px;
-                    font-size: 12px;
-                    font-weight: 600;
-                    text-transform: uppercase;
-                }}
-                .status-completed {{
-                    background: #bee3f8;
-                    color: #2c5282;
-                }}
-                .status-error {{
-                    background: #fed7d7;
-                    color: #742a2a;
-                }}
-                .cvss-score {{
-                    font-weight: bold;
-                    font-size: 16px;
-                    color: #2d3748;
-                }}
-                .severity-badge {{
-                    display: inline-block;
-                    padding: 6px 12px;
-                    border-radius: 6px;
-                    font-weight: bold;
-                    font-size: 12px;
-                    text-transform: uppercase;
-                }}
-                .severity-critical {{ background: #c53030; color: white; }}
-                .severity-high {{ background: #dd6b20; color: white; }}
-                .severity-medium {{ background: #d69e2e; color: white; }}
-                .severity-low {{ background: #38a169; color: white; }}
-                .severity-unknown {{ background: #a0aec0; color: white; }}
-                .duration {{
-                    color: #718096;
-                    font-size: 14px;
-                }}
-                .footer {{
-                    margin-top: 40px;
-                    padding-top: 20px;
-                    border-top: 2px solid #e2e8f0;
-                    text-align: center;
-                    color: #718096;
-                }}
-                .footer a {{
-                    color: #667eea;
-                    text-decoration: none;
-                    font-weight: 600;
-                }}
-                .footer a:hover {{
-                    text-decoration: underline;
-                }}
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h1>🔒 OpenMRS O3 Security Testing</h1>
-                <p class="subtitle">Automated BDD Security Tests with CVSS Vulnerability Scoring</p>
-                <p class="timestamp">Last updated: {datetime.now(ZoneInfo('America/Indiana/Indianapolis')).strftime('%B %d, %Y at %I:%M %p EST')}</p>
-
-                <div class="summary">
-                    <div class="stat-card passed">
-                        <h3>Completed</h3>
-                        <div class="number">{sum(1 for r in results if r['outcome'] == 'passed')}</div>
-                    </div>
-                    <div class="stat-card failed">
-                        <h3>Errors</h3>
-                        <div class="number">{sum(1 for r in results if r['outcome'] != 'passed')}</div>
-                    </div>
-                    <div class="stat-card total">
-                        <h3>Total Tests</h3>
-                        <div class="number">{len(results)}</div>
-                    </div>
-                </div>
-
-                <h2 style="margin: 40px 0 20px 0; color: #2d3748;">Security Test Results</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Test Name</th>
-                            <th>Description</th>
-                            <th>Test Execution</th>
-                            <th>CVSS Score</th>
-                            <th>Severity</th>
-                            <th>Duration</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-        """
-
-for r in results:
-    # Status badge - "Completed" / "Error"
-    status_class = "status-completed" if r['outcome'] == 'passed' else "status-error"
-    status_text = "Completed" if r['outcome'] == 'passed' else "Error"
-
-    # CVSS score and severity
-    cvss = r.get('cvss_score')
-    severity_class, severity_text = get_cvss_severity(cvss)
-
-    if cvss:
-        cvss_display = f'<span class="cvss-score">{cvss:.1f}</span>'
-        severity_display = f'<span class="severity-badge severity-{severity_class}">{severity_text}</span>'
-    else:
-        cvss_display = '<span class="cvss-score">N/A</span>'
-        severity_display = '<span class="severity-badge severity-unknown">N/A</span>'
-
-    # Clean test name
-    test_name = r['name'].replace('_', ' ').replace('test ', '').title()
+def extract_cvss_score(log_content, test_name):
+    """
+    Extract CVSS score from test output logs.
+    Handles both CVSS 3.1 and CVSS 4.0 formats.
+    """
+    pattern = r'CVSS Base Score:\s*([\d.]+)'
     
-    # Get test description
-    description = get_test_description(r['name'])
+    # Search for score in log content
+    matches = re.findall(pattern, log_content)
     
-    # Format duration
-    duration_formatted = f'{r["duration"]:.2f}s' if r['duration'] < 60 else f'{int(r["duration"]//60)}m {int(r["duration"]%60)}s'
+    if matches:
+        return float(matches[-1])  # Return the last score found
+    
+    return None
 
-    html += f"""
-                        <tr>
-                            <td class="test-name">{test_name}</td>
-                            <td class="test-description">{description}</td>
-                            <td><span class="status-badge {status_class}">{status_text}</span></td>
-                            <td>{cvss_display}</td>
-                            <td>{severity_display}</td>
-                            <td class="duration">{duration_formatted}</td>
-                        </tr>
-            """
 
-html += f"""
-                    </tbody>
-                </table>
+def get_severity_level(cvss_score):
+    """
+    Determine severity level based on CVSS score.
+    Same ranges for both CVSS 3.1 and 4.0.
+    """
+    if cvss_score is None:
+        return 'UNKNOWN'
+    
+    if cvss_score >= 9.0:
+        return 'CRITICAL'
+    elif cvss_score >= 7.0:
+        return 'HIGH'
+    elif cvss_score >= 4.0:
+        return 'MEDIUM'
+    elif cvss_score > 0.0:
+        return 'LOW'
+    else:
+        return 'NONE'
 
-                <div class="footer">
-                    <p><a href="detailed-report.html">📊 View Detailed pytest Report</a> |
-                    <a href="results.json">📄 Download JSON Data</a></p>
-                    <p style="margin-top: 10px; font-size: 12px;">
-                        OpenMRS Continuous Security Testing | NSF-Funded Research
-                    </p>
-                </div>
+
+def get_severity_color(severity):
+    """Return color code for severity level"""
+    colors = {
+        'CRITICAL': '#dc3545',
+        'HIGH': '#fd7e14',
+        'MEDIUM': '#ffc107',
+        'LOW': '#28a745',
+        'NONE': '#6c757d',
+        'UNKNOWN': '#6c757d',
+    }
+    return colors.get(severity, '#6c757d')
+
+
+def parse_test_results():
+    """Parse pytest JSON report and test output log"""
+    
+    # Load JSON report
+    try:
+        with open('report.json', 'r') as f:
+            json_report = json.load(f)
+    except FileNotFoundError:
+        print("Error: report.json not found")
+        sys.exit(1)
+    
+    # Load test output log
+    try:
+        with open('test_output.log', 'r') as f:
+            log_content = f.read()
+    except FileNotFoundError:
+        print("Warning: test_output.log not found")
+        log_content = ""
+    
+    # Extract test results
+    results = []
+    
+    for test in json_report.get('tests', []):
+        test_name = test.get('nodeid', 'Unknown Test')
+        status = 'PASS' if test.get('outcome') == 'passed' else 'FAIL'
+        duration = test.get('duration', 0)
+        
+        # Extract CVSS score from logs
+        cvss_score = extract_cvss_score(log_content, test_name)
+        severity = get_severity_level(cvss_score)
+        
+        # Get adaptive description from docstring
+        description = get_test_description_from_docstring(test_name)
+        
+        results.append({
+            'full_name': test_name,
+            'name': test_name.split('::')[-1],
+            'description': description,
+            'status': status,
+            'cvss_score': cvss_score,
+            'severity': severity,
+            'duration': duration,
+        })
+    
+    return results, json_report.get('summary', {})
+
+
+def generate_html_dashboard(results, summary):
+    """Generate HTML dashboard with CVSS scores"""
+    
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')
+    
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenMRS O3 Security Dashboard - CVSS 4.0 Migration</title>
+    <style>
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }}
+        
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }}
+        
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+        }}
+        
+        .header {{
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }}
+        
+        .header h1 {{
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }}
+        
+        .header p {{
+            color: #718096;
+            font-size: 14px;
+        }}
+        
+        .migration-notice {{
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }}
+        
+        .migration-notice h3 {{
+            color: #856404;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }}
+        
+        .migration-notice p {{
+            color: #856404;
+            font-size: 14px;
+            margin: 0;
+        }}
+        
+        .stats {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }}
+        
+        .stat-card {{
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }}
+        
+        .stat-card h3 {{
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }}
+        
+        .stat-card p {{
+            color: #2d3748;
+            font-size: 32px;
+            font-weight: bold;
+        }}
+        
+        .test-results {{
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }}
+        
+        .test-results h2 {{
+            padding: 20px;
+            background: #f7fafc;
+            color: #2d3748;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 20px;
+        }}
+        
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+        }}
+        
+        thead {{
+            background: #f7fafc;
+        }}
+        
+        th {{
+            padding: 15px;
+            text-align: left;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #e2e8f0;
+        }}
+        
+        td {{
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+        }}
+        
+        tr:hover {{
+            background: #f7fafc;
+        }}
+        
+        .status-badge {{
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }}
+        
+        .status-pass {{
+            background: #c6f6d5;
+            color: #22543d;
+        }}
+        
+        .status-fail {{
+            background: #fed7d7;
+            color: #742a2a;
+        }}
+        
+        .severity-badge {{
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }}
+        
+        .cvss-score {{
+            font-weight: bold;
+            font-size: 18px;
+        }}
+        
+        .footer {{
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 14px;
+        }}
+        
+        .footer a {{
+            color: white;
+            text-decoration: underline;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 OpenMRS O3 Security Dashboard</h1>
+            <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
+            <p style="margin-top: 5px; font-size: 12px;">Last Updated: {now}</p>
+        </div>
+        
+        <div class="migration-notice">
+            <h3>⚠️ CVSS 4.0 Migration - Phase 1</h3>
+            <p>Currently migrating from CVSS 3.1 to CVSS 4.0. Only brute force test is using CVSS 4.0 scoring. Other tests will be updated in future phases.</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Tests</h3>
+                <p>{summary.get('total', 0)}</p>
             </div>
-        </body>
-        </html>
-        """
+            <div class="stat-card">
+                <h3>Passed</h3>
+                <p style="color: #38a169;">{summary.get('passed', 0)}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Failed</h3>
+                <p style="color: #e53e3e;">{summary.get('failed', 0)}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Duration</h3>
+                <p>{summary.get('duration', 0):.1f}s</p>
+            </div>
+        </div>
+        
+        <div class="test-results">
+            <h2>Test Results</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Test Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>CVSS Score</th>
+                        <th>Severity</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+"""
+    
+    # Add test rows
+    for r in results:
+        status_class = 'status-pass' if r['status'] == 'PASS' else 'status-fail'
+        severity_color = get_severity_color(r['severity'])
+        
+        cvss_display = f"{r['cvss_score']:.1f}" if r['cvss_score'] is not None else 'N/A'
+        
+        html += f"""
+                    <tr>
+                        <td><strong>{r['name']}</strong></td>
+                        <td>{r['description']}</td>
+                        <td><span class="status-badge {status_class}">{r['status']}</span></td>
+                        <td><span class="cvss-score">{cvss_display}</span></td>
+                        <td><span class="severity-badge" style="background-color: {severity_color};">{r['severity']}</span></td>
+                        <td>{r['duration']:.2f}s</td>
+                    </tr>
+"""
+    
+    html += """
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="footer">
+            <p>OpenMRS O3 Continuous Security Testing</p>
+            <p>Powered by <a href="https://www.first.org/cvss/v4.0/" target="_blank">CVSS 4.0</a> | 
+            <a href="https://github.com/openmrs/openmrs-contrib-cvss-scanning" target="_blank">GitHub Repository</a></p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+    
+    return html
 
-with open('security_dashboard.html', 'w') as f:
-    f.write(html)
 
-print("✅ Security dashboard generated: security_dashboard.html")
+def main():
+    """Main dashboard generation function"""
+    print("="*70)
+    print("OpenMRS O3 Security Dashboard Generator")
+    print("="*70)
+    print("")
+    
+    print("Parsing test results...")
+    results, summary = parse_test_results()
+    
+    print(f"Found {len(results)} test(s)")
+    for r in results:
+        cvss_str = f"CVSS {r['cvss_score']:.1f}" if r['cvss_score'] else "No CVSS"
+        print(f"  - {r['name']}: {r['status']} ({cvss_str})")
+    
+    print("")
+    print("Generating HTML dashboard...")
+    html_content = generate_html_dashboard(results, summary)
+    
+    # Write dashboard
+    with open('security_dashboard.html', 'w') as f:
+        f.write(html_content)
+    
+    print("✓ Dashboard saved to security_dashboard.html")
+    print("")
+    print("="*70)
+
+
+if __name__ == '__main__':
+    main()
