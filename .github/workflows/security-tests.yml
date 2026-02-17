@@ -46,6 +46,13 @@ jobs:
       id: wait-for-omrs-instance
       run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
 
+    - name: Download previous test results DB
+      uses: dawidd6/action-download-artifact@v3
+      with:
+        name: test-results-db
+        path: .
+      continue-on-error: true  # First run won't have a DB artifact yet
+
     - name: Run Security Tests
       if: always() && (steps.wait-for-omrs-instance.outcome == 'success')
       run: |
@@ -61,6 +68,15 @@ jobs:
     - name: Extract CVSS Scores and Generate Dashboard
       if: always()
       run: python scripts/generate_security_dashboard.py
+
+    - name: Upload test results DB
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-db
+        path: test_results.db
+        retention-days: 90
+        overwrite: true
 
     - name: Upload Security Dashboard
       if: always()

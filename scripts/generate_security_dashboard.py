@@ -9,9 +9,106 @@ CVSS 4.0 Migration: Automatically extracts test descriptions from docstrings
 import json
 import re
 import sys
+import sqlite3
+import os
 from datetime import datetime
 from datetime import timezone, timedelta
 from pathlib import Path
+
+# ============================================================================
+# SQLITE DATABASE FUNCTIONS
+# ============================================================================
+
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test_results.db')
+
+def init_db():
+    """Initialize SQLite database. Creates tables if they don't exist."""
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS baselines (
+            test_name TEXT PRIMARY KEY,
+            baseline_score REAL NOT NULL,
+            recorded_at TEXT NOT NULL
+        )
+    ''')
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            test_name TEXT NOT NULL,
+            cvss_score REAL NOT NULL,
+            status TEXT NOT NULL,
+            run_at TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+
+def save_test_result(test_name, cvss_score, status):
+    """Save result. Sets baseline if first run for this test."""
+    if cvss_score is None:
+        return
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    now = datetime.now().isoformat()
+    c.execute('SELECT baseline_score FROM baselines WHERE test_name = ?', (test_name,))
+    if c.fetchone() is None:
+        c.execute(
+            'INSERT INTO baselines (test_name, baseline_score, recorded_at) VALUES (?, ?, ?)',
+            (test_name, cvss_score, now)
+        )
+    c.execute(
+        'INSERT INTO history (test_name, cvss_score, status, run_at) VALUES (?, ?, ?, ?)',
+        (test_name, cvss_score, status, now)
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_baseline(test_name):
+    """Get baseline score for a test."""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute('SELECT baseline_score FROM baselines WHERE test_name = ?', (test_name,))
+        row = c.fetchone()
+        conn.close()
+        return row[0] if row else None
+    except Exception as e:
+        print(f'Warning: Could not get baseline for {test_name}: {e}')
+        return None
+
+
+def get_history(test_name, limit=20):
+    """Get last N CVSS scores for trend line (chronological order)."""
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute(
+            'SELECT cvss_score FROM history WHERE test_name = ? ORDER BY run_at DESC LIMIT ?',
+            (test_name, limit)
+        )
+        rows = c.fetchall()
+        conn.close()
+        return [row[0] for row in reversed(rows)]
+    except Exception as e:
+        print(f'Warning: Could not get history for {test_name}: {e}')
+        return []
+
+
+def get_improvement_html(baseline, current):
+    """Generate colored improvement indicator HTML."""
+    if baseline is None or current is None:
+        return '<span style="color: #a0aec0;">—</span>'
+    improvement = round(baseline - current, 1)
+    if improvement > 0:
+        return f'<span style="color: #28a745; font-weight: bold;">+{improvement:.1f} ↑</span>'
+    elif improvement < 0:
+        return f'<span style="color: #dc3545; font-weight: bold;">{improvement:.1f} ↓</span>'
+    else:
+        return '<span style="color: #718096;">0.0 —</span>'
+
 
 def get_test_description_from_docstring(test_nodeid):
     """
@@ -396,6 +493,7 @@ def generate_html_dashboard(results, summary):
             text-decoration: underline;
         }}
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -434,6 +532,8 @@ def generate_html_dashboard(results, summary):
                         <th>Status</th>
                         <th>CVSS Score</th>
                         <th>Severity</th>
+                        <th>Improvement</th>
+                        <th>Trend</th>
                         <th>Duration</th>
                     </tr>
                 </thead>
@@ -453,7 +553,45 @@ def generate_html_dashboard(results, summary):
             duration_display = f"{duration/60:.1f}m"
         else:
             duration_display = f"{duration:.2f}s"
-        
+
+        # Improvement column
+        improvement_html = get_improvement_html(r.get('baseline'), r.get('cvss_score'))
+
+        # Trend sparkline
+        history = r.get('history', [])
+        chart_id = f"chart_{r['name']}"
+        history_json = json.dumps(history)
+        labels_json = json.dumps([f"Run {i+1}" for i in range(len(history))])
+
+        if len(history) >= 2:
+            trend_html = f'''<canvas id="{chart_id}" width="120" height="40"></canvas>
+                        <script>
+                        new Chart(document.getElementById("{chart_id}"), {{
+                            type: "line",
+                            data: {{
+                                labels: {labels_json},
+                                datasets: [{{
+                                    data: {history_json},
+                                    borderColor: "#667eea",
+                                    borderWidth: 2,
+                                    pointRadius: 2,
+                                    fill: false,
+                                    tension: 0.3
+                                }}]
+                            }},
+                            options: {{
+                                plugins: {{ legend: {{ display: false }} }},
+                                scales: {{
+                                    x: {{ display: false }},
+                                    y: {{ display: false, min: 0, max: 10 }}
+                                }},
+                                animation: false
+                            }}
+                        }});
+                        </script>'''
+        else:
+            trend_html = '<span style="color: #a0aec0; font-size: 12px;">Not enough data</span>'
+
         html += f"""
                     <tr>
                         <td><strong>{r['name'].replace('test_', '').replace('_', ' ').title()}</strong></td>
@@ -461,6 +599,8 @@ def generate_html_dashboard(results, summary):
                         <td><span class="status-badge {status_class}">{r['status']}</span></td>
                         <td><span class="cvss-score">{cvss_display}</span></td>
                         <td><span class="severity-badge" style="background-color: {severity_color};">{r['severity']}</span></td>
+                        <td>{improvement_html}</td>
+                        <td>{trend_html}</td>
                         <td>{duration_display}</td>
                     </tr>
 """
@@ -490,16 +630,27 @@ def main():
     print("="*70)
     print("")
     
+    print("Initializing database...")
+    init_db()
+
     print("Parsing test results...")
     results, summary = parse_test_results()
-    
+
     print(f"Found {len(results)} test(s)")
     for r in results:
         cvss_str = f"CVSS {r['cvss_score']:.1f}" if r['cvss_score'] else "No CVSS"
         duration_str = f"{r['duration']:.1f}s" if r['duration'] else "0s"
         print(f"  - {r['name']}: {r['status']} ({cvss_str}, {duration_str})")
         print(f"    Description: {r['description'][:80]}...")
-    
+        
+        # Save to DB (sets baseline on first run)
+        save_test_result(r['name'], r['cvss_score'], r['status'])
+
+    # Enrich results with baseline, improvement, and history from DB
+    for r in results:
+        r['baseline'] = get_baseline(r['name'])
+        r['history'] = get_history(r['name'])
+
     print("")
     print("Generating HTML dashboard...")
     html_content = generate_html_dashboard(results, summary)
