@@ -11,27 +11,14 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
-import inspect
-import importlib.util
 
 def get_test_description_from_docstring(test_nodeid):
     """
     Extract description from test function docstring.
     Falls back to manual mapping if docstring not found.
-    
-    This makes the dashboard adaptive - contributors can add new tests
-    without modifying the dashboard code. Just add a docstring!
-    
-    Example nodeid: 'tests/authentication/test_01_brute_force_password.py::test_brute_force_password'
-    
-    Args:
-        test_nodeid: Full pytest node ID (filepath::function_name)
-        
-    Returns:
-        String description of the test
     """
     try:
-        # Parse the nodeid to get file path and test function name
+        # Parse the nodeid
         if '::' not in test_nodeid:
             return get_test_description_fallback(test_nodeid)
         
@@ -44,32 +31,24 @@ def get_test_description_from_docstring(test_nodeid):
             print(f"Warning: Test file not found: {abs_path}")
             return get_test_description_fallback(test_name)
         
-        # Load the test module dynamically
-        spec = importlib.util.spec_from_file_location("test_module", abs_path)
-        if spec is None or spec.loader is None:
-            print(f"Warning: Could not load module spec for {abs_path}")
-            return get_test_description_fallback(test_name)
+        # Read the file directly and extract docstring
+        with open(abs_path, 'r') as f:
+            content = f.read()
         
-        module = importlib.util.module_from_spec(spec)
-        sys.modules['test_module'] = module
-        spec.loader.exec_module(module)
+        # Find the function definition and its docstring
+        # Pattern: def test_name(): followed by """docstring"""
+        pattern = rf'def {re.escape(test_name)}\([^)]*\):\s*"""(.*?)"""'
+        match = re.search(pattern, content, re.DOTALL)
         
-        # Get the test function
-        test_func = getattr(module, test_name, None)
-        
-        if test_func and test_func.__doc__:
-            # Clean up the docstring
-            docstring = inspect.cleandoc(test_func.__doc__)
-            
-            # Return first paragraph (before first blank line)
-            first_paragraph = docstring.split('\n\n')[0]
-            
-            # Join lines and clean up whitespace
-            description = ' '.join(first_paragraph.split('\n')).strip()
+        if match:
+            docstring = match.group(1).strip()
+            # Clean up the docstring - join all lines
+            lines = [line.strip() for line in docstring.split('\n') if line.strip()]
+            description = ' '.join(lines)
             
             # Limit length for dashboard display
-            if len(description) > 200:
-                description = description[:197] + '...'
+            if len(description) > 250:
+                description = description[:247] + '...'
             
             return description
         else:
@@ -88,7 +67,7 @@ def get_test_description_fallback(test_name):
     """
     # Manual mapping for existing tests
     descriptions = {
-        'test_brute_force_password': 'Brute force password attack with known admin username',
+        'test_brute_force_password': 'Tests account lockout and cooldown after 7 failed login attempts with known username "admin". Uses CVSS 4.0 with dynamic scoring based on observed security mechanisms.',
         'test_credential_guessing': 'Complete credential guessing attack (random username + password)',
         'test_password_attack_6_attempts': 'Password attack with 6 incorrect attempts',
         'test_password_attack_7_attempts': 'Password attack with 7 incorrect attempts',
@@ -214,7 +193,17 @@ def parse_test_results():
     for test in json_report.get('tests', []):
         test_name = test.get('nodeid', 'Unknown Test')
         status = 'PASS' if test.get('outcome') == 'passed' else 'FAIL'
-        duration = test.get('duration', 0)
+        
+        # Extract duration correctly
+        # pytest JSON report stores duration in 'call' phase
+        duration = test.get('call', {}).get('duration', 0)
+        
+        # If call duration is 0, try summing all phases
+        if duration == 0 or duration is None:
+            setup_duration = test.get('setup', {}).get('duration', 0) or 0
+            call_duration = test.get('call', {}).get('duration', 0) or 0
+            teardown_duration = test.get('teardown', {}).get('duration', 0) or 0
+            duration = setup_duration + call_duration + teardown_duration
         
         # Extract CVSS score from logs
         cvss_score = extract_cvss_score(log_content, test_name)
@@ -477,6 +466,13 @@ def generate_html_dashboard(results, summary):
         
         cvss_display = f"{r['cvss_score']:.1f}" if r['cvss_score'] is not None else 'N/A'
         
+        # Format duration nicely
+        duration = r['duration']
+        if duration >= 60:
+            duration_display = f"{duration/60:.1f}m"
+        else:
+            duration_display = f"{duration:.2f}s"
+        
         html += f"""
                     <tr>
                         <td><strong>{r['name']}</strong></td>
@@ -484,7 +480,7 @@ def generate_html_dashboard(results, summary):
                         <td><span class="status-badge {status_class}">{r['status']}</span></td>
                         <td><span class="cvss-score">{cvss_display}</span></td>
                         <td><span class="severity-badge" style="background-color: {severity_color};">{r['severity']}</span></td>
-                        <td>{r['duration']:.2f}s</td>
+                        <td>{duration_display}</td>
                     </tr>
 """
     
@@ -519,7 +515,9 @@ def main():
     print(f"Found {len(results)} test(s)")
     for r in results:
         cvss_str = f"CVSS {r['cvss_score']:.1f}" if r['cvss_score'] else "No CVSS"
-        print(f"  - {r['name']}: {r['status']} ({cvss_str})")
+        duration_str = f"{r['duration']:.1f}s" if r['duration'] else "0s"
+        print(f"  - {r['name']}: {r['status']} ({cvss_str}, {duration_str})")
+        print(f"    Description: {r['description'][:80]}...")
     
     print("")
     print("Generating HTML dashboard...")
