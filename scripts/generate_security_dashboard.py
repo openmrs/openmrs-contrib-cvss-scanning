@@ -521,15 +521,12 @@ def generate_html_dashboard(results, summary):
             color: white;
             text-decoration: underline;
         }}
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-    <style>
-        .tooltip-wrapper {
+        .tooltip-wrapper {{
             position: relative;
             display: inline-block;
             cursor: pointer;
-        }
-        .tooltip-wrapper .tooltip-content {
+        }}
+        .tooltip-wrapper .tooltip-content {{
             visibility: hidden;
             opacity: 0;
             background-color: #2d3748;
@@ -545,30 +542,31 @@ def generate_html_dashboard(results, summary):
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             transition: opacity 0.2s;
             font-size: 12px;
-        }
-        .tooltip-wrapper:hover .tooltip-content {
+        }}
+        .tooltip-wrapper:hover .tooltip-content {{
             visibility: visible;
             opacity: 1;
-        }
-        .tooltip-table {
+        }}
+        .tooltip-table {{
             width: 100%;
             border-collapse: collapse;
             margin-top: 6px;
-        }
-        .tooltip-table th {
+        }}
+        .tooltip-table th {{
             color: #a0aec0;
             font-size: 11px;
             text-align: left;
             padding: 3px 4px;
             border-bottom: 1px solid #4a5568;
-        }
-        .tooltip-table td {
+        }}
+        .tooltip-table td {{
             padding: 3px 4px;
             font-size: 11px;
             color: white;
             border-bottom: 1px solid #3a4a5a;
-        }
+        }}
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
