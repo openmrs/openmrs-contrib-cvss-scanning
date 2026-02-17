@@ -110,16 +110,48 @@ def get_test_description_fallback(test_name):
 
 def extract_cvss_score(log_content, test_name):
     """
-    Extract CVSS score from test output logs.
+    Extract CVSS score for a specific test from logs.
     Handles both CVSS 3.1 and CVSS 4.0 formats.
-    """
-    pattern = r'CVSS Base Score:\s*([\d.]+)'
     
-    # Search for score in log content
+    Strategy:
+    1. Try to find score near the test name
+    2. If multiple tests ran, extract the right one
+    3. Fallback to last score if only one test
+    """
+    # Clean test name for pattern matching
+    clean_test_name = test_name.replace('test_', '').replace('_', ' ')
+    
+    # Try to find score in section related to this test
+    # Look for test name followed by CVSS score within reasonable distance (2000 chars)
+    test_section_pattern = rf'{re.escape(test_name)}.*?CVSS Base Score:\s*([\d.]+)'
+    match = re.search(test_section_pattern, log_content, re.DOTALL)
+    
+    if match and len(match.group(0)) < 3000:  # Ensure we didn't match too far
+        return float(match.group(1))
+    
+    # Fallback: If only one score in entire log, use it
+    pattern = r'CVSS Base Score:\s*([\d.]+)'
     matches = re.findall(pattern, log_content)
     
     if matches:
-        return float(matches[-1])  # Return the last score found
+        # If only one score found, must be the right one
+        if len(matches) == 1:
+            return float(matches[0])
+        
+        # Multiple scores - try to match by position in log
+        # Find all test names and their positions
+        test_positions = [(m.start(), test_name) for m in re.finditer(re.escape(test_name), log_content)]
+        score_positions = [(m.start(), float(m.group(1))) for m in re.finditer(pattern, log_content)]
+        
+        # Find the score closest after this test name
+        if test_positions and score_positions:
+            test_pos = test_positions[0][0]
+            for score_pos, score in score_positions:
+                if score_pos > test_pos:
+                    return score
+        
+        # Last resort: return last score
+        return float(matches[-1])
     
     return None
 

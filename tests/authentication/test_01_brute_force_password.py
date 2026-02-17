@@ -211,7 +211,8 @@ def calculate_cvss_v4_score(AV, AC, AT, PR, UI, VC, VI, VA, SC, SI, SA):
                      features_base_dir='')
 def test_brute_force_password():
     """
-    CVSS 4.0 brute force password attack with known admin username. Tests if OpenMRS properly implements account lockout after 7 failed password attempts and enforces a 5-minute cooldown period before allowing access again.
+    Tests account lockout and cooldown after 7 failed login attempts with known username "admin". 
+    Uses CVSS 4.0 with dynamic scoring based on observed security mechanisms.
     """
     pass
 
