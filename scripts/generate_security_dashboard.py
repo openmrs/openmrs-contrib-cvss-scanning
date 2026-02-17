@@ -97,18 +97,47 @@ def get_history(test_name, limit=20):
         return []
 
 
-def get_improvement_html(baseline, current):
-    """Generate colored improvement indicator HTML."""
+def get_improvement_html(baseline, current, history):
+    """
+    Generate colored improvement indicator HTML with mouseover tooltip
+    showing last 10 runs with score and delta from baseline.
+    """
     if baseline is None or current is None:
         return '<span style="color: #a0aec0;">—</span>'
-    improvement = round(baseline - current, 1)
-    if improvement > 0:
-        return f'<span style="color: #28a745; font-weight: bold;">+{improvement:.1f} ↑</span>'
-    elif improvement < 0:
-        return f'<span style="color: #dc3545; font-weight: bold;">{improvement:.1f} ↓</span>'
-    else:
-        return '<span style="color: #718096;">0.0 —</span>'
 
+    improvement = round(baseline - current, 1)
+
+    if improvement > 0:
+        label = f'<span style="color: #28a745; font-weight: bold;">+{improvement:.1f} ↑</span>'
+    elif improvement < 0:
+        label = f'<span style="color: #dc3545; font-weight: bold;">{improvement:.1f} ↓</span>'
+    else:
+        label = '<span style="color: #718096;">0.0 —</span>'
+
+    # Build tooltip rows from history (last 10, most recent first)
+    recent = list(reversed(history[-10:] if len(history) >= 10 else history))
+
+    rows = ""
+    for i, score in enumerate(recent):
+        run_number = len(history) - i
+        delta = round(baseline - score, 1)
+        if delta > 0:
+            delta_str = f'<span style="color: #68d391;">+{delta:.1f} ↑</span>'
+        elif delta < 0:
+            delta_str = f'<span style="color: #fc8181;">{delta:.1f} ↓</span>'
+        else:
+            delta_str = '<span style="color: #a0aec0;">0.0 —</span>'
+        marker = ' ◀' if i == 0 else ''
+        rows += f"<tr><td>Run {run_number}{marker}</td><td>{score:.1f}</td><td>{delta_str}</td></tr>"
+
+    tooltip = f"""<div class="tooltip-wrapper">{label}<div class="tooltip-content">
+            <strong>Last {len(recent)} Runs (Baseline: {baseline:.1f})</strong>
+            <table class="tooltip-table">
+                <thead><tr><th>Run</th><th>Score</th><th>Delta</th></tr></thead>
+                <tbody>{rows}</tbody>
+            </table></div></div>"""
+
+    return tooltip
 
 def get_test_description_from_docstring(test_nodeid):
     """
@@ -494,6 +523,52 @@ def generate_html_dashboard(results, summary):
         }}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+        .tooltip-wrapper {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .tooltip-wrapper .tooltip-content {
+            visibility: hidden;
+            opacity: 0;
+            background-color: #2d3748;
+            color: white;
+            border-radius: 8px;
+            padding: 10px 14px;
+            position: absolute;
+            z-index: 100;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: opacity 0.2s;
+            font-size: 12px;
+        }
+        .tooltip-wrapper:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+        .tooltip-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+        }
+        .tooltip-table th {
+            color: #a0aec0;
+            font-size: 11px;
+            text-align: left;
+            padding: 3px 4px;
+            border-bottom: 1px solid #4a5568;
+        }
+        .tooltip-table td {
+            padding: 3px 4px;
+            font-size: 11px;
+            color: white;
+            border-bottom: 1px solid #3a4a5a;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -530,7 +605,7 @@ def generate_html_dashboard(results, summary):
                         <th>Test Name</th>
                         <th>Description</th>
                         <th>Status</th>
-                        <th>CVSS Score</th>
+                        <th>CVSS Score (Baseline)</th>
                         <th>Severity</th>
                         <th>Improvement</th>
                         <th>Trend</th>
@@ -555,7 +630,7 @@ def generate_html_dashboard(results, summary):
             duration_display = f"{duration:.2f}s"
 
         # Improvement column
-        improvement_html = get_improvement_html(r.get('baseline'), r.get('cvss_score'))
+        improvement_html = get_improvement_html(r.get('baseline'), r.get('cvss_score'), r.get('history', []))
 
         # Trend sparkline
         history = r.get('history', [])
