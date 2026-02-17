@@ -4,6 +4,9 @@ import string
 import random
 import time
 import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../'))
+from scripts.database import SecurityTestDatabase
 
 O3_LOGIN_URL = f'{O3_BASE_URL}/login'
 
@@ -509,6 +512,65 @@ def verify_cooldown_and_calculate_cvss(browser):
         print("OVERALL ASSESSMENT: ✗ VULNERABLE")
         print("OpenMRS does not adequately defend against brute force attacks")
     print("="*70)
+    print("")
+    
+    # ============================================================================
+    # Database Integration - Save Results for Historical Tracking
+    # ============================================================================
+    
+    # Get commit SHA from environment (GitHub Actions sets this)
+    commit_sha = os.environ.get('GITHUB_SHA', None)
+    
+    # Calculate execution time (approximate - from start of attack to now)
+    execution_time = browser.test_results.get('total_test_duration_seconds', 
+                                              (browser.fail_count * 8))  # Rough estimate: ~8s per attempt
+    
+    # Save to database
+    db = SecurityTestDatabase()
+    result = db.save_test_result(
+        test_name='test_brute_force_password',
+        cvss_score=cvss_score,
+        cvss_vector=f'CVSS:4.0/AV:{CVSS_AV}/AC:{AC}/AT:{CVSS_AT}/PR:{CVSS_PR}/UI:{CVSS_UI}/VC:{CVSS_VC}/VI:{CVSS_VI}/VA:{VA}/SC:{CVSS_SC}/SI:{CVSS_SI}/SA:{CVSS_SA}',
+        status='PASS',  # Test passed (we detected the vulnerability)
+        details={
+            'dynamic_params': {
+                'AC': AC,
+                'VA': VA,
+                'AC_rationale': 'Low - only 1 defense mechanism detected (account lockout)' if AC == 'L' else 'High - 2+ defense mechanisms detected',
+                'VA_rationale': f"Low - temporary lockout ({browser.test_results.get('lockout_duration_seconds', 0)}s)" if VA == 'L' else 'None - no availability impact'
+            },
+            'test_observations': {
+                'attempts_before_lockout': browser.test_results.get('lockout_at_attempt', browser.num_attempts),
+                'lockout_duration_seconds': browser.test_results.get('lockout_duration_seconds', 0),
+                'rate_limiting_detected': browser.test_results.get('rate_limiting_detected', False),
+                'account_locked': browser.test_results.get('account_locked', False)
+            },
+            'security_mechanisms': {
+                'lockout_working': browser.lockout_working,
+                'cooldown_working': browser.cooldown_working
+            }
+        },
+        execution_time_seconds=execution_time,
+        commit_sha=commit_sha
+    )
+    db.close()
+    
+    # Print relative score information
+    print("\n" + "="*80)
+    print("DATABASE TRACKING - CVSS Score History")
+    print("="*80)
+    print(f"Baseline CVSS Score: {result['baseline_score']:.1f}")
+    print(f"Current CVSS Score:  {result['current_score']:.1f}")
+    print(f"Improvement:         {result['relative_score']:+.1f}")
+    
+    if result['relative_score'] > 0:
+        print(f"  ✅ SECURITY IMPROVED by {result['relative_score']:.1f} points")
+    elif result['relative_score'] < 0:
+        print(f"  ⚠️  SECURITY REGRESSED by {abs(result['relative_score']):.1f} points")
+    else:
+        print(f"  ━━ No change from baseline")
+    
+    print("="*80)
     print("")
     
     # Assertions

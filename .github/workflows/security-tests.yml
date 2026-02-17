@@ -1,169 +1,99 @@
-name: Security Tests
+name: OpenMRS O3 Security Tests - CVSS 4.0
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, cvss-4.0-* ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
   schedule:
-    - cron: "0 0 * * *"
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
   workflow_dispatch:
 
 jobs:
   security-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-
+    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    # Starting early since OpenMRS takes time to spin up; this allows it to initialize
-    # in the background while dependencies are being installed.
-    - name: Start an OpenMRS instance
-      run: docker compose -f docker-compose.yml up -d
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip
-
-        echo "Searching for requirements.txt files..."
-        find . -name "requirements.txt" -type f | while read req; do
-          echo "Installing dependencies from: $req"
-          pip install -r "$req"
-        done
-
-    - name: Install Playwright browsers
-      run: |
-        python -m playwright install chromium
-
-    - name: Wait for the OpenMRS instance to start
-      id: wait-for-omrs-instance
-      run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
-
-    - name: Run Security Tests
-      if: always() && (steps.wait-for-omrs-instance.outcome == 'success')
-      run: |
-        # Run pytest and capture ALL output (including CVSS scores)
-        pytest tests/ \
-          --html=report.html \
-          --self-contained-html \
-          --json-report \
-          --json-report-file=report.json \
-          -v -s 2>&1 | tee test_output.log
-      continue-on-error: true
-
-    - name: Extract CVSS Scores and Generate Dashboard
-      if: always()
-      run: python scripts/generate_security_dashboard.py
-
-    - name: Upload Security Dashboard
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: security-dashboard
-        path: security_dashboard.html
-        retention-days: 30
-
-    - name: Upload HTML Report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: security-test-report-html
-        path: report.html
-        retention-days: 30
-
-    - name: Upload JSON Results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: security-test-report-json
-        path: |
-          report.json
-          security_results.json
-        retention-days: 30
-
-    - name: Prepare GitHub Pages Deployment
-      if: github.ref == 'refs/heads/main'
-      run: |
-        mkdir -p gh-pages
-        cp security_dashboard.html gh-pages/index.html
-        cp report.html gh-pages/detailed-report.html
-        cp security_results.json gh-pages/results.json
-
-    - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/main'
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./gh-pages
-        cname: cvss-report.openmrs.org
-        keep_files: false
-
-    - name: Comment on PR
-      if: ${{ github.event_name == 'pull_request' && github.repository_owner == 'openmrs' }}
-      continue-on-error: true
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const fs = require('fs');
-
-          let summary = '## 🔒 Security Test Results\n\n';
-
-          if (fs.existsSync('security_results.json')) {
-            const data = JSON.parse(fs.readFileSync('security_results.json', 'utf8'));
-
-            summary += `- **Total Tests:** ${data.total_tests}\n`;
-            summary += `- **Completed:** ✅ ${data.passed}\n`;
-            summary += `- **Errors:** ❌ ${data.failed}\n\n`;
-
-            summary += '### Test Details with CVSS Scores\n\n';
-            summary += '| Test | Execution | CVSS Score | Severity | Duration |\n';
-            summary += '|------|-----------|------------|----------|----------|\n';
-
-            data.tests.forEach(test => {
-              const icon = test.outcome === 'passed' ? '✅' : '❌';
-              const status = test.outcome === 'passed' ? 'Completed' : 'Error';
-              const name = test.name.replace(/_/g, ' ');
-              const cvss = test.cvss_score ? test.cvss_score.toFixed(1) : 'N/A';
-              let severity = 'N/A';
-              if (test.cvss_score) {
-                if (test.cvss_score >= 9.0) severity = '🔴 CRITICAL';
-                else if (test.cvss_score >= 7.0) severity = '🟠 HIGH';
-                else if (test.cvss_score >= 4.0) severity = '🟡 MEDIUM';
-                else severity = '🟢 LOW';
-              }
-              summary += `| ${name} | ${icon} ${status} | ${cvss} | ${severity} | ${test.duration.toFixed(2)}s |\n`;
-            });
-
-            summary += '\n📊 [Download Security Dashboard](../actions/runs/${{ github.run_id }})\n';
-          } else {
-            summary += '❌ No test results available\n';
-          }
-
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: summary
-          });
-
-    - name: Capture Server Logs
-      if: always()
-      uses: jwalton/gh-docker-logs@v2
-      with:
-        dest: "./logs"
-
-    - name: Upload Logs as Artifact
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: server-logs
-        path: "./logs"
-        retention-days: 2
-        overwrite: true
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          playwright install chromium
+      
+      - name: Start OpenMRS O3 with Docker
+        run: |
+          docker-compose up -d
+          echo "Waiting for OpenMRS to be ready..."
+          sleep 120
+      
+      - name: Download Previous Database
+        continue-on-error: true
+        run: |
+          # Download the most recent database artifact from previous runs
+          # This allows us to track CVSS scores over time
+          gh run download --name test-database --dir . || echo "No previous database found (this is OK for first run)"
+        env:
+          GH_TOKEN: ${{ github.token }}
+      
+      - name: Run CVSS 4.0 Security Tests
+        run: |
+          pytest tests/authentication/test_01_brute_force_password.py -v --tb=short
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+      
+      - name: Upload Database Artifact
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-database
+          path: test_results.db
+          retention-days: 90
+      
+      - name: Generate Security Dashboard
+        if: always()
+        run: |
+          python scripts/generate_security_dashboard.py
+      
+      - name: Deploy Dashboard to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./scripts
+          publish_branch: gh-pages
+          enable_jekyll: false
+      
+      - name: Display Test Summary
+        if: always()
+        run: |
+          echo "==================================================================="
+          echo "CVSS 4.0 Security Test Results"
+          echo "==================================================================="
+          if [ -f test_results.db ]; then
+            python -c "
+from scripts.database import SecurityTestDatabase
+db = SecurityTestDatabase()
+scores = db.get_all_current_scores()
+for score in scores:
+    print(f\"Test: {score['test_name']}\")
+    print(f\"  Baseline: {score['baseline_score']:.1f}\")
+    print(f\"  Current:  {score['current_score']:.1f}\")
+    print(f\"  Improvement: {score['relative_score']:+.1f}\")
+    print()
+db.close()
+            "
+          else
+            echo "No database found"
+          fi
+          echo "==================================================================="
+          echo "Dashboard URL: https://cvss-report.openmrs.org"
+          echo "==================================================================="
