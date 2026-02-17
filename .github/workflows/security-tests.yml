@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    # Run daily at 2 AM UTC
     - cron: '0 2 * * *'
   workflow_dispatch:
 
@@ -37,10 +36,9 @@ jobs:
       
       - name: Download Previous Database
         continue-on-error: true
-        run: |
-          gh run download --name test-database --dir . || echo "No previous database found (this is OK for first run)"
-        env:
-          GH_TOKEN: ${{ github.token }}
+        uses: actions/download-artifact@v4
+        with:
+          name: test-database
       
       - name: Run CVSS 4.0 Security Tests
         run: |
@@ -50,7 +48,7 @@ jobs:
       
       - name: Upload Database Artifact
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-database
           path: test_results.db
@@ -69,19 +67,3 @@ jobs:
           publish_dir: ./scripts
           publish_branch: gh-pages
           enable_jekyll: false
-      
-      - name: Display Test Summary
-        if: always()
-        run: |
-          echo "==================================================================="
-          echo "CVSS 4.0 Security Test Results"
-          echo "==================================================================="
-          if [ -f test_results.db ]; then
-            echo "Database exists - check dashboard for details"
-            ls -lh test_results.db
-          else
-            echo "No database found"
-          fi
-          echo "==================================================================="
-          echo "Dashboard URL: https://cvss-report.openmrs.org"
-          echo "==================================================================="
