@@ -30,7 +30,7 @@ jobs:
       
       - name: Start OpenMRS O3 with Docker
         run: |
-          docker-compose up -d
+          docker compose up -d
           echo "Waiting for OpenMRS to be ready..."
           sleep 120
       
