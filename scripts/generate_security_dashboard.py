@@ -10,6 +10,7 @@ import json
 import re
 import sys
 from datetime import datetime
+from datetime import timezone, timedelta
 from pathlib import Path
 
 def get_test_description_from_docstring(test_nodeid):
@@ -228,7 +229,8 @@ def parse_test_results():
 def generate_html_dashboard(results, summary):
     """Generate HTML dashboard with CVSS scores"""
     
-    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')
+    est = timezone(timedelta(hours=-5))
+    now = datetime.now(est).strftime('%Y-%m-%d %H:%M:%S EST')
     
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -272,26 +274,6 @@ def generate_html_dashboard(results, summary):
         .header p {{
             color: #718096;
             font-size: 14px;
-        }}
-        
-        .migration-notice {{
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }}
-        
-        .migration-notice h3 {{
-            color: #856404;
-            margin-bottom: 5px;
-            font-size: 16px;
-        }}
-        
-        .migration-notice p {{
-            color: #856404;
-            font-size: 14px;
-            margin: 0;
         }}
         
         .stats {{
@@ -419,11 +401,6 @@ def generate_html_dashboard(results, summary):
             <p style="margin-top: 5px; font-size: 12px;">Last Updated: {now}</p>
         </div>
         
-        <div class="migration-notice">
-            <h3>⚠️ CVSS 4.0 Migration - Phase 1</h3>
-            <p>Currently migrating from CVSS 3.1 to CVSS 4.0. Only brute force test is using CVSS 4.0 scoring. Other tests will be updated in future phases.</p>
-        </div>
-        
         <div class="stats">
             <div class="stat-card">
                 <h3>Total Tests</h3>
@@ -439,7 +416,7 @@ def generate_html_dashboard(results, summary):
             </div>
             <div class="stat-card">
                 <h3>Duration</h3>
-                <p>{summary.get('duration', 0):.1f}s</p>
+                <p>{summary.get('duration', 0)/60:.1f}m</p>
             </div>
         </div>
         
