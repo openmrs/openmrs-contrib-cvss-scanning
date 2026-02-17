@@ -77,18 +77,8 @@ jobs:
           echo "CVSS 4.0 Security Test Results"
           echo "==================================================================="
           if [ -f test_results.db ]; then
-            python3 << 'EOF'
-from scripts.database import SecurityTestDatabase
-db = SecurityTestDatabase()
-scores = db.get_all_current_scores()
-for score in scores:
-    print(f"Test: {score['test_name']}")
-    print(f"  Baseline: {score['baseline_score']:.1f}")
-    print(f"  Current:  {score['current_score']:.1f}")
-    print(f"  Improvement: {score['relative_score']:+.1f}")
-    print()
-db.close()
-EOF
+            echo "Database exists - check dashboard for details"
+            ls -lh test_results.db
           else
             echo "No database found"
           fi
