@@ -232,6 +232,10 @@ def generate_html_dashboard(results, summary):
     est = timezone(timedelta(hours=-5))
     now = datetime.now(est).strftime('%Y-%m-%d %H:%M:%S EST')
     
+    # Calculate total duration from individual test durations
+    total_duration_sec = sum(r['duration'] for r in results)
+    total_duration_min = total_duration_sec / 60
+    
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -416,7 +420,7 @@ def generate_html_dashboard(results, summary):
             </div>
             <div class="stat-card">
                 <h3>Duration</h3>
-                <p>{summary.get('duration', 0)/60:.1f}m</p>
+                <p>{total_duration_min:.1f}m</p>
             </div>
         </div>
         
@@ -452,7 +456,7 @@ def generate_html_dashboard(results, summary):
         
         html += f"""
                     <tr>
-                        <td><strong>{r['name']}</strong></td>
+                        <td><strong>{r['name'].replace('test_', '').replace('_', ' ').title()}</strong></td>
                         <td>{r['description']}</td>
                         <td><span class="status-badge {status_class}">{r['status']}</span></td>
                         <td><span class="cvss-score">{cvss_display}</span></td>
