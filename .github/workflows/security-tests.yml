@@ -38,8 +38,6 @@ jobs:
       - name: Download Previous Database
         continue-on-error: true
         run: |
-          # Download the most recent database artifact from previous runs
-          # This allows us to track CVSS scores over time
           gh run download --name test-database --dir . || echo "No previous database found (this is OK for first run)"
         env:
           GH_TOKEN: ${{ github.token }}
@@ -79,18 +77,18 @@ jobs:
           echo "CVSS 4.0 Security Test Results"
           echo "==================================================================="
           if [ -f test_results.db ]; then
-            python -c "
+            python3 << 'EOF'
 from scripts.database import SecurityTestDatabase
 db = SecurityTestDatabase()
 scores = db.get_all_current_scores()
 for score in scores:
-    print(f\"Test: {score['test_name']}\")
-    print(f\"  Baseline: {score['baseline_score']:.1f}\")
-    print(f\"  Current:  {score['current_score']:.1f}\")
-    print(f\"  Improvement: {score['relative_score']:+.1f}\")
+    print(f"Test: {score['test_name']}")
+    print(f"  Baseline: {score['baseline_score']:.1f}")
+    print(f"  Current:  {score['current_score']:.1f}")
+    print(f"  Improvement: {score['relative_score']:+.1f}")
     print()
 db.close()
-            "
+EOF
           else
             echo "No database found"
           fi
