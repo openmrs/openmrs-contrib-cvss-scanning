@@ -92,23 +92,23 @@ def calculate_cvss_v4_score(AV, AC, AT, PR, UI, VC, VI, VA, SC, SI, SA):
     # -----------------------------------------------------------------------
 
     # EQ1: AV/PR/UI - 3 levels (0, 1, 2)
-    if AV == 'N' and PR == 'N' and UI == 'N':
+    if AV == BaseMetrics.AttackVector.NETWORK and PR == BaseMetrics.PriviledgesRequired.NONE and UI == BaseMetrics.UserInteraction.NONE:
         eq1 = 0
-    elif (AV == 'N' or PR == 'N' or UI == 'N') and not (AV == 'N' and PR == 'N' and UI == 'N') and AV != 'P':
+    elif (AV == BaseMetrics.AttackVector.NETWORK or PR == BaseMetrics.PriviledgesRequired.NONE or UI == BaseMetrics.UserInteraction.NONE) and not (AV == BaseMetrics.AttackVector.NETWORK and PR == BaseMetrics.PriviledgesRequired.NONE and UI == BaseMetrics.UserInteraction.NONE) and AV != BaseMetrics.AttackVector.PHYSICAL:
         eq1 = 1
     else:
         eq1 = 2
 
     # EQ2: AC/AT - 2 levels (0, 1)
-    if AC == 'L' and AT == 'N':
+    if AC == BaseMetrics.AttackComplexity.LOW and AT == BaseMetrics.AttackRequirements.NONE:
         eq2 = 0
     else:
         eq2 = 1
 
     # EQ3: VC/VI/VA - 3 levels (0, 1, 2)
-    if VC == 'H' and VI == 'H':
+    if VC == BaseMetrics.Confidentiality.VulnerableSystem.HIGH and VI == BaseMetrics.Integrity.VulnerableSystem.HIGH:
         eq3 = 0
-    elif (VC == 'H' or VI == 'H' or VA == 'H') and not (VC == 'H' and VI == 'H'):
+    elif (VC == BaseMetrics.Confidentiality.VulnerableSystem.HIGH or VI == BaseMetrics.Integrity.VulnerableSystem.HIGH or VA == BaseMetrics.Availability.VulnerableSystem.HIGH) and not (VC == BaseMetrics.Confidentiality.VulnerableSystem.HIGH and VI == BaseMetrics.Integrity.VulnerableSystem.HIGH):
         eq3 = 1
     else:
         eq3 = 2
@@ -116,7 +116,7 @@ def calculate_cvss_v4_score(AV, AC, AT, PR, UI, VC, VI, VA, SC, SI, SA):
     # EQ4: SC/SI/SA - 2 levels in Base scoring (0, 1)
     # Note: Level 0 requires MSI:S or MSA:S which are Environmental metrics,
     # unreachable in Base scoring. So eq4=0 when SC/SI/SA is High, eq4=1 otherwise.
-    if SC == 'H' or SI == 'H' or SA == 'H':
+    if SC == BaseMetrics.Confidentiality.SubsequentSystem.HIGH or SI == BaseMetrics.Integrity.SubsequentSystem.HIGH or SA == BaseMetrics.Availability.SubsequentSystem.HIGH:
         eq4 = 0
     else:
         eq4 = 1
@@ -214,3 +214,16 @@ def calculate_cvss_v4_score(AV, AC, AT, PR, UI, VC, VI, VA, SC, SI, SA):
     score = lookup.get(key, 0.0)
 
     return round(score, 1)
+
+def get_cvss_severity(cvss_score):
+    # Determine severity rating
+    if cvss_score >= 9.0:
+        severity = "CRITICAL"
+    elif cvss_score >= 7.0:
+        severity = "HIGH"
+    elif cvss_score >= 4.0:
+        severity = "MEDIUM"
+    else:
+        severity = "LOW"
+    
+    return severity

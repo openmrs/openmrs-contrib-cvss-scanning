@@ -4,85 +4,10 @@ import random
 import time
 import os
 
-from tests.utils import calculate_cvss_v4_score, BaseMetrics
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, BaseMetrics
 
 O3_BASE_URL = os.getenv('O3_BASE_URL', 'http://localhost/openmrs/spa')
 O3_LOGIN_URL = f'{O3_BASE_URL}/login'
-
-# ============================================================================
-# CVSS 4.0 BASE METRICS - BRUTE FORCE PASSWORD ATTACK
-# ============================================================================
-# Reference: https://www.first.org/cvss/v4.0/specification-document
-#
-# This test evaluates a brute force password attack against OpenMRS O3.
-# Attack scenario: Known username "admin" + random password attempts
-# ============================================================================
-
-# ---------------------------------------------------------------------------
-# EXPLOITABILITY METRICS (How easy is it to attack?)
-# ---------------------------------------------------------------------------
-
-# Attack Vector (AV): Network (N) = 0.20
-# ⚠️ IMPORTANT DESIGN DECISION:
-# Even though we test against http://localhost in Docker, we set AV='N' (Network)
-# because we are evaluating the vulnerability AS IF an attacker accesses OpenMRS
-# over the internet. The localhost deployment is just our test environment - in
-# production, OpenMRS runs as a network-accessible web application.
-#
-# Think of it this way:
-# - Our test setup: localhost (for convenience)
-# - Real-world deployment: network-accessible server
-# - Vulnerability assessment: assumes network access (worst-case scenario)
-#
-# CVSS 4.0 guidance: "The Base Score...assumes the reasonable worst-case impact
-# across different deployed environments."
-#CVSS_AV = 'N'  # Network - remotely exploitable over internet
-
-# Attack Complexity (AC): Low (L) - Static
-# No special complexity required - attacker simply submits credentials repeatedly
-CVSS_AC = 'L'  # Low - straightforward repeated attempts
-
-# Attack Requirements (AT): DYNAMIC - determined by test observations
-# - 'N' (None) if no lockout detected (attacker can exploit freely)
-# - 'P' (Present) if lockout detected (attacker must know valid username to trigger lockout)
-CVSS_AT = None  # Determined at runtime
-
-# Privileges Required (PR): None (N)
-# No authentication required - we're testing the login endpoint itself
-CVSS_PR = 'N'  # None - testing unauthenticated attack
-
-# User Interaction (UI): None (N)
-# Attack is fully automated - no human interaction needed
-CVSS_UI = 'N'  # None - automated brute force script
-
-# ---------------------------------------------------------------------------
-# IMPACT METRICS - VULNERABLE SYSTEM (OpenMRS itself)
-# ---------------------------------------------------------------------------
-
-# Confidentiality Impact (VC): DYNAMIC - determined by test observations
-# - 'H' (High) if no lockout: attacker can gain full admin access (all PHI exposed)
-# - 'L' (Low) if lockout working: attacker is blocked before gaining access
-CVSS_VC = None  # Determined at runtime
-
-# Integrity Impact (VI): DYNAMIC - determined by test observations
-# - 'H' (High) if no lockout: attacker can modify all medical records
-# - 'L' (Low) if lockout working: attacker is blocked before gaining access
-CVSS_VI = None  # Determined at runtime
-
-# Availability Impact (VA): DYNAMIC - determined by test observations
-# - 'N' (None) if no lockout detected
-# - 'L' (Low) if temporary lockout (1-10 minutes)
-# - 'H' (High) if prolonged lockout (>10 minutes)
-CVSS_VA = None  # Determined at runtime
-
-# ---------------------------------------------------------------------------
-# IMPACT METRICS - SUBSEQUENT SYSTEM (Systems beyond OpenMRS)
-# ---------------------------------------------------------------------------
-
-# For authentication attacks, there are typically no subsequent systems affected
-CVSS_SC = 'N'  # Subsequent Confidentiality: None
-CVSS_SI = 'N'  # Subsequent Integrity: None
-CVSS_SA = 'N'  # Subsequent Availability: None
 
 # ============================================================================
 # DYNAMIC PARAMETER DETECTION FUNCTIONS
@@ -109,9 +34,9 @@ def determine_attack_requirements(test_results):
         'N' or 'P'
     """
     if test_results.get('account_locked'):
-        return 'P'  # Present - valid username required to trigger/bypass lockout
+        return BaseMetrics.AttackRequirements.PRESENT  # Present - valid username required to trigger/bypass lockout
     else:
-        return 'N'  # None - no special conditions needed
+        return BaseMetrics.AttackRequirements.NONE  # None - no special conditions needed
 
 
 def determine_confidentiality_integrity_impact(test_results):
@@ -136,9 +61,9 @@ def determine_confidentiality_integrity_impact(test_results):
         tuple: (VC, VI) both 'H' or both 'L'
     """
     if test_results.get('account_locked'):
-        return 'L', 'L'  # Lockout blocks access - reduced impact
+        return BaseMetrics.Confidentiality.VulnerableSystem.LOW, BaseMetrics.Integrity.VulnerableSystem.LOW  # Lockout blocks access - reduced impact
     else:
-        return 'H', 'H'  # No lockout - full admin access possible
+        return BaseMetrics.Confidentiality.VulnerableSystem.HIGH, BaseMetrics.Integrity.VulnerableSystem.HIGH  # No lockout - full admin access possible
 
 
 def determine_availability_impact(test_results):
@@ -162,16 +87,16 @@ def determine_availability_impact(test_results):
         'N', 'L', or 'H'
     """
     if not test_results.get('account_locked'):
-        return 'N'  # No lockout = no availability impact
+        return BaseMetrics.Availability.VulnerableSystem.NONE  # No lockout = no availability impact
 
     lockout_duration = test_results.get('lockout_duration_seconds', 0)
 
     if lockout_duration > 600:
-        return 'H'  # High: prolonged lockout >10 minutes
+        return BaseMetrics.Availability.VulnerableSystem.HIGH  # High: prolonged lockout >10 minutes
     elif lockout_duration > 60:
-        return 'L'  # Low: temporary lockout 1-10 minutes
+        return BaseMetrics.Availability.VulnerableSystem.LOW  # Low: temporary lockout 1-10 minutes
     else:
-        return 'N'  # None: brief lockout <1 minute
+        return BaseMetrics.Availability.VulnerableSystem.NONE  # None: brief lockout <1 minute
 
 # ============================================================================
 # TEST SCENARIO
@@ -436,27 +361,19 @@ def verify_cooldown_and_calculate_cvss(browser):
     # Calculate CVSS 4.0 score
     cvss_score = calculate_cvss_v4_score(
         AV = BaseMetrics.AttackVector.NETWORK,
-        AC=CVSS_AC,
-        AT=AT,
-        PR=CVSS_PR,
-        UI=CVSS_UI,
-        VC=VC,
-        VI=VI,
-        VA=VA,
-        SC=CVSS_SC,
-        SI=CVSS_SI,
-        SA=CVSS_SA
+        AC = BaseMetrics.AttackComplexity.LOW,
+        AT = AT,
+        PR = BaseMetrics.PriviledgesRequired.NONE,
+        UI = BaseMetrics.UserInteraction.NONE,
+        VC = VC,
+        VI = VI,
+        VA = VA,
+        SC = BaseMetrics.Confidentiality.SubsequentSystem.NONE,
+        SI = BaseMetrics.Integrity.SubsequentSystem.NONE,
+        SA = BaseMetrics.Availability.SubsequentSystem.NONE,
     )
 
-    # Determine severity rating
-    if cvss_score >= 9.0:
-        severity = "CRITICAL"
-    elif cvss_score >= 7.0:
-        severity = "HIGH"
-    elif cvss_score >= 4.0:
-        severity = "MEDIUM"
-    else:
-        severity = "LOW"
+    severity = get_cvss_severity(cvss_score)
     
     # Display results
     print("Attack: Brute Force Password Attack")
@@ -468,24 +385,6 @@ def verify_cooldown_and_calculate_cvss(browser):
     print("-"*70)
     print(f"CVSS Base Score: {cvss_score}")
     print(f"Severity Rating: {severity}")
-    print("-"*70)
-    print("CVSS 4.0 Metrics:")
-    print(f"  Attack Vector (AV): Network ({CVSS_AV})")
-    print(f"  Attack Complexity (AC): Low ({CVSS_AC}) - Straightforward repeated attempts")
-    print(f"  Attack Requirements (AT): {'None' if AT == 'N' else 'Present'} ({AT}) - {'No preconditions needed' if AT == 'N' else 'Valid username required'}")
-    print(f"  Privileges Required (PR): None ({CVSS_PR})")
-    print(f"  User Interaction (UI): None ({CVSS_UI})")
-    print(f"  Vulnerable System Impact:")
-    print(f"    Confidentiality (VC): {'High' if VC == 'H' else 'Low'} ({VC}) - {'Full PHI access possible' if VC == 'H' else 'Attacker blocked by lockout'}")
-    print(f"    Integrity (VI): {'High' if VI == 'H' else 'Low'} ({VI}) - {'Can modify all records' if VI == 'H' else 'Attacker blocked by lockout'}")
-    print(f"    Availability (VA): {'None' if VA == 'N' else 'Low' if VA == 'L' else 'High'} ({VA}) - {'No lockout' if VA == 'N' else 'Temporary lockout 1-10 min' if VA == 'L' else 'Prolonged lockout >10 min'}")
-    print(f"  Subsequent System Impact:")
-    print(f"    Confidentiality (SC): None ({CVSS_SC})")
-    print(f"    Integrity (SI): None ({CVSS_SI})")
-    print(f"    Availability (SA): None ({CVSS_SA})")
-    print("")
-    print(f"CVSS Vector: CVSS:4.0/AV:{CVSS_AV}/AC:{CVSS_AC}/AT:{AT}/PR:{CVSS_PR}/UI:{CVSS_UI}/VC:{VC}/VI:{VI}/VA:{VA}/SC:{CVSS_SC}/SI:{CVSS_SI}/SA:{CVSS_SA}")
-    print("-"*70)
     
     # Final assessment
     print("")
