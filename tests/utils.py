@@ -2,7 +2,11 @@
 # Shared utility between tests in this package
 # This can be referenced as: from tests.utils import func
 
+import os
 from enum import Enum
+
+# URLS
+O3_BASE_URL = os.getenv('O3_BASE_URL', 'http://localhost/openmrs/spa')
 
 # Metrics Enums
 

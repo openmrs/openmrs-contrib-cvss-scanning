@@ -2,11 +2,9 @@ import pytest_bdd
 import string
 import random
 import time
-import os
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, BaseMetrics
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, BaseMetrics, O3_BASE_URL
 
-O3_BASE_URL = os.getenv('O3_BASE_URL', 'http://localhost/openmrs/spa')
 O3_LOGIN_URL = f'{O3_BASE_URL}/login'
 
 # ============================================================================
