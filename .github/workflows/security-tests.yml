@@ -46,6 +46,13 @@ jobs:
       id: wait-for-omrs-instance
       run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
 
+    - name: Download previous test results DB
+      uses: dawidd6/action-download-artifact@v3
+      with:
+        name: test-results-db
+        path: .
+      continue-on-error: true  # First run won't have a DB artifact yet
+
     - name: Run Security Tests
       if: always() && (steps.wait-for-omrs-instance.outcome == 'success')
       run: |
@@ -61,6 +68,15 @@ jobs:
     - name: Extract CVSS Scores and Generate Dashboard
       if: always()
       run: python scripts/generate_security_dashboard.py
+
+    - name: Upload test results DB
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-db
+        path: test_results.db
+        retention-days: 90
+        overwrite: true
 
     - name: Upload Security Dashboard
       if: always()
@@ -83,9 +99,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: security-test-report-json
-        path: |
-          report.json
-          security_results.json
+        path: report.json
         retention-days: 30
 
     - name: Prepare GitHub Pages Deployment
@@ -94,7 +108,6 @@ jobs:
         mkdir -p gh-pages
         cp security_dashboard.html gh-pages/index.html
         cp report.html gh-pages/detailed-report.html
-        cp security_results.json gh-pages/results.json
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
@@ -111,40 +124,7 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          const fs = require('fs');
-
-          let summary = '## 🔒 Security Test Results\n\n';
-
-          if (fs.existsSync('security_results.json')) {
-            const data = JSON.parse(fs.readFileSync('security_results.json', 'utf8'));
-
-            summary += `- **Total Tests:** ${data.total_tests}\n`;
-            summary += `- **Completed:** ✅ ${data.passed}\n`;
-            summary += `- **Errors:** ❌ ${data.failed}\n\n`;
-
-            summary += '### Test Details with CVSS Scores\n\n';
-            summary += '| Test | Execution | CVSS Score | Severity | Duration |\n';
-            summary += '|------|-----------|------------|----------|----------|\n';
-
-            data.tests.forEach(test => {
-              const icon = test.outcome === 'passed' ? '✅' : '❌';
-              const status = test.outcome === 'passed' ? 'Completed' : 'Error';
-              const name = test.name.replace(/_/g, ' ');
-              const cvss = test.cvss_score ? test.cvss_score.toFixed(1) : 'N/A';
-              let severity = 'N/A';
-              if (test.cvss_score) {
-                if (test.cvss_score >= 9.0) severity = '🔴 CRITICAL';
-                else if (test.cvss_score >= 7.0) severity = '🟠 HIGH';
-                else if (test.cvss_score >= 4.0) severity = '🟡 MEDIUM';
-                else severity = '🟢 LOW';
-              }
-              summary += `| ${name} | ${icon} ${status} | ${cvss} | ${severity} | ${test.duration.toFixed(2)}s |\n`;
-            });
-
-            summary += '\n📊 [Download Security Dashboard](../actions/runs/${{ github.run_id }})\n';
-          } else {
-            summary += '❌ No test results available\n';
-          }
+          const summary = '## 🔒 Security Test Results\n\nTests completed. View the [security dashboard](https://cvss-report.openmrs.org) for detailed CVSS scores and trends.\n\n📊 [Download artifacts](../actions/runs/${{ github.run_id }})';
 
           github.rest.issues.createComment({
             issue_number: context.issue.number,
