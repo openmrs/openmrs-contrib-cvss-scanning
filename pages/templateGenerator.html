@@ -1,0 +1,59 @@
+ <!DOCTYPE html>
+ <head>
+    <link rel="stylesheet" href="templateGen.css">
+    <title>OpenMRS Security Test Template Generator</title>
+    <script src = "templateGenerator.js"></script>
+ </head>
+ <body>
+    <h1>OpenMRS Test Template Generator</h1>
+    <h3>v0.0.1</h3>
+    <div>
+        <h4>Test File Name</h4>
+        <label for="lname">Filename:</label>
+        <input type="text" id="testFilenameSTMT" name="fname">
+        <label for="lname">.py</label><br><br>
+        <h4>Feature File Name</h4>
+        <label for="lname">Filename:</label>
+        <input type="text" id="featureFilenameSTMT" name="fname">
+        <label for="lname">.feature</label><br><br>
+        <h4>What are you testing?</h4>
+        <label for="lname">Testing: When...</label>
+        <input type="text" id="testSTMT" name="fname"><br><br>
+        <h4>Where will this test be located?</h4>
+        <p>ex: tests/<b>authentication</b>/, tests/<b>session_management</b>/</p>
+        <label for="lname">Location:</label>
+        <input type="text" id="locationSTMT" name="fname"><br><br>
+    </div>
+    <div class="Given">
+        <h4>Given</h4>
+        <input type="checkbox" id="givenLoginPageDisplayed" name="vehicle3" value="loginPageDisplayed">
+        <label for="vehicle3"> the OpenMRS 3 login page is displayed</label><br> 
+        <input type="checkbox" id="givenLoggedInto" name="vehicle1" value="loggedInto">
+        <label for="vehicle1"> logged into OpenMRS O3</label><br>
+        <input type="checkbox" id="givenTestPatientCreated" name="vehicle2" value="testPatientCreated">
+        <label for="vehicle2"> a test patient has been created</label><br>
+        <input type="checkbox" id="givenEditPatientPageDisplayed" name="vehicle3" value="editPatientPageDisplayed">
+        <label for="vehicle3"> the OpenMRS 3 edit patient page is displayed</label><br> 
+        
+    </div> 
+    <div>
+        <h4>When</h4>
+        <label for="lname">When Statement:</label>
+        <input type="text" id="whenSTMT" name="fname"><br><br>
+    </div>
+    <div class="Then">
+        <h4>Then</h4>
+        <input type="checkbox" id="reportCVSS" name="vehicle1" value="reportCVSS">
+        <label for="vehicle1">Report CVSS</label><br>
+    </div> 
+    <br>
+    <button onclick="generateTemplateFile()">Generate Templates For Review</button>
+    <div class = "resultsDiv">
+        <h4>Test Template</h4>
+        <p class = "results" id ="testScaffold"> </p>
+        <h4>Feature File</h4>
+        <p class = "results" id ="featureFile"></p>
+    </div>
+    <button onclick="downloadFiles()">Download files</button>
+
+</body>
