@@ -1,10 +1,11 @@
 import pytest_bdd
-from conftest import O3_BASE_URL
 import string
 import random
 import time
 import requests
 import base64
+
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, BaseMetrics, O3_BASE_URL
 
 O3_API_URL = f'{O3_BASE_URL}/openmrs/ws/rest/v1/session'
 
@@ -31,21 +32,21 @@ O3_API_URL = f'{O3_BASE_URL}/openmrs/ws/rest/v1/session'
 # Attack Vector (AV): Network (N)
 # API endpoint is network-accessible in production deployments.
 # Same rationale as frontend test - assess real-world attack scenario.
-CVSS_AV = 'N'  # Network - remotely exploitable
+CVSS_AV = BaseMetrics.AttackVector.NETWORK  # Network - remotely exploitable
 
 # Attack Complexity (AC): Low (L)
 # API attacks require no special complexity - simple HTTP requests.
 # No CAPTCHA, no JavaScript rendering, no browser required.
 # API attacks are typically EASIER than UI attacks.
-CVSS_AC = 'L'  # Low - straightforward HTTP requests
+CVSS_AC = BaseMetrics.AttackComplexity.LOW  # Low - straightforward HTTP requests
 
 # Privileges Required (PR): None (N)
 # No authentication required to attempt login via API
-CVSS_PR = 'N'  # None - unauthenticated attack
+CVSS_PR = BaseMetrics.PriviledgesRequired.NONE  # None - unauthenticated attack
 
 # User Interaction (UI): None (N)
 # Fully automated - no human interaction needed
-CVSS_UI = 'N'  # None - automated API requests
+CVSS_UI = BaseMetrics.UserInteraction.NONE  # None - automated API requests
 
 # ---------------------------------------------------------------------------
 # DYNAMIC PARAMETERS (determined at runtime)
@@ -75,9 +76,9 @@ CVSS_VA = None
 # ---------------------------------------------------------------------------
 # SUBSEQUENT SYSTEM IMPACT (Static - no subsequent systems affected)
 # ---------------------------------------------------------------------------
-CVSS_SC = 'N'
-CVSS_SI = 'N'
-CVSS_SA = 'N'
+CVSS_SC = BaseMetrics.Confidentiality.SubsequentSystem.NONE
+CVSS_SI = BaseMetrics.Integrity.SubsequentSystem.NONE
+CVSS_SA = BaseMetrics.Availability.SubsequentSystem.NONE
 
 # ============================================================================
 # DYNAMIC PARAMETER DETECTION FUNCTIONS
@@ -90,8 +91,9 @@ def determine_attack_requirements(test_results):
     - N if no lockout (no preconditions needed)
     """
     if test_results.get('account_locked'):
-        return 'P'
-    return 'N'
+        return BaseMetrics.AttackRequirements.PRESENT  # Present - valid username required to trigger/bypass lockout
+    else:
+        return BaseMetrics.AttackRequirements.NONE  # None - no special conditions needed
 
 
 def determine_confidentiality_integrity_impact(test_results):
@@ -101,8 +103,9 @@ def determine_confidentiality_integrity_impact(test_results):
     - L/L if lockout blocks API access
     """
     if test_results.get('account_locked'):
-        return 'L', 'L'
-    return 'H', 'H'
+        return BaseMetrics.Confidentiality.VulnerableSystem.LOW, BaseMetrics.Integrity.VulnerableSystem.LOW  # Lockout blocks access - reduced impact
+    else:
+        return BaseMetrics.Confidentiality.VulnerableSystem.HIGH, BaseMetrics.Integrity.VulnerableSystem.HIGH  # No lockout - full admin access possible
 
 
 def determine_availability_impact(test_results):
@@ -113,130 +116,16 @@ def determine_availability_impact(test_results):
     - H if >10 minute lockout
     """
     if not test_results.get('account_locked'):
-        return 'N'
+        return BaseMetrics.Availability.VulnerableSystem.NONE  # No lockout = no availability impact
+    
     lockout_duration = test_results.get('lockout_duration_seconds', 0)
+
     if lockout_duration > 600:
-        return 'H'
+        return BaseMetrics.Availability.VulnerableSystem.HIGH  # High: prolonged lockout >10 minutes
     elif lockout_duration > 60:
-        return 'L'
-    return 'N'
-
-
-def calculate_cvss_v4_score(AV, AC, AT, PR, UI, VC, VI, VA, SC, SI, SA):
-    """
-    Calculate CVSS 4.0 Base Score using the official MacroVector lookup table.
-    Reference: https://www.first.org/cvss/v4.0/specification-document
-    """
-    # EQ1: AV/PR/UI
-    if AV == 'N' and PR == 'N' and UI == 'N':
-        eq1 = 0
-    elif (AV == 'N' or PR == 'N' or UI == 'N') and not (AV == 'N' and PR == 'N' and UI == 'N') and AV != 'P':
-        eq1 = 1
+        return BaseMetrics.Availability.VulnerableSystem.LOW  # Low: temporary lockout 1-10 minutes
     else:
-        eq1 = 2
-
-    # EQ2: AC/AT
-    if AC == 'L' and AT == 'N':
-        eq2 = 0
-    else:
-        eq2 = 1
-
-    # EQ3: VC/VI/VA
-    if VC == 'H' and VI == 'H':
-        eq3 = 0
-    elif (VC == 'H' or VI == 'H' or VA == 'H') and not (VC == 'H' and VI == 'H'):
-        eq3 = 1
-    else:
-        eq3 = 2
-
-    # EQ4: SC/SI/SA
-    if SC == 'H' or SI == 'H' or SA == 'H':
-        eq4 = 0
-    else:
-        eq4 = 1
-
-    # EQ5: E defaults to A (worst case)
-    eq5 = 0
-
-    # EQ6: CR/IR/AR default to H (worst case)
-    if VC == 'H' or VI == 'H' or VA == 'H':
-        eq6 = 0
-    else:
-        eq6 = 1
-
-    eq3eq6_map = {
-        (0, 0): 0, (0, 1): 1,
-        (1, 0): 2, (1, 1): 3,
-        (2, 0): 4, (2, 1): 4,
-    }
-    eq3eq6 = eq3eq6_map.get((eq3, eq6), 4)
-
-    lookup = {
-        (0, 0, 0, 0, 0): 10.0, (0, 0, 0, 0, 1): 9.9, (0, 0, 0, 0, 2): 9.8,
-        (0, 0, 0, 1, 0): 9.5,  (0, 0, 0, 1, 1): 9.5, (0, 0, 0, 1, 2): 9.2,
-        (0, 0, 1, 0, 0): 10.0, (0, 0, 1, 0, 1): 9.6, (0, 0, 1, 0, 2): 9.3,
-        (0, 0, 1, 1, 0): 9.2,  (0, 0, 1, 1, 1): 8.9, (0, 0, 1, 1, 2): 8.6,
-        (0, 0, 2, 0, 0): 9.3,  (0, 0, 2, 0, 1): 9.0, (0, 0, 2, 0, 2): 8.8,
-        (0, 0, 2, 1, 0): 8.6,  (0, 0, 2, 1, 1): 8.0, (0, 0, 2, 1, 2): 7.4,
-        (0, 0, 3, 0, 0): 9.0,  (0, 0, 3, 0, 1): 8.5, (0, 0, 3, 0, 2): 7.9,
-        (0, 0, 3, 1, 0): 7.9,  (0, 0, 3, 1, 1): 7.5, (0, 0, 3, 1, 2): 7.0,
-        (0, 0, 4, 0, 0): 8.0,  (0, 0, 4, 0, 1): 7.3, (0, 0, 4, 0, 2): 6.8,
-        (0, 0, 4, 1, 0): 6.4,  (0, 0, 4, 1, 1): 5.9, (0, 0, 4, 1, 2): 5.4,
-        (0, 1, 0, 0, 0): 9.5,  (0, 1, 0, 0, 1): 9.4, (0, 1, 0, 0, 2): 9.2,
-        (0, 1, 0, 1, 0): 8.7,  (0, 1, 0, 1, 1): 8.6, (0, 1, 0, 1, 2): 8.4,
-        (0, 1, 1, 0, 0): 9.2,  (0, 1, 1, 0, 1): 8.9, (0, 1, 1, 0, 2): 8.6,
-        (0, 1, 1, 1, 0): 8.4,  (0, 1, 1, 1, 1): 7.8, (0, 1, 1, 1, 2): 7.0,
-        (0, 1, 2, 0, 0): 8.8,  (0, 1, 2, 0, 1): 8.4, (0, 1, 2, 0, 2): 7.8,
-        (0, 1, 2, 1, 0): 7.7,  (0, 1, 2, 1, 1): 7.1, (0, 1, 2, 1, 2): 6.4,
-        (0, 1, 3, 0, 0): 8.5,  (0, 1, 3, 0, 1): 7.9, (0, 1, 3, 0, 2): 7.3,
-        (0, 1, 3, 1, 0): 7.2,  (0, 1, 3, 1, 1): 6.5, (0, 1, 3, 1, 2): 5.8,
-        (0, 1, 4, 0, 0): 7.4,  (0, 1, 4, 0, 1): 6.6, (0, 1, 4, 0, 2): 6.0,
-        (0, 1, 4, 1, 0): 5.5,  (0, 1, 4, 1, 1): 5.1, (0, 1, 4, 1, 2): 4.7,
-        (1, 0, 0, 0, 0): 9.4,  (1, 0, 0, 0, 1): 9.3, (1, 0, 0, 0, 2): 9.0,
-        (1, 0, 0, 1, 0): 8.8,  (1, 0, 0, 1, 1): 8.6, (1, 0, 0, 1, 2): 8.3,
-        (1, 0, 1, 0, 0): 9.2,  (1, 0, 1, 0, 1): 8.8, (1, 0, 1, 0, 2): 8.5,
-        (1, 0, 1, 1, 0): 8.2,  (1, 0, 1, 1, 1): 7.6, (1, 0, 1, 1, 2): 6.8,
-        (1, 0, 2, 0, 0): 8.6,  (1, 0, 2, 0, 1): 8.3, (1, 0, 2, 0, 2): 7.7,
-        (1, 0, 2, 1, 0): 7.5,  (1, 0, 2, 1, 1): 6.8, (1, 0, 2, 1, 2): 6.0,
-        (1, 0, 3, 0, 0): 8.2,  (1, 0, 3, 0, 1): 7.7, (1, 0, 3, 0, 2): 7.1,
-        (1, 0, 3, 1, 0): 6.9,  (1, 0, 3, 1, 1): 6.3, (1, 0, 3, 1, 2): 5.6,
-        (1, 0, 4, 0, 0): 7.2,  (1, 0, 4, 0, 1): 6.5, (1, 0, 4, 0, 2): 5.8,
-        (1, 0, 4, 1, 0): 5.1,  (1, 0, 4, 1, 1): 4.7, (1, 0, 4, 1, 2): 4.3,
-        (1, 1, 0, 0, 0): 9.0,  (1, 1, 0, 0, 1): 8.8, (1, 1, 0, 0, 2): 8.5,
-        (1, 1, 0, 1, 0): 8.3,  (1, 1, 0, 1, 1): 8.1, (1, 1, 0, 1, 2): 7.8,
-        (1, 1, 1, 0, 0): 8.6,  (1, 1, 1, 0, 1): 8.3, (1, 1, 1, 0, 2): 7.8,
-        (1, 1, 1, 1, 0): 7.6,  (1, 1, 1, 1, 1): 7.0, (1, 1, 1, 1, 2): 6.2,
-        (1, 1, 2, 0, 0): 8.1,  (1, 1, 2, 0, 1): 7.7, (1, 1, 2, 0, 2): 7.2,
-        (1, 1, 2, 1, 0): 6.9,  (1, 1, 2, 1, 1): 6.3, (1, 1, 2, 1, 2): 5.5,
-        (1, 1, 3, 0, 0): 7.7,  (1, 1, 3, 0, 1): 7.2, (1, 1, 3, 0, 2): 6.6,
-        (1, 1, 3, 1, 0): 6.4,  (1, 1, 3, 1, 1): 5.8, (1, 1, 3, 1, 2): 5.2,
-        (1, 1, 4, 0, 0): 6.7,  (1, 1, 4, 0, 1): 6.1, (1, 1, 4, 0, 2): 5.4,
-        (1, 1, 4, 1, 0): 4.8,  (1, 1, 4, 1, 1): 4.4, (1, 1, 4, 1, 2): 4.0,
-        (2, 0, 0, 0, 0): 8.5,  (2, 0, 0, 0, 1): 8.4, (2, 0, 0, 0, 2): 8.2,
-        (2, 0, 0, 1, 0): 7.9,  (2, 0, 0, 1, 1): 7.8, (2, 0, 0, 1, 2): 7.5,
-        (2, 0, 1, 0, 0): 8.3,  (2, 0, 1, 0, 1): 8.0, (2, 0, 1, 0, 2): 7.6,
-        (2, 0, 1, 1, 0): 7.3,  (2, 0, 1, 1, 1): 6.7, (2, 0, 1, 1, 2): 6.0,
-        (2, 0, 2, 0, 0): 7.7,  (2, 0, 2, 0, 1): 7.4, (2, 0, 2, 0, 2): 7.0,
-        (2, 0, 2, 1, 0): 6.6,  (2, 0, 2, 1, 1): 6.1, (2, 0, 2, 1, 2): 5.3,
-        (2, 0, 3, 0, 0): 7.3,  (2, 0, 3, 0, 1): 6.9, (2, 0, 3, 0, 2): 6.4,
-        (2, 0, 3, 1, 0): 6.1,  (2, 0, 3, 1, 1): 5.6, (2, 0, 3, 1, 2): 5.0,
-        (2, 0, 4, 0, 0): 6.4,  (2, 0, 4, 0, 1): 5.9, (2, 0, 4, 0, 2): 5.3,
-        (2, 0, 4, 1, 0): 4.7,  (2, 0, 4, 1, 1): 4.3, (2, 0, 4, 1, 2): 3.9,
-        (2, 1, 0, 0, 0): 8.0,  (2, 1, 0, 0, 1): 7.9, (2, 1, 0, 0, 2): 7.6,
-        (2, 1, 0, 1, 0): 7.4,  (2, 1, 0, 1, 1): 7.2, (2, 1, 0, 1, 2): 7.0,
-        (2, 1, 1, 0, 0): 7.7,  (2, 1, 1, 0, 1): 7.4, (2, 1, 1, 0, 2): 7.0,
-        (2, 1, 1, 1, 0): 6.7,  (2, 1, 1, 1, 1): 6.1, (2, 1, 1, 1, 2): 5.3,
-        (2, 1, 2, 0, 0): 7.3,  (2, 1, 2, 0, 1): 7.0, (2, 1, 2, 0, 2): 6.5,
-        (2, 1, 2, 1, 0): 6.2,  (2, 1, 2, 1, 1): 5.6, (2, 1, 2, 1, 2): 5.0,
-        (2, 1, 3, 0, 0): 6.9,  (2, 1, 3, 0, 1): 6.5, (2, 1, 3, 0, 2): 6.0,
-        (2, 1, 3, 1, 0): 5.7,  (2, 1, 3, 1, 1): 5.2, (2, 1, 3, 1, 2): 4.7,
-        (2, 1, 4, 0, 0): 6.0,  (2, 1, 4, 0, 1): 5.5, (2, 1, 4, 0, 2): 5.0,
-        (2, 1, 4, 1, 0): 4.4,  (2, 1, 4, 1, 1): 4.0, (2, 1, 4, 1, 2): 3.6,
-    }
-
-    key = (eq1, eq2, eq3eq6, eq4, eq5)
-    return round(lookup.get(key, 0.0), 1)
-
+        return BaseMetrics.Availability.VulnerableSystem.NONE  # None: brief lockout <1 minute
 
 # ============================================================================
 # TEST SCENARIO
@@ -497,19 +386,20 @@ def verify_api_cooldown_and_calculate_cvss(browser):
     VA = determine_availability_impact(browser.api_test_results)
 
     cvss_score = calculate_cvss_v4_score(
-        AV=CVSS_AV, AC=CVSS_AC, AT=AT, PR=CVSS_PR, UI=CVSS_UI,
-        VC=VC, VI=VI, VA=VA,
-        SC=CVSS_SC, SI=CVSS_SI, SA=CVSS_SA
+        AV=CVSS_AV,
+        AC=CVSS_AC,
+        AT=AT,
+        PR=CVSS_PR,
+        UI=CVSS_UI,
+        VC=VC,
+        VI=VI,
+        VA=VA,
+        SC=CVSS_SC,
+        SI=CVSS_SI,
+        SA=CVSS_SA
     )
 
-    if cvss_score >= 9.0:
-        severity = "CRITICAL"
-    elif cvss_score >= 7.0:
-        severity = "HIGH"
-    elif cvss_score >= 4.0:
-        severity = "MEDIUM"
-    else:
-        severity = "LOW"
+    severity = get_cvss_severity(cvss_score)
 
     print("Attack: Brute Force API Password Attack")
     print(f"API responses during attack: {browser.api_responses}")
