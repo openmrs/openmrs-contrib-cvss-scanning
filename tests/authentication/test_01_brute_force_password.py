@@ -3,7 +3,7 @@ import string
 import random
 import time
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, BaseMetrics, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 
 O3_LOGIN_URL = f'{O3_BASE_URL}/login'
 
@@ -381,8 +381,10 @@ def verify_cooldown_and_calculate_cvss(browser):
     print(f"  Account lockout (7 failures): {'✓ WORKING' if browser.lockout_working else '✗ NOT WORKING'}")
     print(f"  Cooldown period (5 minutes): {'✓ WORKING' if browser.cooldown_working else '✗ NOT WORKING' if browser.lockout_working else 'SKIPPED'}")
     print("-"*70)
-    print(f"CVSS Base Score: {cvss_score}")
-    print(f"Severity Rating: {severity}")
+    
+    
+    #REQUIRED
+    display_results(cvss_score=cvss_score, severity=severity)
     
     # Final assessment
     print("")
