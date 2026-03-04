@@ -719,45 +719,39 @@ security improves or degrades over time.
 Steps to make a test
 
 1. Option 1: Manual Creation
-    a. Create a new subfolder, feature file, __init__.py file, and test file
-    b. For the test, import pytest_bdd, and from tests.utils import
+    1. Create a new subfolder, feature file, __init__.py file, and test file
+    2. For the test, import pytest_bdd, and from tests.utils import
        calculate_cvss_v4_score, get_cvss_severity, BaseMetrics, O3_BASE_URL
 2. Option 2: Use template generator (Not merged yet)
-    a. Go to the template generator page
-    b. Fill in options listen
-    c. ...
-    d. This will create all necessary files
+    1. Go to the template generator page
+    1. Fill in options listen
+    1. ...
+    1. This will create all necessary files
 3. Write a feature file. The feature file covers all subtests using the same “given.” It will
     contain the following.
-       a. Feature: This is the feature of OpenMRS that is going to be tested
-       b. Background: This is where shared “givens” between all “scenarios” will be stored.
-       c. Given: This is what is given for the test to run. For example, “The login page is
+       1. Feature: This is the feature of OpenMRS that is going to be tested
+       1. Background: This is where shared “givens” between all “scenarios” will be stored.
+       1. Given: This is what is given for the test to run. For example, “The login page is
           shown.”
-       d. Scenario: This is a specific attack method. Each “scenario” can be converted into
+       1. Scenario: This is a specific attack method. Each “scenario” can be converted into
           a test file.
-             i. When: The attacker tries some attack method,
-ii. Then: The system should do this in response.
-iii. And: The system may optionally do this. Any amount of “And’s” may be
+           1. When: The attacker tries some attack method,
+           1. Then: The system should do this in response.
+           1. And: The system may optionally do this. Any amount of “And’s” may be
 used.
-4. Every test will need the following structure:
-    a. @pytest_bdd.scenario('tests/<subfolder>/<feature file>',
+5. Every test will need the following structure:
+    1. @pytest_bdd.scenario('tests/<subfolder>/<feature file>',
        '<Scenario text of one scenario in feature file>',
        features_base_dir='') followed by a function. def <function name>():
-    b. @pytest_bdd.given('<given text>') followed by a function. def <function name>():
-    c. @pytest_bdd.when('<when text>') followed by a function. def <function name>():
-    d. @pytest_bdd.then('<then text>') followed by a function. def <function name>():
-       i. Repeat this for “ands” as well, still using @pytest_bdd.then('<and text>')
-    e. A section to calculate CVSS scores.
-       i. Define these based on the CVSS 4.0 calculator. They should be static.
-
-
-```
-ii. Use the function calculate_cvss_v4_score() with parameters using Enums
-listed in the util.py file
-iii. Use get_cvss_severity(cvss_score) to get the severity, in english, of the
-test.
-f. Display the results (CVSS score, severity, and pass/fail)
-```
+    1. @pytest_bdd.given('<given text>') followed by a function. def <function name>():
+    1. @pytest_bdd.when('<when text>') followed by a function. def <function name>():
+    1. @pytest_bdd.then('<then text>') followed by a function. def <function name>():
+       1. Repeat this for “ands” as well, still using @pytest_bdd.then('<and text>')
+    1. A section to calculate CVSS scores.
+       1. Define these based on the CVSS 4.0 calculator. They should be static.
+       2. Use the function calculate_cvss_v4_score() with parameters using Enums listed in the util.py file
+       3. 1. Use get_cvss_severity(cvss_score) to get the severity, in english, of the test.
+    1. Display the results (CVSS score, severity, and pass/fail)
 5. For each test, fill in each function.
 6. Connect the function to the workflow.
 
