@@ -20,12 +20,8 @@ from pytest_bdd import scenarios, given, when, then, parsers
 from playwright.sync_api import Page, expect
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'assets'))
-from sharedBDDFunctions import *
-
-O3_LOGIN_URL = f'{O3_BASE_URL}/login'
-O3_WELCOME_URL = f'{O3_BASE_URL}/login/location'
-O3_HOMEPAGE_URL = f'{O3_BASE_URL}/home/service-queues#'
+from test_utils.utils import calculate_cvss_v4_score, get_cvss_severity, BaseMetrics, O3_BASE_URL
+from test_utils.sharedBDDFunctions import navigateToLogin
 
 `);
 }
@@ -49,11 +45,6 @@ def verify_test_patient(page):
 `);
 }
 var thenMapping = new Map();
-thenMapping.set("reportCVSS",`@then("Calculate CVSS score")
-def calculate_cvss_score():
-    return calculateCVSSScore()
-
-`)
 var givenThenToFeatureFileMapping = new Map();
 {
 givenThenToFeatureFileMapping.set("givenLoginPageDisplayed","the OpenMRS 3 login page is displayed");
@@ -89,6 +80,92 @@ function generateFeatureFile(filename, when, givenStmts,thenStmts){
 
     document.querySelector('#featureFile').innerHTML=featureFileString;
 }
+
+function prepareWhenString(location,featureFileName,testing){
+    whenString = testing.replaceAll(" ","_")
+    whenString = whenString.replaceAll(",","")
+    whenString = whenString.replaceAll(":","")
+    whenString = whenString.replaceAll(";","")
+    whenString = whenString.replaceAll(" ","_")
+
+    r = "";
+    r += "@pytest_bdd.scenario('tests/"+location+"/"+featureFileName+".feature','"+testing+"',features_base_dir='')\n";
+    r+=`@when('`+testing+`')
+def test_`+whenString.replace(" ","_")+`(page:Page):
+    #your test code here
+    return
+`
+    return r;
+}
+
+function prepareCVSSCode(){
+    r="";
+    r+=`
+@then("Calculate CVSS score")
+def calculate_cvss_score():
+`
+    var AV,AC,AT,PR,UI,VC,VI,VA,SC,SI,SA =0;
+    //AV
+    if(document.querySelector('#cvssAVP').checked)AV="P";
+    if(document.querySelector('#cvssAVL').checked)AV="L";
+    if(document.querySelector('#cvssAVA').checked)AV="A";
+    if(document.querySelector('#cvssAVN').checked)AV="M";
+
+    //AC
+    if(document.querySelector('#cvssACL').checked)AC="L";
+    if(document.querySelector('#cvssACH').checked)AC="H";
+    //AT
+    if(document.querySelector('#cvssATP').checked)AT="P";
+    if(document.querySelector('#cvssATN').checked)AT="N";
+    //PR
+    if(document.querySelector('#cvssPRN').checked)PR="N";
+    if(document.querySelector('#cvssPRL').checked)PR="L";
+    if(document.querySelector('#cvssPRH').checked)PR="H";
+
+    //UI
+    if(document.querySelector('#cvssUIP').checked)UI="P";
+    if(document.querySelector('#cvssUIA').checked)UI="A";
+    if(document.querySelector('#cvssUIN').checked)UI="N";
+    //VC
+    if(document.querySelector('#cvssVCN').checked)VC="N";
+    if(document.querySelector('#cvssVCL').checked)VC="L";
+    if(document.querySelector('#cvssVCH').checked)VC="H";
+
+
+    //VI
+    if(document.querySelector('#cvssVIN').checked)VI="N";
+    if(document.querySelector('#cvssVIL').checked)VI="L";
+    if(document.querySelector('#cvssVIH').checked)VI="H";
+    //VA
+    if(document.querySelector('#cvssVAN').checked)VA="N";
+    if(document.querySelector('#cvssVAL').checked)VA="L";
+    if(document.querySelector('#cvssVAH').checked)VA="H";
+    //SC
+    if(document.querySelector('#cvssSCN').checked)SC="N";
+    if(document.querySelector('#cvssSCL').checked)SC="L";
+    if(document.querySelector('#cvssSCH').checked)SC="H";
+    //SI
+    if(document.querySelector('#cvssSIN').checked)SI="N";
+    if(document.querySelector('#cvssSIL').checked)SI="L";
+    if(document.querySelector('#cvssSIH').checked)SI="H";
+    //SA
+    if(document.querySelector('#cvssSAN').checked)SA="N";
+    if(document.querySelector('#cvssSAL').checked)SA="L";
+    if(document.querySelector('#cvssSAH').checked)SA="H";
+
+    var arr = [AV,AC,AT,PR,UI,VC,VI,VA,SC,SI,SA];
+    r+="    cvss_score=calculate_cvss_v4_score(";
+    for(var i =0;i<11;i++){
+        r+="'"+arr[i]+"',";
+    }
+    r+=`)
+    severity = get_cvss_severity(cvss_score)
+    display_results(cvss_score=cvss_score, severity=severity)
+
+`
+    return r;
+}
+
 function generateTemplateFile(){
     var givenStmts = [];
     //see which given statements are needed
@@ -101,7 +178,6 @@ function generateTemplateFile(){
 
     //see which then statements are needed
     var thenStmts = [];
-    if(document.querySelector('#reportCVSS').checked)thenStmts.push("reportCVSS");
     console.log("Then clauses:")
     console.log(thenStmts);
     var testScaffold = document.querySelector("#testScaffold")
@@ -119,15 +195,6 @@ function generateTemplateFile(){
 
    
     var addCVSSMetrics = false;
-    //if calculate cvss, make global variables for that
-    for(var i=0;i<thenStmts.length;i++){
-        if(thenStmts[i]==="reportCVSS"){
-            addCVSSMetrics=true;
-        }
-    }
-    if(addCVSSMetrics){
-        //todo
-    }
     //paste in mapped given code
     for(var i =0;i<givenStmts.length;i++){
         testScaffoldString+=givenMapping.get(givenStmts[i])
@@ -136,16 +203,8 @@ function generateTemplateFile(){
     }
     //make scaffolding for the when
     whenString = testing.replaceAll(" ","_")
-    whenString = whenString.replaceAll(",","")
-    whenString = whenString.replaceAll(":","")
-    whenString = whenString.replaceAll(";","")
-    whenString = whenString.replaceAll(" ","_")
-    testScaffoldString += "@pytest_bdd.scenario('tests/"+location+"/"+featureFileName+".feature','"+testing+"',features_base_dir='')\n";
-    testScaffoldString+=`@when('`+testing+`')
-def test_`+whenString.replace(" ","_")+`(page:Page):
-    #your test code here
-    return
-`
+    testScaffoldString += prepareWhenString(location,featureFileName,testing);
+
     
     //past in mapped then code
     for(var i =0;i<thenStmts.length;i++){
@@ -153,6 +212,12 @@ def test_`+whenString.replace(" ","_")+`(page:Page):
         testScaffoldString+=`
 `
     }
+
+    //if calculate cvss, make global variables for that
+    if(document.querySelector("#reportCVSS").checked){
+        testScaffoldString += prepareCVSSCode();
+    }
+
     testScaffold.innerHTML=testScaffoldString;
     testScaffoldStringSave=testScaffoldString
     generateFeatureFile(featureFileName,testing,givenStmts,thenStmts);
@@ -163,5 +228,14 @@ function downloadFiles(){
     if(fileStringsInitialized){
         downloadStringAsFile(testScaffoldStringSave,"test_"+testScaffoldSFilePath+".py",mimeType='text/plain');
         downloadStringAsFile(featureFileString,featureFilepath+".feature",mimeType='text/plain');
+    }
+}
+
+function toggleDivVisibilityByID(id){
+    var x = document.getElementById(id);
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
     }
 }

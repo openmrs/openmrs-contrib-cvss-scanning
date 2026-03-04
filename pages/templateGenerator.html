@@ -7,7 +7,8 @@
  <body>
     <h1>OpenMRS Test Template Generator</h1>
     <h3>v0.0.1</h3>
-    <div>
+    <button class = "dropdownButton" id = "fileOptionDropBtn" onclick="toggleDivVisibilityByID('fileOptionDiv')">File Options</button>
+    <div id = "fileOptionDiv">
         <h4>Test File Name</h4>
         <label for="lname">Filename:test_</label>
         <input type="text" id="testFilenameSTMT" name="fname">
@@ -25,30 +26,93 @@
         <input type="text" id="testSTMT" name="fname"><br><br>
         
     </div>
-    <div class="Given">
-        <h4>Given</h4>
-        <input type="checkbox" id="givenLoginPageDisplayed" name="vehicle3" value="loginPageDisplayed">
-        <label for="vehicle3"> the OpenMRS 3 login page is displayed</label><br> 
-        <input type="checkbox" id="givenLoggedInto" name="vehicle1" value="loggedInto">
-        <label for="vehicle1"> logged into OpenMRS O3</label><br>
-        <input type="checkbox" id="givenTestPatientCreated" name="vehicle2" value="testPatientCreated">
-        <label for="vehicle2"> a test patient has been created</label><br>
-        <input type="checkbox" id="givenEditPatientPageDisplayed" name="vehicle3" value="editPatientPageDisplayed">
-        <label for="vehicle3"> the OpenMRS 3 edit patient page is displayed</label><br> 
-        
-    </div> 
-    <div>
-        <h4>When</h4>
-        <label for="lname">When Statement:</label>
-        <input type="text" id="whenSTMT" name="fname"><br><br>
+    <button class = "dropdownButton" id = "bddDropBtn" onclick="toggleDivVisibilityByID('bddDiv')">BDD Options</button>
+    <div id = "bddDiv">
+        <div class="Given">
+            <h4>Given</h4>
+            <input type="checkbox" id="givenLoginPageDisplayed" name="vehicle3" value="loginPageDisplayed">
+            <label for="vehicle3"> the OpenMRS 3 login page is displayed</label><br> 
+            <input type="checkbox" id="givenLoggedInto" name="vehicle1" value="loggedInto">
+            <label for="vehicle1"> logged into OpenMRS O3</label><br>
+            <input type="checkbox" id="givenTestPatientCreated" name="vehicle2" value="testPatientCreated">
+            <label for="vehicle2"> a test patient has been created</label><br>
+            <input type="checkbox" id="givenEditPatientPageDisplayed" name="vehicle3" value="editPatientPageDisplayed">
+            <label for="vehicle3"> the OpenMRS 3 edit patient page is displayed</label><br> 
+            
+        </div> 
+        <div>
+            <h4>When</h4>
+            <label for="lname">When Statement:</label>
+            <input type="text" id="whenSTMT" name="fname"><br><br>
+        </div>
+        <div class="Then">
+            <h4>Then</h4>
+            <input type="checkbox" id="reportCVSS" name="vehicle1" value="reportCVSS">
+            <label for="vehicle1">Report CVSS</label><br>
+        </div> 
     </div>
-    <div class="Then">
-        <h4>Then</h4>
-        <input type="checkbox" id="reportCVSS" name="vehicle1" value="reportCVSS">
-        <label for="vehicle1">Report CVSS</label><br>
-    </div> 
+    <button class = "dropdownButton" id = "cvssDropBtn" onclick="toggleDivVisibilityByID('cvssCalcDiv')">CVSS Options (if reporting CVSS)</button>
+    <div id="cvssCalcDiv">
+    
+        <!--Exploitability Metrics -->
+        <h4>Exploitability Metrics</h4>
+        <label class="cvssMetricLabel">Attack Vector (AV): </label>
+        <label class="borderLabel">Network <input type = "checkbox" id = "cvssAVN"></label>
+        <label class="borderLabel">Adjacent <input type = "checkbox" id = "cvssAVA"></label>
+        <label class="borderLabel">Local <input type = "checkbox" id = "cvssAVL"></label>
+        <label class="borderLabel">Physical <input type = "checkbox" id = "cvssAVP"></label><br>
+
+        <label class="cvssMetricLabel">Attack Complexity (AC): </label>
+        <label class="borderLabel"> Low (L) <input type = "checkbox" id = "cvssACL"></label>
+        <label class="borderLabel"> High (H) <input type = "checkbox" id = "cvssACH"></label><br>
+
+        <label class="cvssMetricLabel">Attack Requirements (AT):</label>
+        <label class="borderLabel"> None (N) <input type = "checkbox" id = "cvssATN"></label>
+        <label class="borderLabel"> Present (P) <input type = "checkbox" id = "cvssATP"></label><br>
+        <label class="cvssMetricLabel">Privileges Required (PR):</label>
+        <label class="borderLabel"> None (N) <input type = "checkbox" id = "cvssPRN"></label>
+        <label class="borderLabel"> Low (L) <input type = "checkbox" id = "cvssPRL"></label>
+        <label class="borderLabel"> High (H) <input type = "checkbox" id = "cvssPRH"></label><br>
+
+        <label class="cvssMetricLabel">User Interaction (UI)</label>
+        <label class="borderLabel"> None (N) <input type = "checkbox" id = "cvssUIN"></label>
+        <label class="borderLabel"> Passive (P) <input type = "checkbox" id = "cvssUIP"></label>
+        <label class="borderLabel"> Active (A) <input type = "checkbox" id = "cvssUIA"></label><br><br>
+        <!-- Vulnerable System Impact Metrics-->
+         <h4>Vulnerable System Impact Metrics</h4>
+        <label class="cvssMetricLabel">Confidentiality (VC):</label>
+        <label class="borderLabel"> High (H) <input type = "checkbox" id = "cvssVCH"></label>
+        <label class="borderLabel"> Low (L) <input type = "checkbox" id = "cvssVCL"></label>
+        <label class="borderLabel"> None (N) <input type = "checkbox" id = "cvssVCN"></label><br>
+        <label class="cvssMetricLabel">Integrity (VI):</label>
+        <label class="borderLabel"> High (H) <input type = "checkbox" id = "cvssVIH"></label>
+        <label class="borderLabel"> Low (L) <input type = "checkbox" id = "cvssVIL"></label>
+        <label class="borderLabel"> None (N) <input type = "checkbox" id = "cvssVIN"></label><br>
+        <label class="cvssMetricLabel">Availability (VA):</label>
+        <label class="borderLabel"> High (H) <input type = "checkbox" id = "cvssVAH"></label>
+        <label class="borderLabel"> Low (L) <input type = "checkbox" id = "cvssVAL"></label>
+        <label class="borderLabel"> None (N) <input type = "checkbox" id = "cvssVAN"></label><br><br>
+
+        
+        <h4>Subsequent System Metrics</h4>
+        <!-- Subsequent System Metrics-->
+        <label class="cvssMetricLabel">Confidentiality (VC):</label>
+        <label class="borderLabel"> High (H) <input type = "checkbox" id = "cvssSCH"></label>
+        <label class="borderLabel"> Low (L) <input type = "checkbox" id = "cvssSCL"></label>
+        <label class="borderLabel"> None (N) <input type = "checkbox" id = "cvssSCN"></label><br>
+        <label class="cvssMetricLabel">Integrity (VI):</label>
+        <label class="borderLabel"> High (H) <input type = "checkbox" id = "cvssSIH"></label>
+        <label class="borderLabel"> Low (L) <input type = "checkbox" id = "cvssSIL"></label>
+        <label class="borderLabel"> None (N) <input type = "checkbox" id = "cvssSIN"></label><br>
+        <label class="cvssMetricLabel">Availability (VA):</label>
+        <label class="borderLabel"> High (H) <input type = "checkbox" id = "cvssSAH"></label>
+        <label class="borderLabel"> Low (L) <input type = "checkbox" id = "cvssSAL"></label>
+        <label class="borderLabel"> None (N) <input type = "checkbox" id = "cvssSAN"></label><br>
+        <br>
+        <p>if multiple boxes in a row are selected, the most severe metric(leftmost) will override others</p>
+    </div>
     <br>
-    <button onclick="generateTemplateFile()">Generate Templates For Review</button>
+    <button onclick="generateTemplateFile()" >Generate Templates For Review</button>
     <div class = "resultsDiv">
         <h4>Test Template</h4>
         <p class = "results" id ="testScaffold"> </p>

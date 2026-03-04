@@ -9,7 +9,7 @@ O3_WELCOME_URL = 'http://0.0.0.0:80/openmrs/spa/login/location'
 O3_HOMEPAGE_URL = 'http://0.0.0.0:80/openmrs/spa/home/service-queues#'
 DEFAULT_WAIT_TIME = 1000
 
-def navigate_to_login(browser):
+def navigateToLogin(browser):
     """Navigate to O3 login page"""
     browser.goto(O3_LOGIN_URL)
     browser.wait_for_timeout(DEFAULT_WAIT_TIME)

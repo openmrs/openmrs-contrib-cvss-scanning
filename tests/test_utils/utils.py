@@ -231,3 +231,7 @@ def get_cvss_severity(cvss_score):
         severity = "LOW"
     
     return severity
+
+def display_results(cvss_score, severity):
+    print(f"CVSS Base Score: {cvss_score}")
+    print(f"Severity Rating: {severity}")
