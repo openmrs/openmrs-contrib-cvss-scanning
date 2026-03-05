@@ -372,7 +372,10 @@ def parse_test_results():
             'severity': severity,
             'duration': duration,
         })
-    
+        #override cvss for passed tests
+        if status == 'PASS':
+            results[-1]['cvss_score']=0
+            results[-1]['severity']='NONE'
     # Group results by category, preserving insertion order
     grouped = {}
     for r in results:
@@ -736,8 +739,10 @@ def generate_html_dashboard(grouped_results, summary):
 
         for r in results:
             status_class   = 'status-pass' if r['status'] == 'PASS' else 'status-fail'
+            
             severity_color = get_severity_color(r['severity'])
             cvss_display   = f"{r['cvss_score']:.1f}" if r['cvss_score'] is not None else 'N/A'
+        
 
             duration = r['duration']
             duration_display = f"{duration/60:.1f}m" if duration >= 60 else f"{duration:.2f}s"

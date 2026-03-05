@@ -5,7 +5,7 @@ import time
 import requests
 import base64
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, BaseMetrics, O3_BASE_URL
+from test_utils.utils import calculate_cvss_v4_score, get_cvss_severity, BaseMetrics, O3_BASE_URL
 
 O3_API_URL = f'{O3_BASE_URL}/openmrs/ws/rest/v1/session'
 

@@ -3,7 +3,7 @@ import string
 import random
 import time
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, BaseMetrics, O3_BASE_URL
+from test_utils.utils import calculate_cvss_v4_score, get_cvss_severity, BaseMetrics, O3_BASE_URL
 
 O3_LOGIN_URL = f'{O3_BASE_URL}/login'
 
