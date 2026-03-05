@@ -2,6 +2,7 @@ import re
 import pytest
 from pytest_bdd import scenarios, given, when, then, parsers
 from playwright.sync_api import Page, expect
+from test_utils.utils import display_results,get_cvss_severity
 
 O3_LOGIN_URL = 'http://0.0.0.0:80/openmrs/spa/login'
 O3_WELCOME_URL = 'http://0.0.0.0:80/openmrs/spa/login/location'
@@ -106,6 +107,16 @@ def navigateToTestPatient(page:Page):
 
 def setAlertPresent(val):
         alertPresent=val
+   
+def cleanupTestPatient(page,editUrl):
+    #not finished
+    page.goto(editUrl)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    for id in xssEditProfileLocations:
+        page.locator(testLocation).fill("")
+    page.locator("#givenName").fill("Test")
+    page.locator("#familyName").fill("Patient")
+    page.get_by_text("Update patient").click()
 
 loggedIn = False
 editUrl = None
@@ -146,17 +157,22 @@ def test_xss_injection_edit_profile_parameterized(page:Page,testString,testLocat
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.on('dialog', lambda: setAlertPresent(True))
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    #cleanupTestPatient(page,editUrl)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
-    #expect(alertPresent).to_be_truthy()
     #if pass, go to next, else stop
-
 
 @then('calculate CVSS score and report failure. ')
 def calculate_cvss_score():
-    if alertPresent:
-        return "CVSS Base Score: 7.4"
-    else:
-        return "CVSS Base Score: 0.0"        
+    global alertPresent
+    #print cvss information
+    cvss_score=calculate_cvss_v4_score('M','L','N','L','P','H','H','N','N','N','N',)
+    severity = get_cvss_severity(cvss_score)
+    display_results(cvss_score=cvss_score, severity=severity)
+    if(alertPresent):
+        #trigger test failure
+        assert False
+    
 
 
 
