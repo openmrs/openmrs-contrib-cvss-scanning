@@ -15,7 +15,10 @@ Feature:
     # to be in a known state. Such as, "Given I am logged in"
     # When written in the background, the Given will run before
     # each scenario.
-    Given 
+
+    # Each scenario should calculate and print a CVSS score.
+    # Becuase it is a static value, it can be done before anything else
+    Given a CVSS score is calculated and printed
 
   # A scenario is a specfic method to test against the vulnerability
   # Each scenario will be converted into its own test file in python
