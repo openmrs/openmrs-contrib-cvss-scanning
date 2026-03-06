@@ -72,6 +72,8 @@ def given_cvss_score_is_calculted_and_printed():
     #               themselves into the logical network path between 
     #               the target and the resource requested by the victim.
 
+    AT = BaseMetrics.AttackRequirements.NONE
+
     # Privileges Required (PR) / BaseMetrics.PriviledgesRequired
     # This metric describes the level of priviledges an attacker must possess prior to exploiting a vulnerability.
     #   None        The attacker is unauthenticated prior to attack, 
@@ -84,6 +86,8 @@ def given_cvss_score_is_calculted_and_printed():
     #   High        The attacker requires privileges that provide 
     #               significant (e.g., administrative) control over the 
     #               vulnerable system allowing full access
+
+    PR = BaseMetrics.PriviledgesRequired.NONE
 
     # User Interaction (UI) / BaseMetrics.UserInteraction
     # This metric captures the requirement of a non-attacker human user to access the vulnerability
@@ -100,6 +104,8 @@ def given_cvss_score_is_calculted_and_printed():
     #               requires a targeted user to perform specific, 
     #               conscious interactions with the vulnerable system 
     #               and the attacker’s payload
+
+    UI = BaseMetrics.UserInteraction.NONE
 
     # Impact Metrics
     # The Impact metrics capture the effects of a successfully 
@@ -132,7 +138,9 @@ def given_cvss_score_is_calculted_and_printed():
     #               loss is limited.
     #
     #   None        There is no loss of confidentiality.
-    #
+    
+    VC = BaseMetrics.Confidentiality.VulnerableSystem.NONE
+
     # Impact to the Subsequent System (SC) / .SubsequentSystem
     #   High        There is a total loss of confidentiality, resulting 
     #               in all resources within the Subsequent System being 
@@ -145,6 +153,8 @@ def given_cvss_score_is_calculted_and_printed():
     #               loss is limited.
     #
     #   None        There is no loss of confidentiality.
+
+    SC = BaseMetrics.Confidentiality.SubsequentSystem.NONE
 
     # Integrity (VI/SI) / BaseMetrics.Integrity
     # This metric measures the impact to integrity of a successfully 
@@ -161,7 +171,9 @@ def given_cvss_score_is_calculted_and_printed():
     #               limited.
     #
     #   None        There is no loss of integrity.
-    #
+    
+    VI = BaseMetrics.Integrity.VulnerableSystem.NONE
+
     # Impact to the Subsequent System (SI) / .SubsequentSystem
     #   High        There is a total loss of integrity, or a complete 
     #               loss of protection.
@@ -172,6 +184,8 @@ def given_cvss_score_is_calculted_and_printed():
     #               limited.
     #
     #   None        There is no loss of integrity.
+
+    SI = BaseMetrics.Integrity.SubsequentSystem.NONE
 
     # Availability (VA/SA) BaseMetrics.Availability
     # This metric measures the impact to the availability of the 
@@ -194,7 +208,9 @@ def given_cvss_score_is_calculted_and_printed():
     #               deny service to legitimate users.
     #
     #   None        There is no impact to availability.
-    #
+    
+    VA = BaseMetrics.Availability.VulnerableSystem.NONE
+
     # Impact to the Subsequent System (SA) / .SubsequentSystem
     #   High        There is a total loss of availability, resulting in 
     #               the attacker being able to fully deny access to 
@@ -208,21 +224,12 @@ def given_cvss_score_is_calculted_and_printed():
     #
     #   None        There is no impact to availability.
 
+    SA = BaseMetrics.Availability.SubsequentSystem.NONE
 
     # Calculate CVSS 4.0 score
     cvss_score = calculate_cvss_v4_score(
-        AV = AV,
-        AC = AC,
-        AT = AT,
-        PR = PR,
-        UI = UI,
-        VC = VC,
-        VI = VI,
-        VA = VA,
-        SC = SC,
-        SI = SI,
-        SA = SA,
-    )
+        AV = AV, AC = AC, AT = AT, PR = PR, UI = UI, VC = VC, VI = VI, VA = VA, SC = SC, SI = SI, SA = SA
+        )
 
     # This is calculated automatically
     # It has possible values of Low, Medium, High, Critical
