@@ -4,10 +4,9 @@
 # Add the title of the feature next to the Feature tag,
 # such as, "Feature: SQL Injection"
 Feature: Session Management
-
-  # Text can be add here for a description of the feature
   As a security auditor
   I want to test OpenMRS 3 against various session management attacks
+  # Text can be add here for a description of the feature
 
   # Background holds any amount of Given steps to run before
   # each scenario. These should be used to consolidate shared behavior

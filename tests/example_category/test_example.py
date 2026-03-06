@@ -1,6 +1,7 @@
 # Test implementation template
 # This file represents one scenario in the feature file
 # For this test category
+# This file NEEDS to start with test_*.py
 
 import pytest_bdd
 
@@ -10,12 +11,13 @@ from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_resu
 
 # In the scenario decorator, fill out the "tests/"
 # string by adding the relevant folder and feature file
-# 'tests/<folder>/<feature>.feature'
+# '<feature>.feature'
 # The second string should be copied from the feature file
 @pytest_bdd.scenario('tests/',
-                     '',
-                     features_base_dir='')
-def scenario():
+                     '')
+def test_scenario():
+    # it is required by pytest that the scenario file starts with test_
+
     # This function below the decorator represents what will be run
     # when the Scenario is run. The name of the function may be changed
     # but should represent the scenario being called

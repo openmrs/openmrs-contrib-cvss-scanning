@@ -11,10 +11,9 @@ from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_resu
 # In the scenario decorator, fill out the "tests/"
 # string by adding the relevant folder and feature file
 # 'tests/<folder>/<feature>.feature'
-@pytest_bdd.scenario('tests/session_management/session_management.feature',
-                     'Cookies have Secure, HTTPOnly, and SameSite Attributes',
-                     features_base_dir='')
-def scenario():
+@pytest_bdd.scenario('session_management.feature',
+                     'Cookies have Secure, HTTPOnly, and SameSite Attributes')
+def test_cookies_have_attributes():
     # This function below the decorator represents what will be run
     # when the Scenario is run. The name of the function may be changed
     # but should represent the scenario being called
@@ -87,7 +86,7 @@ def given_cvss_score_is_calculted_and_printed():
     #               significant (e.g., administrative) control over the 
     #               vulnerable system allowing full access
 
-    PR = BaseMetrics.PriviledgesRequired.NONE
+    PR = BaseMetrics.PriviledgesRequired.LOW
 
     # User Interaction (UI) / BaseMetrics.UserInteraction
     # This metric captures the requirement of a non-attacker human user to access the vulnerability
@@ -139,7 +138,7 @@ def given_cvss_score_is_calculted_and_printed():
     #
     #   None        There is no loss of confidentiality.
     
-    VC = BaseMetrics.Confidentiality.VulnerableSystem.NONE
+    VC = BaseMetrics.Confidentiality.VulnerableSystem.HIGH
 
     # Impact to the Subsequent System (SC) / .SubsequentSystem
     #   High        There is a total loss of confidentiality, resulting 
@@ -154,7 +153,7 @@ def given_cvss_score_is_calculted_and_printed():
     #
     #   None        There is no loss of confidentiality.
 
-    SC = BaseMetrics.Confidentiality.SubsequentSystem.NONE
+    SC = BaseMetrics.Confidentiality.SubsequentSystem.HIGH
 
     # Integrity (VI/SI) / BaseMetrics.Integrity
     # This metric measures the impact to integrity of a successfully 
@@ -172,7 +171,7 @@ def given_cvss_score_is_calculted_and_printed():
     #
     #   None        There is no loss of integrity.
     
-    VI = BaseMetrics.Integrity.VulnerableSystem.NONE
+    VI = BaseMetrics.Integrity.VulnerableSystem.HIGH
 
     # Impact to the Subsequent System (SI) / .SubsequentSystem
     #   High        There is a total loss of integrity, or a complete 
@@ -185,7 +184,7 @@ def given_cvss_score_is_calculted_and_printed():
     #
     #   None        There is no loss of integrity.
 
-    SI = BaseMetrics.Integrity.SubsequentSystem.NONE
+    SI = BaseMetrics.Integrity.SubsequentSystem.HIGH
 
     # Availability (VA/SA) BaseMetrics.Availability
     # This metric measures the impact to the availability of the 
@@ -262,7 +261,7 @@ def when():
 @pytest_bdd.then('They should have Secure, HTTPOnly, and SameSite attributes')
 def then():
     # This function represents what will happen during the Then step of the scenario.
-    pass
+    assert 1 == 1
 
 # Additional then decorators and functions should be added for any
 # And and But statements in the feature file, but they should still
