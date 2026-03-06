@@ -234,5 +234,6 @@ def get_cvss_severity(cvss_score):
 
 def display_results(cvss_score, severity):
     # This is required at the end of your test for the workflow to pick up the CVSS score
+    print("")
     print(f"CVSS Base Score: {cvss_score}")
     print(f"Severity Rating: {severity}")
