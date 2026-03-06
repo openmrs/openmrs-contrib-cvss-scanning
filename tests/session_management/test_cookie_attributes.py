@@ -261,7 +261,7 @@ def when():
 @pytest_bdd.then('They should have Secure, HTTPOnly, and SameSite attributes')
 def then():
     # This function represents what will happen during the Then step of the scenario.
-    assert 1 == 1
+    pass
 
 # Additional then decorators and functions should be added for any
 # And and But statements in the feature file, but they should still
