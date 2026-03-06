@@ -11,6 +11,7 @@ from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_resu
 # In the scenario decorator, fill out the "tests/"
 # string by adding the relevant folder and feature file
 # 'tests/<folder>/<feature>.feature'
+# The second string should be copied from the feature file
 @pytest_bdd.scenario('tests/',
                      '',
                      features_base_dir='')
