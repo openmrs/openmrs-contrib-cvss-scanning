@@ -2,6 +2,10 @@
 # that a user is testing. For example, XSS, SQL Injection, etc.
 # In this way, it groups related scenarios, or related tests.
 # Add the title of the feature next to the Feature tag,
+
+# To run all scenarios in this feature file, use this command
+# pytest tests/<folder>/ -v -s
+
 # such as, "Feature: SQL Injection"
 Feature: 
 
