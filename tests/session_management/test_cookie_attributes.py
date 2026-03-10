@@ -3,6 +3,7 @@
 # For this test category
 
 import pytest_bdd
+import playwright
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 
@@ -240,14 +241,15 @@ def given_cvss_score_is_calculted_and_printed():
 # Given statement in Background or the Scenario. For each given in the
 # Background and Scenario, a new decorator should be made.
 @pytest_bdd.given('the OpenMRS 3 home page is show after login')
-def given_openMRS_page_logged_in():
+def given_openMRS_page_logged_in(browser):
     # This function represents what will be run before the When and Then
     # steps. It is to put the system into a known state.
     #
     # If different givens exist, it is important to name the functions
     # differently. This function should be renamed to reflect what the
     # Given's functionality is.
-    pass
+
+    browser.goto(O3_BASE_URL + '/login')
 
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
