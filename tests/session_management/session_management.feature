@@ -24,18 +24,7 @@ Feature: Session Management
 
   # A scenario is a specfic method to test against the vulnerability
   # Each scenario will be converted into its own test file in python
-  Scenario: Cookies have Secure, HTTPOnly, and SameSite Attributes
-    # Given steps are used to describe the initial context of the
-    # system. This will run before the test and sets up the system
-    # to be in a known state. Such as, "Given I am logged in" 
-    #Given 
-
-    # And and But steps are to specify multiple Given statements for
-    # one Scenario statement. They can be used to make the statements
-    # more readable. In the test file, they will be converted back
-    # into Given statements.
-    #And 
-    #But 
+  Scenario: Cookies have Secure attribute
 
     # When steps describe an event or action, likely done by an attacker
     # Such as, "When the attacker tries to ..."
@@ -43,17 +32,27 @@ Feature: Session Management
 
     # Then steps should describe the expected
     # outcome or result of the above When statement.
-    Then They should have Secure, HTTPOnly, and SameSite attributes
+    Then the cookies attribute secure should be True
+  
+  Scenario: Cookies have HTTPOnly attribute
 
-    # And and But steps are to specify multiple Then statements for
-    # one When statement. They can be used to make the statements
-    # more readable. In the test file, they will be converted back
-    # into Then statements.
-    #And 
-    #But 
+    # When steps describe an event or action, likely done by an attacker
+    # Such as, "When the attacker tries to ..."
+    When Cookies are accessed from the browser
 
-  # More scenarios can be added. Each represents one method to test.
-  #Scenario:
+    # Then steps should describe the expected
+    # outcome or result of the above When statement.
+    Then the cookies attribute httpOnly should be True
+
+  Scenario: Cookies have SameSite attribute
+
+    # When steps describe an event or action, likely done by an attacker
+    # Such as, "When the attacker tries to ..."
+    When Cookies are accessed from the browser
+
+    # Then steps should describe the expected
+    # outcome or result of the above When statement.
+    Then the cookies attribute sameSite should be Strict or Lax
 
 # For further explanation of Gherkin and Feature files,
 # reference https://cucumber.io/docs/gherkin/reference/

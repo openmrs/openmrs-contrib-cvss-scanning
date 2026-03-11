@@ -2,6 +2,7 @@
 # This file represents one scenario in the feature file
 # For this test category
 
+import pytest
 import pytest_bdd
 import playwright
 
@@ -13,16 +14,15 @@ from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_resu
 # string by adding the relevant folder and feature file
 # 'tests/<folder>/<feature>.feature'
 @pytest_bdd.scenario('session_management.feature',
-                     'Cookies have Secure, HTTPOnly, and SameSite Attributes')
+                     'Cookies have Secure attribute')
 def test_cookies_have_attributes():
     # This function below the decorator represents what will be run
     # when the Scenario is run. The name of the function may be changed
     # but should represent the scenario being called
+    
+    # This is often left empty because the main logic is in the Given, When and Then
     pass
 
-# This given is the implementation of the first Given in the background
-# It should not be removed. It may be modified to pick the correct CVSS
-# metrics for this specific scenario.
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed():
 
@@ -237,33 +237,17 @@ def given_cvss_score_is_calculted_and_printed():
 
     display_results(cvss_score=cvss_score, severity=severity)
 
-# In the given decorator, fill out the parameter as the text of the
-# Given statement in Background or the Scenario. For each given in the
-# Background and Scenario, a new decorator should be made.
-@pytest_bdd.given('the OpenMRS 3 home page is show after login')
-def given_openMRS_page_logged_in(browser):
-    # This function represents what will be run before the When and Then
-    # steps. It is to put the system into a known state.
-    #
-    # If different givens exist, it is important to name the functions
-    # differently. This function should be renamed to reflect what the
-    # Given's functionality is.
-
-    browser.goto(O3_BASE_URL + '/login')
-
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
-@pytest_bdd.when('Cookies are accessed from the browser')
-def when():
-    # This function represents what will happen during the When step of the scenario.
-    pass
-
-# In the when decorator, fill out the parameter as the text of the
-# When statement in the Scenario. It should be copied and pasted.
-@pytest_bdd.then('They should have Secure, HTTPOnly, and SameSite attributes')
-def then():
+@pytest_bdd.then('the cookies attribute secure should be True')
+def then(context_data):
     # This function represents what will happen during the Then step of the scenario.
-    pass
+    
+    # Check cookies attributes
+    cookies = context_data["cookies"]
+    
+    for cookie in cookies:
+        assert cookie["secure"] == True
 
 # Additional then decorators and functions should be added for any
 # And and But statements in the feature file, but they should still
