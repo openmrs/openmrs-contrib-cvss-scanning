@@ -7,22 +7,9 @@ import pytest_bdd
 import playwright
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
+from tests.conftest import save_cvss_result
 
 # O3_BASE_URL represents the URL to access OpenMRS 3
-
-# In the scenario decorator, fill out the "tests/"
-# string by adding the relevant folder and feature file
-# 'tests/<folder>/<feature>.feature'
-@pytest_bdd.scenario('session_management.feature',
-                     'Cookies have SameSite attribute')
-def test_cookies_have_sameSite_attribute_set_to_Strict_or_Lax():
-    """Test if the SameSite attribute is set to Strict or Lax for each cookie"""
-    # This function below the decorator represents what will be run
-    # when the Scenario is run. The name of the function may be changed
-    # but should represent the scenario being called
-    
-    # This is often left empty because the main logic is in the Given, When and Then
-    pass
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed():
@@ -237,6 +224,22 @@ def given_cvss_score_is_calculted_and_printed():
     severity = get_cvss_severity(cvss_score)
 
     display_results(cvss_score=cvss_score, severity=severity)
+    
+    save_cvss_result("test_cookies_have_sameSite_attribute_set_to_Strict_or_Lax", cvss_score, severity)
+
+# In the scenario decorator, fill out the "tests/"
+# string by adding the relevant folder and feature file
+# 'tests/<folder>/<feature>.feature'
+@pytest_bdd.scenario('session_management.feature',
+                     'Cookies have SameSite attribute')
+def test_cookies_have_sameSite_attribute_set_to_Strict_or_Lax():
+    """Test if the SameSite attribute is set to Strict or Lax for each cookie"""
+    # This function below the decorator represents what will be run
+    # when the Scenario is run. The name of the function may be changed
+    # but should represent the scenario being called
+    
+    # This is often left empty because the main logic is in the Given, When and Then
+    pass
 
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
