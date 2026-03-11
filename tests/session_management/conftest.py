@@ -70,7 +70,7 @@ def given_openMRS_page_logged_in(new_page):
     new_page.wait_for_timeout(DEFAULT_LOAD_TIME)
 
 @pytest_bdd.when('Cookies are accessed from the browser')
-def when(new_page, context_data):
+def when_cookies_are_accessed_from_the_browser(new_page, context_data):
     # This function represents what will happen during the When step of the scenario.
     
     # get the cookies
