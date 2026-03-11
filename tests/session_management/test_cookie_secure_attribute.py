@@ -15,7 +15,8 @@ from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_resu
 # 'tests/<folder>/<feature>.feature'
 @pytest_bdd.scenario('session_management.feature',
                      'Cookies have Secure attribute')
-def test_cookies_have_attributes():
+def test_cookies_have_secure_attribute():
+    """Test that cookies have the Secure attribute"""
     # This function below the decorator represents what will be run
     # when the Scenario is run. The name of the function may be changed
     # but should represent the scenario being called

@@ -15,7 +15,8 @@ from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_resu
 # 'tests/<folder>/<feature>.feature'
 @pytest_bdd.scenario('session_management.feature',
                      'Cookies have HTTPOnly attribute')
-def test_cookies_have_attributes():
+def test_cookies_have_session_httpOnly_attribute():
+    """Test is cookies have HTTPOnly Attribute"""
     # This function below the decorator represents what will be run
     # when the Scenario is run. The name of the function may be changed
     # but should represent the scenario being called

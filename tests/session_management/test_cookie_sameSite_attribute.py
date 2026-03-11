@@ -15,7 +15,8 @@ from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_resu
 # 'tests/<folder>/<feature>.feature'
 @pytest_bdd.scenario('session_management.feature',
                      'Cookies have SameSite attribute')
-def test_cookies_have_attributes():
+def test_cookies_have_sameSite_attribute_set_to_Strict_or_Lax():
+    """Test if the SameSite attribute is set to Strict or Lax for each cookie"""
     # This function below the decorator represents what will be run
     # when the Scenario is run. The name of the function may be changed
     # but should represent the scenario being called
