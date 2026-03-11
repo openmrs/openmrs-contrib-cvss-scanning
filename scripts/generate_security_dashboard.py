@@ -152,14 +152,14 @@ def get_test_description_from_docstring(test_nodeid):
         file_path, test_name = test_nodeid.split('::')
         
         # Convert relative path to absolute
-        abs_path = Path(file_path).resolve()
-        
+        abs_path = Path("tests/" + file_path).resolve()
+                
         if not abs_path.exists():
             print(f"Warning: Test file not found: {abs_path}")
             return get_test_description_fallback(test_name)
         
         # Read the file directly and extract docstring
-        with open(abs_path, 'r') as f:
+        with open(abs_path, 'r', encoding="utf-8") as f:
             content = f.read()
         
         # Find the function definition and its docstring
@@ -227,10 +227,14 @@ def extract_cvss_score(log_content, test_name):
     # Clean test name for pattern matching
     clean_test_name = test_name.replace('test_', '').replace('_', ' ')
     
+    # Normalize slashes
+    normalized_test_name = test_name.replace("\\", "/")
+    normalized_log_content = log_content.replace("\\", "/")
+    
     # Try to find score in section related to this test
     # Look for test name followed by CVSS score within reasonable distance (2000 chars)
-    test_section_pattern = rf'{re.escape(test_name)}.*?CVSS Base Score:\s*([\d.]+)'
-    match = re.search(test_section_pattern, log_content, re.DOTALL)
+    test_section_pattern = rf'(?:tests/)?{re.escape(normalized_test_name)}.*?CVSS Base Score:\s*([\d.]+)'
+    match = re.search(test_section_pattern, normalized_log_content, re.DOTALL)
     
     if match and len(match.group(0)) < 3000:  # Ensure we didn't match too far
         return float(match.group(1))
@@ -333,8 +337,10 @@ def parse_test_results():
             duration = setup_duration + call_duration + teardown_duration
         
         # Extract CVSS score from logs
-        cvss_score = extract_cvss_score(log_content, test_name)
-        severity = get_severity_level(cvss_score)
+        #cvss_score = extract_cvss_score(log_content, test_name)
+        #severity = get_severity_level(cvss_score)
+        cvss_score = test.get('cvss_score')
+        severity = test.get('severity')
         
         # Get adaptive description from docstring
         description = get_test_description_from_docstring(test_name)
@@ -729,7 +735,7 @@ def main():
     html_content = generate_html_dashboard(results, summary)
     
     # Write dashboard
-    with open('security_dashboard.html', 'w') as f:
+    with open('security_dashboard.html', 'w', encoding="utf-8") as f:
         f.write(html_content)
     
     print("✓ Dashboard saved to security_dashboard.html")
