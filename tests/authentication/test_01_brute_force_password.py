@@ -378,8 +378,8 @@ def verify_cooldown_and_calculate_cvss(browser):
     print(f"Failed password attempts: {browser.fail_count}/{browser.num_attempts}")
     print("-"*70)
     print("Security Mechanism Test Results:")
-    print(f"  Account lockout (7 failures): {'✓ WORKING' if browser.lockout_working else '✗ NOT WORKING'}")
-    print(f"  Cooldown period (5 minutes): {'✓ WORKING' if browser.cooldown_working else '✗ NOT WORKING' if browser.lockout_working else 'SKIPPED'}")
+    print(f"  Account lockout (7 failures): {'WORKING' if browser.lockout_working else 'NOT WORKING'}")
+    print(f"  Cooldown period (5 minutes): {'WORKING' if browser.cooldown_working else 'NOT WORKING' if browser.lockout_working else 'SKIPPED'}")
     print("-"*70)
     
     
@@ -389,13 +389,13 @@ def verify_cooldown_and_calculate_cvss(browser):
     # Final assessment
     print("")
     if browser.lockout_working and browser.cooldown_working:
-        print("OVERALL ASSESSMENT: ✓ SECURE")
+        print("OVERALL ASSESSMENT: SECURE")
         print("OpenMRS properly defends against brute force password attacks")
     elif browser.lockout_working and not browser.cooldown_working:
-        print("OVERALL ASSESSMENT: ⚠️  PARTIAL")
+        print("OVERALL ASSESSMENT: PARTIAL")
         print("Lockout works but cooldown mechanism has issues")
     else:
-        print("OVERALL ASSESSMENT: ✗ VULNERABLE")
+        print("OVERALL ASSESSMENT: VULNERABLE")
         print("OpenMRS does not adequately defend against brute force attacks")
     print("="*70)
     print("")
