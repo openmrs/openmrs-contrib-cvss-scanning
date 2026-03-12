@@ -533,15 +533,10 @@ def generate_html_dashboard(grouped_results, summary):
             border-top: none;
         }}
 
-        details > summary {{
-            list-style: none;
-        }}
-        details > summary::-webkit-details-marker {{
-            display: none;
-        }}
+
 
         .subcategory-summary {{
-            display: flex;
+            display: list-item;
             align-items: center;
             justify-content: space-between;
             padding: 10px 20px;
@@ -629,9 +624,13 @@ def generate_html_dashboard(grouped_results, summary):
             color: white;
         }}
         
-        .cvss-score {{
+        .cvss-score-fail {{
             font-weight: bold;
             font-size: 18px;
+        }}
+        .cvss-score-pass {{
+            font-size: 18px;
+            color:#696969;
         }}
         
         .footer {{
@@ -850,7 +849,7 @@ def generate_html_dashboard(grouped_results, summary):
                             <td><strong>{r['name'].replace('test_', '').replace('_', ' ').title()}</strong>{param_display}</td>
                             <td>{r['description']}</td>
                             <td><span class="status-badge {status_class}">{r['status']}</span></td>
-                            <td><span class="cvss-score"><s>{cvss_display}</s></span></td>
+                            <td><span class="cvss-score-pass">{cvss_display}</span></td>
                             <td><span class="severity-badge" style="background-color: {get_severity_color("NONE")};">{r['severity']}</span></td>
                             <td>{improvement_html}</td>
                             <td>{trend_html}</td>
@@ -863,7 +862,7 @@ def generate_html_dashboard(grouped_results, summary):
                             <td><strong>{r['name'].replace('test_', '').replace('_', ' ').title()}</strong>{param_display}</td>
                             <td>{r['description']}</td>
                             <td><span class="status-badge {status_class}">{r['status']}</span></td>
-                            <td><span class="cvss-score">{cvss_display}</span></td>
+                            <td><span class="cvss-score-fail">{cvss_display}</span></td>
                             <td><span class="severity-badge" style="background-color: {severity_color};">{r['severity']}</span></td>
                             <td>{improvement_html}</td>
                             <td>{trend_html}</td>
@@ -877,7 +876,7 @@ def generate_html_dashboard(grouped_results, summary):
             html += f"""
                 <details open>
                     <summary class="subcategory-summary subcategory-fail">
-                        <span>❌ Failed Tests</span>
+                        <span>Failed Tests</span>
                         <span class="subcategory-count">{len(failed_results)} test{'s' if len(failed_results) != 1 else ''}</span>
                     </summary>
                     {TABLE_HEADER}
@@ -892,7 +891,7 @@ def generate_html_dashboard(grouped_results, summary):
             html += f"""
                 <details open>
                     <summary class="subcategory-summary subcategory-pass">
-                        <span>✅ Passed Tests</span>
+                        <span>Passed Tests</span>
                         <span class="subcategory-count">{len(passed_results)} test{'s' if len(passed_results) != 1 else ''}</span>
                     </summary>
                     {TABLE_HEADER}
