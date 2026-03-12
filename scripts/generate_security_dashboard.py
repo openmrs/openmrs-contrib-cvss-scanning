@@ -269,18 +269,16 @@ def parse_test_results():
         severity = test.get('severity')
         
         # Get adaptive description from docstring
-        description = get_test_description_from_docstring(test_name)
+        description = test.get("scenario_description", "No description available")
         
-        category = test_name.split('::')[0].replace("\\","/").split("/")[0]
-        scenario_name = test_name.split('::')[-1]
-        test_name = test_name.split('::')[0].replace("\\","/").split("/")[1]
-        test_name = test_name.replace(".py", "")
+        category = test.get("feature", "No feature found")
+        scenario = test.get("scenario", "No scenario found")
         
         results.append({
             'full_name': test_name,
             'name': test_name,
             'category': category,
-            'scenario': scenario_name,
+            'scenario': scenario,
             'description': description,
             'status': status,
             'cvss_score': cvss_score,
@@ -608,12 +606,7 @@ def generate_html_dashboard(results, summary):
         html += f"""
                     <tr>
                         <td><strong>{r['category'].replace('test_', '').replace('_', ' ').title()}</strong></td>
-                        <td>{r['name'].replace('test_', '').replace('_', ' ').title()}</td>
-                        
-                        <!--
-                        <td><strong>{r['scenario'].replace('test_', '').replace('_', ' ').title()}</strong></td>
-                        -->
-
+                        <td>{r['scenario'].replace('test_', '').replace('_', ' ').title()}</td>
                         <td>{r['description']}</td>
                         <td><span class="status-badge {status_class}">{r['status']}</span></td>
                         <td><span class="cvss-score">{cvss_display}</span></td>

@@ -25,6 +25,7 @@ Feature: Session Management
   # A scenario is a specfic method to test against the vulnerability
   # Each scenario will be converted into its own test file in python
   Scenario: Cookies have Secure attribute
+    Test whether cookies have the secure attribute enabled.
 
     # When steps describe an event or action, likely done by an attacker
     # Such as, "When the attacker tries to ..."
@@ -35,6 +36,7 @@ Feature: Session Management
     Then the cookies attribute secure should be True
   
   Scenario: Cookies have HTTPOnly attribute
+    Test whether cookies have the HTTPOnly attribute enabled.
 
     # When steps describe an event or action, likely done by an attacker
     # Such as, "When the attacker tries to ..."
@@ -45,6 +47,7 @@ Feature: Session Management
     Then the cookies attribute httpOnly should be True
 
   Scenario: Cookies have SameSite attribute
+    Test whether cookies have the SameSite attribute to Strict or Lax.
 
     # When steps describe an event or action, likely done by an attacker
     # Such as, "When the attacker tries to ..."

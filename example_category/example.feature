@@ -25,6 +25,10 @@ Feature:
   # A scenario is a specfic method to test against the vulnerability
   # Each scenario will be converted into its own test file in python
   Scenario:
+
+    # ^^^ Put the description of the scenario above. This will become
+    # the description on the dashboard
+
     # Given steps are used to describe the initial context of the
     # system. This will run before the test and sets up the system
     # to be in a known state. Such as, "Given I am logged in" 

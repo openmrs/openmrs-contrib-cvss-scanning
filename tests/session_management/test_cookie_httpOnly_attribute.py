@@ -12,7 +12,7 @@ from tests.conftest import save_cvss_result
 # O3_BASE_URL represents the URL to access OpenMRS 3
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
-def given_cvss_score_is_calculted_and_printed():
+def given_cvss_score_is_calculted_and_printed(request):
 
     # For an indepth reference to CVSS 4.0
     # https://www.first.org/cvss/v4.0/specification-document
@@ -224,7 +224,7 @@ def given_cvss_score_is_calculted_and_printed():
     severity = get_cvss_severity(cvss_score)
 
     display_results(cvss_score=cvss_score, severity=severity)
-    save_cvss_result("test_cookies_have_session_httpOnly_attribute", cvss_score, severity)
+    save_cvss_result(request, cvss_score, severity)
 
 # In the scenario decorator, fill out the "tests/"
 # string by adding the relevant folder and feature file

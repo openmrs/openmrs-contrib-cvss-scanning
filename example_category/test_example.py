@@ -14,7 +14,7 @@ from tests.conftest import save_cvss_result
 # It should not be removed. It may be modified to pick the correct CVSS
 # metrics for this specific scenario.
 @pytest_bdd.given('a CVSS score is calculated and printed')
-def given_cvss_score_is_calculted_and_printed():
+def given_cvss_score_is_calculted_and_printed(request):
 
     # For an indepth reference to CVSS 4.0
     # https://www.first.org/cvss/v4.0/specification-document
@@ -228,8 +228,7 @@ def given_cvss_score_is_calculted_and_printed():
     display_results(cvss_score=cvss_score, severity=severity)
     
     # This is required to be able to add the CVSS and Severity to the dashboard.
-    # The string must be the same name as the scenario function name
-    save_cvss_result("test_example_scenario", cvss_score, severity)
+    save_cvss_result(request, cvss_score, severity)
 
 # In the scenario decorator, fill out the "tests/"
 # string by adding the relevant folder and feature file
@@ -238,14 +237,11 @@ def given_cvss_score_is_calculted_and_printed():
 @pytest_bdd.scenario('tests/',
                         '')
 def test_example_scenario():
-    """This is the description on the dashboard for this subtest."""
     # it is required by pytest that the scenario file starts with test_
 
     # This function below the decorator represents what will be run
     # when the Scenario is run. The name of the function may be changed
     # but should represent the scenario being called.
-    
-    # This function name is the name of the subtest that will appear on the dashboard
     pass
 
 # In the given decorator, fill out the parameter as the text of the

@@ -10,6 +10,7 @@ load_dotenv()
 
 # Store CVSS results during test runs
 _cvss_results = {}
+_scenario_names = {}
 
 @pytest.fixture(scope="function")
 def new_page():
@@ -31,10 +32,17 @@ def new_page():
         context.close()
         browser.close()
 
-def save_cvss_result(test_name, cvss_score, severity):
-    _cvss_results[test_name] = {
+def save_cvss_result(request, cvss_score, severity):
+    _cvss_results[request.node.name] = {
         "cvss_score": cvss_score,
         "severity": severity
+    }
+
+def pytest_bdd_after_scenario(request, feature, scenario):
+    _scenario_names[request.node.name] = {
+        "feature": feature.name,
+        "scenario": scenario.name,
+        "scenario_description": scenario.description,
     }
 
 @pytest.hookimpl(hookwrapper=True)
@@ -57,3 +65,8 @@ def pytest_json_modifyreport(json_report):
         if test_name in _cvss_results:
             test["cvss_score"] = _cvss_results[test_name]["cvss_score"]
             test["severity"] = _cvss_results[test_name]["severity"]
+        
+        if test_name in _scenario_names:
+            test["feature"] = _scenario_names[test_name]["feature"]
+            test["scenario"] = _scenario_names[test_name]["scenario"]
+            test["scenario_description"] = _scenario_names[test_name]["scenario_description"]
