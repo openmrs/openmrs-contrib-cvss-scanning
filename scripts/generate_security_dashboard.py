@@ -373,10 +373,6 @@ def parse_test_results():
             'severity': severity,
             'duration': duration,
         })
-        #override cvss for passed tests
-        if status == 'PASS':
-            results[-1]['cvss_score']=0
-            results[-1]['severity']='NONE'
     # Group results by category, preserving insertion order
     grouped = {}
     for r in results:
