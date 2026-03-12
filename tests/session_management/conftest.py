@@ -9,33 +9,10 @@ from dotenv import load_dotenv
 
 DEFAULT_LOAD_TIME = 1000
 
-# Load environment variables
-load_dotenv()
-
 # URL configuration
 O3_BASE_URL = os.getenv('O3_BASE_URL', 'http://localhost/openmrs/spa')
 O3_LOGIN_URL = f'{O3_BASE_URL}/login'
 O3_HOME_URL = f'{O3_BASE_URL}/home'
-
-@pytest.fixture(scope="function")
-def new_page():
-    """Setup Playwright browser for testing"""
-    with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=os.getenv('CI') == True,
-            args=[
-                '--no-sandbox',
-                '--disable-dev-shm-usage',
-            ] if os.getenv('CI') else []
-        )
-        context = browser.new_context()
-        page = context.new_page()
-        page.set_default_timeout(30000)
-        
-        yield page
-        
-        context.close()
-        browser.close()
 
 @pytest.fixture
 def context_data():

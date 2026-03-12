@@ -6,22 +6,9 @@
 import pytest_bdd
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
+from tests.conftest import save_cvss_result
 
 # O3_BASE_URL represents the URL to access OpenMRS 3
-
-# In the scenario decorator, fill out the "tests/"
-# string by adding the relevant folder and feature file
-# '<feature>.feature'
-# The second string should be copied from the feature file
-@pytest_bdd.scenario('tests/',
-                     '')
-def test_scenario():
-    # it is required by pytest that the scenario file starts with test_
-
-    # This function below the decorator represents what will be run
-    # when the Scenario is run. The name of the function may be changed
-    # but should represent the scenario being called
-    pass
 
 # This given is the implementation of the first Given in the background
 # It should not be removed. It may be modified to pick the correct CVSS
@@ -239,6 +226,27 @@ def given_cvss_score_is_calculted_and_printed():
     severity = get_cvss_severity(cvss_score)
 
     display_results(cvss_score=cvss_score, severity=severity)
+    
+    # This is required to be able to add the CVSS and Severity to the dashboard.
+    # The string must be the same name as the scenario function name
+    save_cvss_result("test_example_scenario", cvss_score, severity)
+
+# In the scenario decorator, fill out the "tests/"
+# string by adding the relevant folder and feature file
+# '<feature>.feature'
+# The second string should be copied from the feature file
+@pytest_bdd.scenario('tests/',
+                        '')
+def test_example_scenario():
+    """This is the description on the dashboard for this subtest."""
+    # it is required by pytest that the scenario file starts with test_
+
+    # This function below the decorator represents what will be run
+    # when the Scenario is run. The name of the function may be changed
+    # but should represent the scenario being called.
+    
+    # This function name is the name of the subtest that will appear on the dashboard
+    pass
 
 # In the given decorator, fill out the parameter as the text of the
 # Given statement in Background or the Scenario. For each given in the

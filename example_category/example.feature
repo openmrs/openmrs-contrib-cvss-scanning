@@ -7,9 +7,7 @@
 # pytest tests/<folder>/ -v -s
 
 # such as, "Feature: SQL Injection"
-Feature: 
-
-  # Text can be add here for a description of the feature
+Feature:
 
   # Background holds any amount of Given steps to run before
   # each scenario. These should be used to consolidate shared behavior
@@ -52,7 +50,10 @@ Feature:
     # more readable. In the test file, they will be converted back
     # into Then statements.
     #And 
-    #But 
+    #But
+
+    # For any shared given/when/then, use see the conftest.py example
+    # to see how to utilize shared code.
 
   # More scenarios can be added. Each represents one method to test.
   #Scenario:
