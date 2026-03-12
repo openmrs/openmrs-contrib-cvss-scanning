@@ -213,7 +213,7 @@ def get_test_description_fallback(test_name):
     readable_name = test_name.replace('test_', '').replace('_', ' ').title()
     return f'{readable_name} security test'
 
-
+scoreCount=-1
 def extract_cvss_score(log_content, test_name):
     """
     Extract CVSS score for a specific test from logs.
@@ -224,6 +224,7 @@ def extract_cvss_score(log_content, test_name):
     2. If multiple tests ran, extract the right one
     3. Fallback to last score if only one test
     """
+
     # Clean test name for pattern matching
     clean_test_name = test_name.replace('test_', '').replace('_', ' ')
     
@@ -231,14 +232,13 @@ def extract_cvss_score(log_content, test_name):
     # Look for test name followed by CVSS score within reasonable distance (2000 chars)
     test_section_pattern = rf'{re.escape(test_name)}.*?CVSS Base Score:\s*([\d.]+)'
     match = re.search(test_section_pattern, log_content, re.DOTALL)
-    
-    if match and len(match.group(0)) < 3000:  # Ensure we didn't match too far
+    if match and len(match.group(0)) < 30:  # Ensure we didn't match too far
         return float(match.group(1))
     
     # Fallback: If only one score in entire log, use it
     pattern = r'CVSS Base Score:\s*([\d.]+)'
     matches = re.findall(pattern, log_content)
-    
+  
     if matches:
         # If only one score found, must be the right one
         if len(matches) == 1:
@@ -248,7 +248,6 @@ def extract_cvss_score(log_content, test_name):
         # Find all test names and their positions
         test_positions = [(m.start(), test_name) for m in re.finditer(re.escape(test_name), log_content)]
         score_positions = [(m.start(), float(m.group(1))) for m in re.finditer(pattern, log_content)]
-        
         # Find the score closest after this test name
         if test_positions and score_positions:
             test_pos = test_positions[0][0]
@@ -257,10 +256,12 @@ def extract_cvss_score(log_content, test_name):
                     return score
         
         # Last resort: return last score
-        return float(matches[-1])
-    
+        scoreCount+=1
+        return float(matches[scoreCount])
     return None
 
+def extract_all_cvss_scores(log_content):
+    x=1
 
 def get_severity_level(cvss_score):
     """
@@ -526,6 +527,55 @@ def generate_html_dashboard(grouped_results, summary):
         .category-body.open {{
             display: block;
         }}
+
+        /* ── details/summary subgroups ── */
+        details {{
+            border-top: 1px solid #e2e8f0;
+        }}
+
+        details:first-of-type {{
+            border-top: none;
+        }}
+
+        details > summary {{
+            list-style: none;
+        }}
+        details > summary::-webkit-details-marker {{
+            display: none;
+        }}
+
+        .subcategory-summary {{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            user-select: none;
+        }}
+
+        .subcategory-summary:hover {{
+            filter: brightness(0.96);
+        }}
+
+        .subcategory-fail {{
+            background: #fff5f5;
+            color: #c53030;
+            border-left: 4px solid #fc8181;
+        }}
+
+        .subcategory-pass {{
+            background: #f0fff4;
+            color: #276749;
+            border-left: 4px solid #68d391;
+        }}
+
+        .subcategory-count {{
+            font-size: 12px;
+            font-weight: 500;
+            color: #718096;
+        }}
         
         table {{
             width: 100%;
@@ -721,6 +771,13 @@ def generate_html_dashboard(grouped_results, summary):
                 </span>
             </div>
             <div class="category-body" id="{cat_id}">
+"""
+
+        # Split results into failed and passed
+        failed_results = [r for r in results if r['status'] == 'FAIL']
+        passed_results = [r for r in results if r['status'] == 'PASS']
+
+        TABLE_HEADER = """
                 <table>
                     <thead>
                         <tr>
@@ -737,63 +794,75 @@ def generate_html_dashboard(grouped_results, summary):
                     <tbody>
 """
 
-        for r in results:
-            status_class   = 'status-pass' if r['status'] == 'PASS' else 'status-fail'
-            
-            severity_color = get_severity_color(r['severity'])
-            cvss_display   = f"{r['cvss_score']:.1f}" if r['cvss_score'] is not None else 'N/A'
-        
+        def render_rows(rows, category):
+            out = ""
+            for r in rows:
+                status_class   = 'status-pass' if r['status'] == 'PASS' else 'status-fail'
+                severity_color = get_severity_color(r['severity'])
+                cvss_display   = f"{r['cvss_score']:.1f}" if r['cvss_score'] is not None else 'N/A'
 
-            duration = r['duration']
-            duration_display = f"{duration/60:.1f}m" if duration >= 60 else f"{duration:.2f}s"
+                duration = r['duration']
+                duration_display = f"{duration/60:.1f}m" if duration >= 60 else f"{duration:.2f}s"
 
-            improvement_html = get_improvement_html(r.get('baseline'), r.get('cvss_score'), r.get('history', []))
+                improvement_html = get_improvement_html(r.get('baseline'), r.get('cvss_score'), r.get('history', []))
 
-            # Safe DOM id — strip brackets, quotes, special chars from parameterized names
-            safe_id_name = ''.join(c if c.isalnum() else '_' for c in r['name'])
-            chart_id     = f"chart_{category}_{safe_id_name}"
+                safe_id_name = ''.join(c if c.isalnum() else '_' for c in r['name'])
+                chart_id     = f"chart_{category}_{safe_id_name}"
 
-            # Escaped parameter label shown in small text after the test name
-            param_display = (
-                f' <span style="font-size:11px; color:#718096; font-weight:400;">'
-                f'[{html_lib.escape(r["param"])}]</span>'
-                if r.get('param') else ''
-            )
+                param_display = (
+                    f' <span style="font-size:11px; color:#718096; font-weight:400;">'
+                    f'[{html_lib.escape(r["param"])}]</span>'
+                    if r.get('param') else ''
+                )
 
-            history      = r.get('history', [])
-            history_json = json.dumps(history)
-            labels_json  = json.dumps([f"Run {i+1}" for i in range(len(history))])
+                history      = r.get('history', [])
+                history_json = json.dumps(history)
+                labels_json  = json.dumps([f"Run {i+1}" for i in range(len(history))])
 
-            if len(history) >= 2:
-                trend_html = f'''<canvas id="{chart_id}" width="120" height="40"></canvas>
-                        <script>
-                        new Chart(document.getElementById("{chart_id}"), {{
-                            type: "line",
-                            data: {{
-                                labels: {labels_json},
-                                datasets: [{{
-                                    data: {history_json},
-                                    borderColor: "#667eea",
-                                    borderWidth: 2,
-                                    pointRadius: 2,
-                                    fill: false,
-                                    tension: 0.3
-                                }}]
+                if len(history) >= 2:
+                    trend_html = f'''<canvas id="{chart_id}" width="120" height="40"></canvas>
+                    <script>
+                    new Chart(document.getElementById("{chart_id}"), {{
+                        type: "line",
+                        data: {{
+                            labels: {labels_json},
+                            datasets: [{{
+                                data: {history_json},
+                                borderColor: "#667eea",
+                                borderWidth: 2,
+                                pointRadius: 2,
+                                fill: false,
+                                tension: 0.3
+                            }}]
+                        }},
+                        options: {{
+                            plugins: {{ legend: {{ display: false }} }},
+                            scales: {{
+                                x: {{ display: false }},
+                                y: {{ display: false, min: 0, max: 10 }}
                             }},
-                            options: {{
-                                plugins: {{ legend: {{ display: false }} }},
-                                scales: {{
-                                    x: {{ display: false }},
-                                    y: {{ display: false, min: 0, max: 10 }}
-                                }},
-                                animation: false
-                            }}
-                        }});
-                        </script>'''
-            else:
-                trend_html = '<span style="color: #a0aec0; font-size: 12px;">Not enough data</span>'
+                            animation: false
+                        }}
+                    }});
+                    </script>'''
+                else:
+                    trend_html = '<span style="color: #a0aec0; font-size: 12px;">Not enough data</span>'
 
-            html += f"""
+                if r['status'] == 'PASS':
+                    out += f"""
+                        <tr>
+                            <td><strong>{r['name'].replace('test_', '').replace('_', ' ').title()}</strong>{param_display}</td>
+                            <td>{r['description']}</td>
+                            <td><span class="status-badge {status_class}">{r['status']}</span></td>
+                            <td><span class="cvss-score"><s>{cvss_display}</s></span></td>
+                            <td><span class="severity-badge" style="background-color: {get_severity_color("NONE")};">{r['severity']}</span></td>
+                            <td>{improvement_html}</td>
+                            <td>{trend_html}</td>
+                            <td>{duration_display}</td>
+                        </tr>
+"""
+                else:
+                    out += f"""
                         <tr>
                             <td><strong>{r['name'].replace('test_', '').replace('_', ' ').title()}</strong>{param_display}</td>
                             <td>{r['description']}</td>
@@ -805,10 +874,39 @@ def generate_html_dashboard(grouped_results, summary):
                             <td>{duration_display}</td>
                         </tr>
 """
+            return out
 
-        html += """
+        # ── Failed sub-section ──
+        if failed_results:
+            html += f"""
+                <details open>
+                    <summary class="subcategory-summary subcategory-fail">
+                        <span>❌ Failed Tests</span>
+                        <span class="subcategory-count">{len(failed_results)} test{'s' if len(failed_results) != 1 else ''}</span>
+                    </summary>
+                    {TABLE_HEADER}
+                    {render_rows(failed_results, category)}
                     </tbody>
                 </table>
+                </details>
+"""
+
+        # ── Passed sub-section ──
+        if passed_results:
+            html += f"""
+                <details open>
+                    <summary class="subcategory-summary subcategory-pass">
+                        <span>✅ Passed Tests</span>
+                        <span class="subcategory-count">{len(passed_results)} test{'s' if len(passed_results) != 1 else ''}</span>
+                    </summary>
+                    {TABLE_HEADER}
+                    {render_rows(passed_results, category)}
+                    </tbody>
+                </table>
+                </details>
+"""
+
+        html += """
             </div>
         </div>
 """
