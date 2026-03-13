@@ -1,0 +1,12 @@
+# This file will run before anything in pytest.
+
+# This file is for shared Given, When, and Thens
+# Any time two or more features share a step, that has the same implementation (unlike CVSS)
+# then putting them here will allow pytest to read them for each test.
+# This saves time because you do not need to rewrite many functions
+
+# Fixtures may also be used here or in the tests directly. They can store data between tests
+# or between steps, like Given/When/Then. For a concrete example, see the session management tests.
+
+# As a note, Pytest hooks can be used here, but that will require futher documenation lookup.
+# As well, parameterized steps may be utilized as well to help with code reuse.
