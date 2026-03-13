@@ -24,7 +24,6 @@ Feature: Authentication
     # Each scenario should calculate and print a CVSS score.
     # Becuase it is a static value, it can be done before anything else
     Given a CVSS score is calculated and printed
-    Given the OpenMRS 3 login page is displayed
 
   # A scenario is a specfic method to test against the vulnerability
   # Each scenario will be converted into its own test file in python
@@ -32,6 +31,8 @@ Feature: Authentication
     Tests account lockout and cooldown after 7 failed login attempts with known username "admin". Uses CVSS 4.0 with dynamic scoring based on observed security mechanisms.
     # ^^^ Put the description of the scenario above. This will become
     # the description on the dashboard
+
+    Given the OpenMRS 3 login page is displayed
 
     # When steps describe an event or action, likely done by an attacker
     # Such as, "When the attacker tries to ..."

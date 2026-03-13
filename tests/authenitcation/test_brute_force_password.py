@@ -3,10 +3,14 @@
 # For this test category
 # This file NEEDS to start with test_*.py
 
+import pytest
 import pytest_bdd
+import string
+import random
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 from tests.conftest import save_cvss_result
+from tests.authenitcation.conftest import random_password
 
 # O3_BASE_URL represents the URL to access OpenMRS 3
 
@@ -244,29 +248,72 @@ def test_brute_force_password():
     # but should represent the scenario being called.
     pass
 
+def login(new_page, username, password):
+    new_page.wait_for_selector("#username")
+    new_page.fill("#username", username)
+    new_page.keyboard.press("Enter")
+    new_page.wait_for_selector("#password")
+    new_page.fill("#password", password)
+    new_page.keyboard.press("Enter")
+
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
 @pytest_bdd.when('the attacker tries to login with known username admin and random passwords')
-def when_attacker_tries_to_log_in_with_known_username():
+def when_attacker_tries_to_log_in_with_known_username(new_page, login_data):
     # This function represents what will happen during the When step of the scenario.
-    pass
+    
+    # OpenMRS password requirements
+    # Minimum 8 characters
+    # Must contain upper and lower case letters
+    # Must contain at least 1 number
+    
+    login_data["logged_in"] = False
+    
+    passwords = []
+    
+    for _ in range(0,7):
+        passwords.append(random_password())
+        
+    for password in passwords:
+        print("Trying...",password)
+                
+        # try passwords
+        login(new_page, "admin", password)
+        new_page.wait_for_timeout(1000)
+            
+        # if on page /login/location
+        if (new_page.url != (O3_BASE_URL + '/login')):
+            # password worked
+            login_data["logged_in"] = True
+            break
 
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
 @pytest_bdd.then('check after 7 incorrect attempts')
-def then_check_after_seven_attempts():
+def then_check_after_seven_attempts(login_data):
     # This function represents what will happen during the Then step of the scenario.
-    pass
+    assert login_data["logged_in"] == False
 
 @pytest_bdd.then('verify account lockout triggers after 7 failures')
-def then_verify_account_lockout():
+def then_verify_account_lockout(new_page):
     # This function represents what will happen during the Then step of the scenario.
-    pass
+    
+    # go to login page
+    new_page.goto(O3_BASE_URL + '/login')
+    
+    # assert correct credentials do not work
+    login(new_page, "admin", "Admin123")
+    
+    assert new_page.url == O3_BASE_URL + '/login'
 
 @pytest_bdd.then('verify account becomes accessible after 5-minute cooldown period')
-def then_verify_account_accessible():
+def then_verify_account_accessible(new_page):
     # This function represents what will happen during the Then step of the scenario.
-    pass
+    new_page.wait_for_timeout(5 * 60 * 1000 + 500)
+    
+    login(new_page, "admin", "Admin123")
+    
+    assert new_page.url != O3_BASE_URL + '/login'
 
 # Additional then decorators and functions should be added for any
 # And and But statements in the feature file, but they should still
