@@ -1,4 +1,4 @@
-Feature: O3 Authentication Security Testing
+Feature: Authentication
   As a security auditor
   I want to test OpenMRS 3 against brute force authentication attacks on both frontend and API layers
   So that I can assess whether defenses are consistently applied across attack surfaces
