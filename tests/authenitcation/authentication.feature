@@ -43,22 +43,22 @@ Feature: Authentication
     And verify account lockout triggers after 7 failures
     And verify account becomes accessible after 5-minute cooldown period
 
-  # Scenario: Brute force password attack via REST API with known admin username
-  #   Tests account lockout and cooldown after 7 failed API login attempts with known
-  #   username "admin". Uses CVSS 4.0 with dynamic scoring based on observed API-layer
-  #   security mechanisms. Compares defense consistency with frontend brute force test.
-  #   # ^^^ Put the description of the scenario above. This will become
-  #   # the description on the dashboard
+  Scenario: Brute force password attack via REST API with known admin username
+    Tests account lockout and cooldown after 7 failed API login attempts with known
+    username "admin". Uses CVSS 4.0 with dynamic scoring based on observed API-layer
+    security mechanisms. Compares defense consistency with frontend brute force test.
+    # ^^^ Put the description of the scenario above. This will become
+    # the description on the dashboard
 
-  #   # When steps describe an event or action, likely done by an attacker
-  #   # Such as, "When the attacker tries to ..."
-  #   When the attacker sends 7 API login requests with known username "admin" and random passwords
+    # When steps describe an event or action, likely done by an attacker
+    # Such as, "When the attacker tries to ..."
+    When the attacker sends 7 API login requests with known username admin and random passwords
 
-  #   # Then steps should describe the expected
-  #   # outcome or result of the above When statement.
-  #   Then check after 7 incorrect attempts
-  #   And verify API account lockout triggers after 7 failures
-  #   And verify API account becomes accessible after 5-minute cooldown period
+    # Then steps should describe the expected
+    # outcome or result of the above When statement.
+    Then check after 7 incorrect attempts
+    And verify API account lockout triggers after 7 failures
+    And verify API account becomes accessible after 5-minute cooldown period
 
 # For further explanation of Gherkin and Feature files,
 # reference https://cucumber.io/docs/gherkin/reference/

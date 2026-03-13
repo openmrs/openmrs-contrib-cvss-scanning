@@ -1,3 +1,7 @@
+import pytest_bdd
+
+from tests.utils import O3_BASE_URL
+
 # This file will run before anything in pytest.
 
 # This file is for shared Given, When, and Thens
@@ -10,3 +14,8 @@
 
 # As a note, Pytest hooks can be used here, but that will require futher documenation lookup.
 # As well, parameterized steps may be utilized as well to help with code reuse.
+
+@pytest_bdd.given('the OpenMRS 3 login page is displayed')
+def given_login_page_shown(new_page):
+    new_page.goto(O3_BASE_URL + './login')
+    new_page.wait_for_url(O3_BASE_URL + './login')
