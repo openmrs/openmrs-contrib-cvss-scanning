@@ -235,8 +235,8 @@ def given_cvss_score_is_calculted_and_printed(request):
 # '<feature>.feature'
 # The second string should be copied from the feature file
 @pytest_bdd.scenario('session_management.feature',
-                        'Session cookie should change when logging out')
-def test_session_cookie_changed():
+                        'Session cookie hijacked')
+def test_session_cookie_highjacked():
     # it is required by pytest that the scenario file starts with test_
 
     # This function below the decorator represents what will be run
@@ -244,22 +244,11 @@ def test_session_cookie_changed():
     # but should represent the scenario being called.
     pass
 
-# In the given decorator, fill out the parameter as the text of the
-# Given statement in Background or the Scenario. For each given in the
-# Background and Scenario, a new decorator should be made.
-
-# In the when decorator, fill out the parameter as the text of the
-# When statement in the Scenario. It should be copied and pasted.
-@pytest_bdd.then('the cookies expire and new cookies with different IDs are generated')
-def then(new_page, context_data):
-    # This function represents what will happen during the Then step of the scenario.
-    new_cookies = new_page.context.cookies()
-    old_cookies = context_data["cookies"]
-    
-    for new_cookie in new_cookies:
-        for old_cookie in old_cookies:
-            if (new_cookie["name"] == old_cookie["name"]):
-                assert new_cookie["value"] != old_cookie["value"]
+@pytest_bdd.when('an attacker injects an old cookie')
+def when_url_is_directed_at_spa(new_page, context_data):
+    # This function represents what will happen during the When step of the scenario.
+    new_page.context.clear_cookies()
+    new_page.context.add_cookies(context_data["cookies"])
 
 # Additional then decorators and functions should be added for any
 # And and But statements in the feature file, but they should still
