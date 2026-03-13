@@ -129,7 +129,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of confidentiality.
     
-    VC = BaseMetrics.Confidentiality.VulnerableSystem.NONE
+    VC = BaseMetrics.Confidentiality.VulnerableSystem.HIGH
 
     # Impact to the Subsequent System (SC) / .SubsequentSystem
     #   High        There is a total loss of confidentiality, resulting 
@@ -162,7 +162,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of integrity.
     
-    VI = BaseMetrics.Integrity.VulnerableSystem.NONE
+    VI = BaseMetrics.Integrity.VulnerableSystem.HIGH
 
     # Impact to the Subsequent System (SI) / .SubsequentSystem
     #   High        There is a total loss of integrity, or a complete 
@@ -199,7 +199,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no impact to availability.
     
-    VA = BaseMetrics.Availability.VulnerableSystem.NONE
+    VA = BaseMetrics.Availability.VulnerableSystem.HIGH
 
     # Impact to the Subsequent System (SA) / .SubsequentSystem
     #   High        There is a total loss of availability, resulting in 
