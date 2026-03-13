@@ -165,7 +165,7 @@ def perform_attack_and_calculate_cvss(browser, num, attack_name):
     def random_password(length=10):
         """Generate random password"""
         letters = string.ascii_letters + string.digits
-        return ''.join(random.choice(letters) for i in range(length))
+        return ''.join(random.choice(letters) for _ in range(length))
 
     wrong_passwords = [random_password() for _ in range(num)]
 

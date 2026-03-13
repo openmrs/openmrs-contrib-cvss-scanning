@@ -1,4 +1,7 @@
+import pytest
 import pytest_bdd
+import string
+import random
 
 from tests.utils import O3_BASE_URL
 
@@ -15,7 +18,16 @@ from tests.utils import O3_BASE_URL
 # As a note, Pytest hooks can be used here, but that will require futher documenation lookup.
 # As well, parameterized steps may be utilized as well to help with code reuse.
 
+@pytest.fixture
+def login_data():
+    return {}
+
 @pytest_bdd.given('the OpenMRS 3 login page is displayed')
 def given_login_page_shown(new_page):
-    new_page.goto(O3_BASE_URL + './login')
-    new_page.wait_for_url(O3_BASE_URL + './login')
+    new_page.goto(O3_BASE_URL + '/login')
+    new_page.wait_for_url(O3_BASE_URL + '/login')
+
+# generate random passwords
+def random_password(length=8):
+    letters = string.ascii_letters + string.digits
+    return ''.join(random.choice(letters) for _ in range(length))
