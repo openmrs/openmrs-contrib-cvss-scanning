@@ -7,6 +7,8 @@ from enum import Enum
 
 # URLS
 O3_BASE_URL = os.getenv('O3_BASE_URL', 'http://localhost/openmrs/spa')
+O3_LOGIN_URL = f'{O3_BASE_URL}/login'
+O3_HOME_URL = f'{O3_BASE_URL}/home'
 
 # Metrics Enums
 

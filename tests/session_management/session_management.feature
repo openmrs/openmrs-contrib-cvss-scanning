@@ -57,6 +57,22 @@ Feature: Session Management
     # outcome or result of the above When statement.
     Then the cookies attribute sameSite should be Strict or Lax
 
+  Scenario: Session cookie should change when logging out
+    After a user logs out of a system, the cookie holding information
+    about the login should expire and a new one should be created
+
+    Given cookie information is saved
+    And the user logs out of their account
+
+    # When steps describe an event or action, likely done by an attacker
+    # Such as, "When the attacker tries to ..."
+    When the url is directed at /spa
+
+    # Then steps should describe the expected
+    # outcome or result of the above When statement.
+    Then the cookies expire and new cookies with different IDs are generated
+    And the login page should be shown
+
 # For further explanation of Gherkin and Feature files,
 # reference https://cucumber.io/docs/gherkin/reference/
 # Keep in mind that some of the definitions in the

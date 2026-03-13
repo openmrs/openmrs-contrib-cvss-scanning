@@ -5,7 +5,7 @@
 
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL, O3_LOGIN_URL
 from tests.conftest import save_cvss_result
 
 # O3_BASE_URL represents the URL to access OpenMRS 3
@@ -95,7 +95,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #               conscious interactions with the vulnerable system 
     #               and the attacker’s payload
 
-    UI = BaseMetrics.UserInteraction.NONE
+    UI = BaseMetrics.UserInteraction.PASSIVE
 
     # Impact Metrics
     # The Impact metrics capture the effects of a successfully 
@@ -129,7 +129,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of confidentiality.
     
-    VC = BaseMetrics.Confidentiality.VulnerableSystem.NONE
+    VC = BaseMetrics.Confidentiality.VulnerableSystem.HIGH
 
     # Impact to the Subsequent System (SC) / .SubsequentSystem
     #   High        There is a total loss of confidentiality, resulting 
@@ -144,7 +144,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of confidentiality.
 
-    SC = BaseMetrics.Confidentiality.SubsequentSystem.NONE
+    SC = BaseMetrics.Confidentiality.SubsequentSystem.HIGH
 
     # Integrity (VI/SI) / BaseMetrics.Integrity
     # This metric measures the impact to integrity of a successfully 
@@ -162,7 +162,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of integrity.
     
-    VI = BaseMetrics.Integrity.VulnerableSystem.NONE
+    VI = BaseMetrics.Integrity.VulnerableSystem.HIGH
 
     # Impact to the Subsequent System (SI) / .SubsequentSystem
     #   High        There is a total loss of integrity, or a complete 
@@ -175,7 +175,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of integrity.
 
-    SI = BaseMetrics.Integrity.SubsequentSystem.NONE
+    SI = BaseMetrics.Integrity.SubsequentSystem.HIGH
 
     # Availability (VA/SA) BaseMetrics.Availability
     # This metric measures the impact to the availability of the 
@@ -226,7 +226,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     severity = get_cvss_severity(cvss_score)
 
     display_results(cvss_score=cvss_score, severity=severity)
-    
+        
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
@@ -234,8 +234,8 @@ def given_cvss_score_is_calculted_and_printed(request):
 # string by adding the relevant folder and feature file
 # '<feature>.feature'
 # The second string should be copied from the feature file
-@pytest_bdd.scenario('example.feature',
-                        '')
+@pytest_bdd.scenario('session_management.feature',
+                        'Session cookie should change when logging out')
 def test_example_scenario():
     # it is required by pytest that the scenario file starts with test_
 
@@ -247,29 +247,52 @@ def test_example_scenario():
 # In the given decorator, fill out the parameter as the text of the
 # Given statement in Background or the Scenario. For each given in the
 # Background and Scenario, a new decorator should be made.
-@pytest_bdd.given('')
-def given():
+@pytest_bdd.given('cookie information is saved')
+def given_cookie_information_is_saved(new_page, context_data):
     # This function represents what will be run before the When and Then
     # steps. It is to put the system into a known state.
     #
     # If different givens exist, it is important to name the functions
     # differently. This function should be renamed to reflect what the
     # Given's functionality is.
-    pass
+    
+    cookies = new_page.context.cookies()
+    context_data["cookies"] = cookies
 
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
-@pytest_bdd.when('')
-def when():
+@pytest_bdd.given('the user logs out of their account')
+def given_user_logs_out(new_page):
     # This function represents what will happen during the When step of the scenario.
-    pass
+    new_page.wait_for_timeout(1000)
+    new_page.get_by_role("button", name="My Account").click()
+    new_page.wait_for_timeout(1000)
+    new_page.get_by_role("button", name="Logout").click()
+
+@pytest_bdd.when('the url is directed at /spa')
+def when_url_is_directed_at_spa(new_page):
+    # This function represents what will happen during the When step of the scenario.
+    new_page.wait_for_url(O3_LOGIN_URL)
+    new_page.goto(O3_BASE_URL)
 
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
-@pytest_bdd.then('')
-def then():
+@pytest_bdd.then('the cookies expire and new cookies with different IDs are generated')
+def then(new_page, context_data):
     # This function represents what will happen during the Then step of the scenario.
-    pass
+    new_cookies = new_page.context.cookies()
+    old_cookies = context_data["cookies"]
+    
+    for new_cookie in new_cookies:
+        for old_cookie in old_cookies:
+            if (new_cookie["name"] == old_cookie["name"]):
+                assert new_cookie["value"] != old_cookie["value"]
+
+@pytest_bdd.then('the login page should be shown')
+def then(new_page):
+    # This function represents what will happen during the Then step of the scenario.
+    new_page.wait_for_url(O3_LOGIN_URL)
+    assert new_page.url == O3_LOGIN_URL
 
 # Additional then decorators and functions should be added for any
 # And and But statements in the feature file, but they should still
