@@ -235,8 +235,8 @@ def given_cvss_score_is_calculted_and_printed(request):
 # '<feature>.feature'
 # The second string should be copied from the feature file
 @pytest_bdd.scenario('authentication.feature',
-                        'Brute force password attack with known admin username')
-def test_brute_force_password():
+                        'Brute force password attack via REST API with known admin username')
+def test_brute_force_password_api():
     # it is required by pytest that the scenario file starts with test_
 
     # This function below the decorator represents what will be run
@@ -246,25 +246,25 @@ def test_brute_force_password():
 
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
-@pytest_bdd.when('the attacker tries to login with known username admin and random passwords')
-def when_attacker_tries_to_log_in_with_known_username():
+@pytest_bdd.when('the attacker sends 7 API login requests with known username admin and random passwords')
+def when_attacker_sends_seven_api_login():
     # This function represents what will happen during the When step of the scenario.
     pass
 
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
 @pytest_bdd.then('check after 7 incorrect attempts')
-def then_check_after_seven_attempts():
+def then_check_attempts():
     # This function represents what will happen during the Then step of the scenario.
     pass
 
-@pytest_bdd.then('verify account lockout triggers after 7 failures')
-def then_verify_account_lockout():
+@pytest_bdd.then('verify API account lockout triggers after 7 failures')
+def then_verify_api_lockout():
     # This function represents what will happen during the Then step of the scenario.
     pass
 
-@pytest_bdd.then('verify account becomes accessible after 5-minute cooldown period')
-def then_verify_account_accessible():
+@pytest_bdd.then('verify API account becomes accessible after 5-minute cooldown period')
+def then_verify_api_accessible():
     # This function represents what will happen during the Then step of the scenario.
     pass
 
