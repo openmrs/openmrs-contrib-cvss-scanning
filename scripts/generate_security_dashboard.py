@@ -381,18 +381,9 @@ def parse_test_results():
     return grouped, json_report.get('summary', {})
 
 
-def generate_html_dashboard(grouped_results, summary):
-    """Generate HTML dashboard with CVSS scores, grouped by test directory"""
-    
-    est = timezone(timedelta(hours=-5))
-    now = datetime.now(est).strftime('%Y-%m-%d %H:%M:%S EST')
-    
-    # Flatten all results for duration calculation
-    all_results = [r for group in grouped_results.values() for r in group]
-    total_duration_sec = sum(r['duration'] for r in all_results)
-    total_duration_min = total_duration_sec / 60
-    
-    html = f"""<!DOCTYPE html>
+#generate the header for the dashboard, including css style, chart script, and js helper functions for test category id closing
+def generate_dashboard_html_header():
+    return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -404,12 +395,16 @@ def generate_html_dashboard(grouped_results, summary):
             padding: 0;
             box-sizing: border-box;
         }}
-        
+        html {{
+            height:100%
+        }}
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            width:100%
+            height:100%;
         }}
         
         .container {{
@@ -688,18 +683,59 @@ def generate_html_dashboard(grouped_results, summary):
             color: white;
             border-bottom: 1px solid #3a4a5a;
         }}
+        #tabs_div{{
+            height:100%;
+        }}
+        #tabs_div>div{{
+            visibility: hidden;
+            display:none;
+        }}
+        #tabs_div>div.visible{{
+            visibility: visible;
+            display:block;
+            height:100%;
+        }}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
+    <script>
+        function toggleCategory(id) {{
+            const body    = document.getElementById(id);
+            const chevron = document.getElementById('chevron_' + id);
+            const isOpen  = body.classList.toggle('open');
+            chevron.classList.toggle('open', isOpen);
+        }}
+    </script>
+    <script>
+        function showDiv(id){{
+            const divs = document.querySelectorAll("#tabs_div>div");
+            divs.forEach(d=>{{d.classList.remove("visible")}});
+            document.getElementById(id).classList.add("visible");
+        }}
+    </script>
+</head>"""
+
+#Main header with time of last update
+def generate_dashboard_page_header():
+    est = timezone(timedelta(hours=-5))
+    now = datetime.now(est).strftime('%Y-%m-%d %H:%M:%S EST')
+    
+    return f"""      <div class="header">
             <h1>🔒 OpenMRS O3 Security Dashboard</h1>
             <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
             <p style="margin-top: 5px; font-size: 12px;">Last Updated: {now}</p>
         </div>
-        
-        <div class="stats">
+"""
+
+#Vulnerability Testing Tab
+def generate_dashboard_vulnerability_testing(grouped_results, summary):
+    est = timezone(timedelta(hours=-5))
+    now = datetime.now(est).strftime('%Y-%m-%d %H:%M:%S EST')
+    
+    # Flatten all results for duration calculation
+    all_results = [r for group in grouped_results.values() for r in group]
+    total_duration_sec = sum(r['duration'] for r in all_results)
+    total_duration_min = total_duration_sec / 60
+    html = f"""     <div class="stats">
             <div class="stat-card">
                 <h3>Total Tests</h3>
                 <p>{summary.get('total', 0)}</p>
@@ -716,10 +752,8 @@ def generate_html_dashboard(grouped_results, summary):
                 <h3>Duration</h3>
                 <p>{total_duration_min:.1f}m</p>
             </div>
-        </div>
-"""
-
-    # ── One card per category ──────────────────────────────────────────────
+        </div> """
+            #One card per category 
     for category, results in grouped_results.items():
         cat_total  = len(results)
         cat_passed = sum(1 for r in results if r['status'] == 'PASS')
@@ -905,6 +939,38 @@ def generate_html_dashboard(grouped_results, summary):
             </div>
         </div>
 """
+    return html
+
+#Buttons to select tabs
+def generate_dashboard_tabs_buttons():
+    html = """  <div class = "tabs_buttons">
+        <button onclick='showDiv("vulnerability_testing")'>Vulnerability Tests</button>
+        <button onclick='showDiv("dependency_scanning")'>Dependency Scanning</button>
+    </div>    
+"""
+
+    return html
+def generate_html_dashboard(grouped_results, summary):
+    """Generate HTML dashboard with CVSS scores, grouped by test directory"""
+    
+    #generate the header for the dashboard, including css style
+    html = generate_dashboard_html_header()
+    html += f"""
+<body>
+    {generate_dashboard_page_header()}
+    {generate_dashboard_tabs_buttons()}
+    <div id="tabs_div">
+        <div id="vulnerability_testing" onload = "showDiv("vulnerability_testing")">
+            {generate_dashboard_vulnerability_testing(grouped_results, summary)}
+        </div>
+        <div id="dependency_scanning">
+            <iframe id = "dependency_frame" src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/" style="flex-grow:1; border: none; width:100%;height:95vh;">
+            </iframe>
+        </div>
+    </div>
+"""
+    
+
 
     html += """
         <div class="footer">
@@ -913,15 +979,6 @@ def generate_html_dashboard(grouped_results, summary):
             <a href="https://github.com/openmrs/openmrs-contrib-cvss-scanning" target="_blank">GitHub Repository</a></p>
         </div>
     </div>
-
-    <script>
-        function toggleCategory(id) {
-            const body    = document.getElementById(id);
-            const chevron = document.getElementById('chevron_' + id);
-            const isOpen  = body.classList.toggle('open');
-            chevron.classList.toggle('open', isOpen);
-        }
-    </script>
 </body>
 </html>
 """
@@ -943,19 +1000,6 @@ def main():
     results, summary = parse_test_results()
 
     print(f"Found {len(results)} test(s)")
-    #for r in results:
-        #cvss_str = f"CVSS {r['cvss_score']:.1f}" if r['cvss_score'] else "No CVSS"
-        #duration_str = f"{r['duration']:.1f}s" if r['duration'] else "0s"
-        #print(f"  - {r['name']}: {r['status']} ({cvss_str}, {duration_str})")
-        #print(f"    Description: {r['description'][:80]}...")
-        
-        # Save to DB (sets baseline on first run)
-        #save_test_result(r['name'], r['cvss_score'], r['status'])
-
-    # Enrich results with baseline, improvement, and history from DB
-   # for r in results:
-        #r['baseline'] = get_baseline(r['name'])
-        #r['history'] = get_history(r['name'])
 
     print("")
     print("Generating HTML dashboard...")
