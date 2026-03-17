@@ -630,6 +630,27 @@ def generate_dashboard_html_header():
             display:block;
             height:100%;
         }}
+        .tabs_buttons{{
+            width:100%;
+            display:flex;
+            justify-content: center;
+            padding-bottom:20px;
+        }}
+        .tabs_buttons button{{
+            border-radius: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color:white;
+            color:black;
+            width:50%;
+            height:50px;
+        }}
+        .tabs_buttons button:hover{{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color:#edf2f7;
+            color:black;
+            width:50%;
+            height:50px;
+        }}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script>
@@ -658,8 +679,7 @@ def generate_dashboard_page_header():
             <h1>🔒 OpenMRS O3 Security Dashboard</h1>
             <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
             <p style="margin-top: 5px; font-size: 12px;">Last Updated: {now}</p>
-        </div>
-"""
+        </div>\n"""
 
 #Vulnerability Testing Tab
 def generate_dashboard_vulnerability_testing(grouped_results, summary):
@@ -872,8 +892,8 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
 #Buttons to select tabs
 def generate_dashboard_tabs_buttons():
     html = """  <div class = "tabs_buttons">
-        <button onclick='showDiv("vulnerability_testing")'>Vulnerability Tests</button>
-        <button onclick='showDiv("dependency_scanning")'>Dependency Scanning</button>
+        <button style="margin-right:5px;" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
+        <button style="margin-left:5px;" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
     </div>\n"""
     return html
 
