@@ -2,7 +2,7 @@ import re
 import pytest
 from pytest_bdd import scenarios, given, when, then, parsers
 from playwright.sync_api import Page, expect
-from test_utils.utils import display_results,get_cvss_severity
+from tests.utils import display_results,get_cvss_severity
 
 O3_LOGIN_URL = 'http://0.0.0.0:80/openmrs/spa/login'
 O3_WELCOME_URL = 'http://0.0.0.0:80/openmrs/spa/login/location'

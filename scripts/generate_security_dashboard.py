@@ -11,6 +11,7 @@ import re
 import sys
 import sqlite3
 import os
+import html as html_lib
 from datetime import datetime
 from datetime import timezone, timedelta
 from pathlib import Path
@@ -225,10 +226,18 @@ def get_severity_color(severity):
     }
     return colors.get(severity, '#6c757d')
 
-
-import html as html_lib
-
-import html as html_lib
+def get_cvss_severity(cvss_score):
+    # Determine severity rating
+    if cvss_score >= 9.0:
+        severity = "CRITICAL"
+    elif cvss_score >= 7.0:
+        severity = "HIGH"
+    elif cvss_score >= 4.0:
+        severity = "MEDIUM"
+    else:
+        severity = "LOW"
+    
+    return severity
 
 def parse_test_results():
     """Parse pytest JSON report and test output log"""
@@ -699,8 +708,9 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
         ]
         max_cvss = max(failed_cvss_scores) if failed_cvss_scores else None
         if max_cvss is not None:
-            max_severity = get_severity_level(max_cvss)
-            max_severity_color = get_severity_color(max_severity)
+            print("max cvss:", max_cvss)
+            max_severity = max_cvss
+            max_severity_color = get_severity_color(get_cvss_severity(max_severity))
             cvss_badge_html = (
                 f'<span style="background-color:{max_severity_color}; color:white; '
                 f'font-weight:600; font-size:12px; padding:3px 10px; '
@@ -725,9 +735,7 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                     <span class="chevron" id="chevron_{cat_id}">▼</span>
                 </span>
             </div>
-            <div class="category-body" id="{cat_id}">
-"""
-
+            <div class="category-body" id="{cat_id}">\n"""
         # Split results into failed and passed
         failed_results = [r for r in results if r['status'] == 'FAIL']
         passed_results = [r for r in results if r['status'] == 'PASS']
@@ -746,8 +754,7 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                             <th>Duration</th>
                         </tr>
                     </thead>
-                    <tbody>
-"""
+                    <tbody>\n"""
 
         def render_rows(rows, category):
             out = ""
@@ -814,8 +821,7 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                             <td>{improvement_html}</td>
                             <td>{trend_html}</td>
                             <td>{duration_display}</td>
-                        </tr>
-"""
+                        </tr>\n"""
                 else:
                     out += f"""
                         <tr>
@@ -827,8 +833,7 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                             <td>{improvement_html}</td>
                             <td>{trend_html}</td>
                             <td>{duration_display}</td>
-                        </tr>
-"""
+                        </tr>\n"""
             return out
 
         # ── Failed sub-section ──
@@ -843,8 +848,7 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                     {render_rows(failed_results, category)}
                     </tbody>
                 </table>
-                </details>
-"""
+                </details>\n"""
 
         # ── Passed sub-section ──
         if passed_results:
@@ -858,13 +862,11 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                     {render_rows(passed_results, category)}
                     </tbody>
                 </table>
-                </details>
-"""
+                </details>\n"""
 
         html += """
             </div>
-        </div>
-"""
+        </div>\n"""
     return html
 
 #Buttons to select tabs
@@ -872,10 +874,9 @@ def generate_dashboard_tabs_buttons():
     html = """  <div class = "tabs_buttons">
         <button onclick='showDiv("vulnerability_testing")'>Vulnerability Tests</button>
         <button onclick='showDiv("dependency_scanning")'>Dependency Scanning</button>
-    </div>    
-"""
-
+    </div>\n"""
     return html
+
 def generate_html_dashboard(grouped_results, summary):
     """Generate HTML dashboard with CVSS scores, grouped by test directory"""
     
@@ -893,11 +894,7 @@ def generate_html_dashboard(grouped_results, summary):
             <iframe id = "dependency_frame" src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/" style="flex-grow:1; border: none; width:100%;height:95vh;">
             </iframe>
         </div>
-    </div>
-"""
-    
-
-
+    </div>\n"""
     html += """
         <div class="footer">
             <p>OpenMRS O3 Continuous Security Testing</p>
@@ -906,8 +903,7 @@ def generate_html_dashboard(grouped_results, summary):
         </div>
     </div>
 </body>
-</html>
-"""
+</html>\n"""
 
     return html
 
@@ -924,7 +920,6 @@ def main():
 
     print("Parsing test results...")
     results, summary = parse_test_results()
-
     print(f"Found {len(results)} test(s)")
 
     print("")
