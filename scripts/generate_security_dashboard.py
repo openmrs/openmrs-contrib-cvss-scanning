@@ -903,7 +903,7 @@ def generate_html_dashboard(grouped_results, summary):
     #generate the header for the dashboard, including css style
     html = generate_dashboard_html_header()
     html += f"""
-<body>
+<body  onload='showDiv("vulnerability_testing")'>
     {generate_dashboard_page_header()}
     {generate_dashboard_tabs_buttons()}
     <div id="tabs_div">
