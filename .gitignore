@@ -8,6 +8,7 @@ report.json
 security_dashboard.html
 debug_output.txt
 security_results.json
+test_results.db
 
 # IntelliJ IDEA
 .idea/

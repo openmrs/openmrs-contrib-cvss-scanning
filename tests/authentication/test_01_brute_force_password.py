@@ -3,7 +3,7 @@ import string
 import random
 import time
 
-from test_utils.utils import calculate_cvss_v4_score, get_cvss_severity, BaseMetrics, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 
 O3_LOGIN_URL = f'{O3_BASE_URL}/login'
 
@@ -378,24 +378,26 @@ def verify_cooldown_and_calculate_cvss(browser):
     print(f"Failed password attempts: {browser.fail_count}/{browser.num_attempts}")
     print("-"*70)
     print("Security Mechanism Test Results:")
-    print(f"  Account lockout (7 failures): {'✓ WORKING' if browser.lockout_working else '✗ NOT WORKING'}")
-    print(f"  Cooldown period (5 minutes): {'✓ WORKING' if browser.cooldown_working else '✗ NOT WORKING' if browser.lockout_working else 'SKIPPED'}")
+    print(f"  Account lockout (7 failures): {'WORKING' if browser.lockout_working else 'NOT WORKING'}")
+    print(f"  Cooldown period (5 minutes): {'WORKING' if browser.cooldown_working else 'NOT WORKING' if browser.lockout_working else 'SKIPPED'}")
     print("-"*70)
-    print(f"CVSS Base Score: {cvss_score}")
-    print(f"Severity Rating: {severity}")
+    
+    
+    #REQUIRED
+    display_results(cvss_score=cvss_score, severity=severity)
     
     # Final assessment
     print("")
     if browser.lockout_working and browser.cooldown_working:
-        print("OVERALL ASSESSMENT: ✓ SECURE")
+        print("OVERALL ASSESSMENT: SECURE")
         print("OpenMRS properly defends against brute force password attacks")
         print("TEST STATUS:PASSED")
     elif browser.lockout_working and not browser.cooldown_working:
-        print("OVERALL ASSESSMENT: ⚠️  PARTIAL")
+        print("OVERALL ASSESSMENT: PARTIAL")
         print("Lockout works but cooldown mechanism has issues")
         print("TEST STATUS:FAILED")
     else:
-        print("OVERALL ASSESSMENT: ✗ VULNERABLE")
+        print("OVERALL ASSESSMENT: VULNERABLE")
         print("OpenMRS does not adequately defend against brute force attacks")
         print("TEST STATUS:FAILED")
     print("="*70)

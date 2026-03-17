@@ -152,14 +152,14 @@ def get_test_description_from_docstring(test_nodeid):
         file_path, test_name = test_nodeid.split('::')
         
         # Convert relative path to absolute
-        abs_path = Path(file_path).resolve()
-        
+        abs_path = Path("tests/" + file_path).resolve()
+                
         if not abs_path.exists():
             print(f"Warning: Test file not found: {abs_path}")
             return get_test_description_fallback(test_name)
         
         # Read the file directly and extract docstring
-        with open(abs_path, 'r') as f:
+        with open(abs_path, 'r', encoding="utf-8") as f:
             content = f.read()
         
         # Find the function definition and its docstring
@@ -213,76 +213,6 @@ def get_test_description_fallback(test_name):
     readable_name = test_name.replace('test_', '').replace('_', ' ').title()
     return f'{readable_name} security test'
 
-scoreCount=-1
-def extract_cvss_score(log_content, test_name):
-    """
-    Extract CVSS score for a specific test from logs.
-    Handles both CVSS 3.1 and CVSS 4.0 formats.
-    
-    Strategy:
-    1. Try to find score near the test name
-    2. If multiple tests ran, extract the right one
-    3. Fallback to last score if only one test
-    """
-
-    # Clean test name for pattern matching
-    clean_test_name = test_name.replace('test_', '').replace('_', ' ')
-    
-    # Try to find score in section related to this test
-    # Look for test name followed by CVSS score within reasonable distance (2000 chars)
-    test_section_pattern = rf'{re.escape(test_name)}.*?CVSS Base Score:\s*([\d.]+)'
-    match = re.search(test_section_pattern, log_content, re.DOTALL)
-    if match and len(match.group(0)) < 30:  # Ensure we didn't match too far
-        return float(match.group(1))
-    
-    # Fallback: If only one score in entire log, use it
-    pattern = r'CVSS Base Score:\s*([\d.]+)'
-    matches = re.findall(pattern, log_content)
-  
-    if matches:
-        # If only one score found, must be the right one
-        if len(matches) == 1:
-            return float(matches[0])
-        
-        # Multiple scores - try to match by position in log
-        # Find all test names and their positions
-        test_positions = [(m.start(), test_name) for m in re.finditer(re.escape(test_name), log_content)]
-        score_positions = [(m.start(), float(m.group(1))) for m in re.finditer(pattern, log_content)]
-        # Find the score closest after this test name
-        if test_positions and score_positions:
-            test_pos = test_positions[0][0]
-            for score_pos, score in score_positions:
-                if score_pos > test_pos:
-                    return score
-        
-        # Last resort: return last score
-        scoreCount+=1
-        return float(matches[scoreCount])
-    return None
-
-def extract_all_cvss_scores(log_content):
-    x=1
-
-def get_severity_level(cvss_score):
-    """
-    Determine severity level based on CVSS score.
-    Same ranges for both CVSS 3.1 and 4.0.
-    """
-    if cvss_score is None:
-        return 'UNKNOWN'
-    
-    if cvss_score >= 9.0:
-        return 'CRITICAL'
-    elif cvss_score >= 7.0:
-        return 'HIGH'
-    elif cvss_score >= 4.0:
-        return 'MEDIUM'
-    elif cvss_score > 0.0:
-        return 'LOW'
-    else:
-        return 'NONE'
-
-
 def get_severity_color(severity):
     """Return color code for severity level"""
     colors = {
@@ -324,6 +254,7 @@ def parse_test_results():
     
     for test in json_report.get('tests', []):
         test_name = test.get('nodeid', 'Unknown Test')
+        
         status = 'PASS' if test.get('outcome') == 'passed' else 'FAIL'
         
         # Extract directory category from the FILE PATH portion of the nodeid only
@@ -348,25 +279,20 @@ def parse_test_results():
             duration = setup_duration + call_duration + teardown_duration
         
         # Extract CVSS score from logs
-        cvss_score = extract_cvss_score(log_content, test_name)
-        severity = get_severity_level(cvss_score)
+        cvss_score = test.get('cvss_score')
+        severity = test.get('severity')
         
         # Get adaptive description from docstring
-        description = get_test_description_from_docstring(test_name)
-
-        # Extract base function name and parameter string from the test portion of nodeid
-        raw_name = test_name.split('::')[-1]
-        if '[' in raw_name:
-            base_name, param_str = raw_name.split('[', 1)
-            param_str = param_str.rstrip(']')
-        else:
-            base_name, param_str = raw_name, None
+        description = test.get("scenario_description", "No description available")
+        
+        category = test.get("feature", "No feature found")
+        scenario = test.get("scenario", "No scenario found")
         
         results.append({
             'full_name': test_name,
-            'name': base_name,
-            'param': param_str,  # raw parameter string, will be escaped at render time
+            'name': test_name,
             'category': category,
+            'scenario': scenario,
             'description': description,
             'status': status,
             'cvss_score': cvss_score,
@@ -1006,7 +932,7 @@ def main():
     html_content = generate_html_dashboard(results, summary)
     
     # Write dashboard
-    with open('security_dashboard.html', 'w') as f:
+    with open('security_dashboard.html', 'w', encoding="utf-8") as f:
         f.write(html_content)
     
     print("✓ Dashboard saved to security_dashboard.html")
