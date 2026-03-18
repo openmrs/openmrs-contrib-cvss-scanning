@@ -34,8 +34,6 @@ xssEditProfileLocations = [
 ]
 
 
-#py_bdd.scenario('o3_xss_security.feature','XSS injection edit profile parameterized')
-
 @pytest_bdd.given("A CVSS is calculated and logged")
 def calculate_cvss_score(request):
     #print cvss information
@@ -133,8 +131,9 @@ loggedIn = False
 editUrl = None
 @pytest.mark.parametrize("testString",xssTestStrings)
 @pytest.mark.parametrize("testLocation",xssEditProfileLocations)
+@pytest_bdd.scenario('o3_xss_security.feature','XSS injection edit profile parameterized')
 @pytest_bdd.when('the attacker tries to edit a patient middle name using a set of potential XSS strings')
-def test_xss_injection_edit_profile_parameterized(page:Page,testString,testLocation):
+def test_xss_injection_edit_profile(page:Page,testString,testLocation):
     global loggedIn
     global editUrl
     if(not loggedIn):
