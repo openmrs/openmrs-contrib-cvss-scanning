@@ -4,19 +4,12 @@ Feature: O3 XSS Security Testing
   So that I can assess injection vulnerabilities and blocking mechanisms
   
   Background:
+    Given A CVSS is calculated and logged
     Given logged into OpenMRS O3
     Given a test patient has been created
     Given the OpenMRS 3 edit patient page is displayed
-
+    
   Scenario: XSS injection edit profile parameterized
-    When the attacker tries to edit a patient middle name using a set of potential XSS strings and an alert was found after any string
-    Then calculate CVSS score and report failure. 
-  #Scenario: XSS injection on patient edit page, middle name field
-    #When the attacker tries to edit a patient middle name using a set of potential XSS strings and an alert was found after any string
-    #Then calculate CVSS score and report failure. 
-  #Scenario: XSS injection on patient edit page, first name field
-    #When the attacker tries to edit a patient first name using a set of potential XSS strings and an alert was found after any string
-    #Then calculate CVSS score and report failure. 
-  #Scenario: XSS injection on patient edit page, family name field
-    #When the attacker tries to edit a patient family name using a set of potential XSS strings and an alert was found after any string
-    #Then calculate CVSS score and report failure.  
+    When the attacker tries to edit a patient middle name using a set of potential XSS strings
+    Then see if XSS injection was successful
+    Then cleanup the test patient and potentially report failure

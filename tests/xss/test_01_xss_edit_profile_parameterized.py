@@ -1,16 +1,17 @@
 import re
 import pytest
-from pytest_bdd import scenarios, given, when, then, parsers
+import pytest_bdd
 from playwright.sync_api import Page, expect
-from tests.utils import display_results,get_cvss_severity
-
+from tests.utils import display_results,get_cvss_severity,calculate_cvss_v4_score
+from tests.conftest import save_cvss_result
+import conftest
 O3_LOGIN_URL = 'http://0.0.0.0:80/openmrs/spa/login'
 O3_WELCOME_URL = 'http://0.0.0.0:80/openmrs/spa/login/location'
 O3_HOMEPAGE_URL = 'http://0.0.0.0:80/openmrs/spa/home/service-queues#'
 DEFAULT_WAIT_TIME = 1000
 alertPresent=False
 
-scenarios('o3_xss_security.feature')
+pytest_bdd.scenarios('o3_xss_security.feature')
 xssTestStrings= [
         '<script>alert("XSS")</script>',
         '<img src=x onerror=alert("XSS")>',
@@ -31,8 +32,18 @@ xssEditProfileLocations = [
     "#phone",
     
 ]
- 
-@given("logged into OpenMRS O3")
+
+
+#py_bdd.scenario('o3_xss_security.feature','XSS injection edit profile parameterized')
+
+@pytest_bdd.given("A CVSS is calculated and logged")
+def calculate_cvss_score(request):
+    #print cvss information
+    cvss_score=calculate_cvss_v4_score('M','L','N','H','N','H','H','H','N','N','N',)
+    severity = get_cvss_severity(cvss_score)
+    save_cvss_result(request, cvss_score, severity)
+
+@pytest_bdd.given("logged into OpenMRS O3")
 def login(page:Page):
     page.goto(O3_LOGIN_URL)
     page.locator('#username').fill("admin")
@@ -65,7 +76,7 @@ def createTestPatient(page:Page):
     page.get_by_text("Register patient").click()
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
-@given('a test patient has been created')
+@pytest_bdd.given('a test patient has been created')
 def verifyTestPatientExists(page:Page):
     page.goto(O3_HOMEPAGE_URL)
     #page.wait_for_timeout(DEFAULT_WAIT_TIME)
@@ -78,7 +89,7 @@ def verifyTestPatientExists(page:Page):
         #createTestPatient(page)
         #page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
-@given('the OpenMRS 3 edit patient page is displayed')
+@pytest_bdd.given('the OpenMRS 3 edit patient page is displayed')
 def navigateToTestPatient(page:Page):
     page.goto(O3_HOMEPAGE_URL)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
@@ -112,17 +123,17 @@ def cleanupTestPatient(page,editUrl):
     #not finished
     page.goto(editUrl)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    for id in xssEditProfileLocations:
-        page.locator(testLocation).fill("")
+    for field in xssEditProfileLocations:
+        page.locator(field).fill("")
     page.locator("#givenName").fill("Test")
     page.locator("#familyName").fill("Patient")
     page.get_by_text("Update patient").click()
 
 loggedIn = False
 editUrl = None
-@when('the attacker tries to edit a patient middle name using a set of potential XSS strings and an alert was found after any string')
 @pytest.mark.parametrize("testString",xssTestStrings)
 @pytest.mark.parametrize("testLocation",xssEditProfileLocations)
+@pytest_bdd.when('the attacker tries to edit a patient middle name using a set of potential XSS strings')
 def test_xss_injection_edit_profile_parameterized(page:Page,testString,testLocation):
     global loggedIn
     global editUrl
@@ -145,33 +156,41 @@ def test_xss_injection_edit_profile_parameterized(page:Page,testString,testLocat
         page.wait_for_timeout(DEFAULT_WAIT_TIME)
         print(page.url)
     global alertPresent
-    setAlertPresent(False)
+
 
     #run the test
-    #fill in middle name and update patient
+    #fill in field and update patient
     page.locator(testLocation).fill(testString)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Update patient").click()
+    #The page should now be the patient's main page. There should be no alert from XSS
+    #Starting @then "see if XSS injection was successful"
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Show more").click()
-    #now on patient main phase, expect no alert from xss
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.on('dialog', lambda: setAlertPresent(True))
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    #cleanupTestPatient(page,editUrl)
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    #Ending @then "see if XSS injection was successful"
 
-    #if pass, go to next, else stop
-
-@then('calculate CVSS score and report failure. ')
-def calculate_cvss_score():
-    global alertPresent
-    #print cvss information
-    cvss_score=calculate_cvss_v4_score('M','L','N','L','P','H','H','N','N','N','N',)
-    severity = get_cvss_severity(cvss_score)
-    display_results(cvss_score=cvss_score, severity=severity)
+    #Starting @then "cleanup the test patient and potentially report failure"
+    #cleanup patient
+    cleanupTestPatient(page,editUrl)
     if(alertPresent):
         #trigger test failure
         assert False
+    #Ending @then "cleanup the test patient and potentially report failure"
+
+
+@pytest_bdd.then('see if XSS injection was successful')
+def see_if_XSS_injection_was_successful(page):
+    pass #no-op, handled in @when for parameterization purposes
+
+
+@pytest_bdd.then('cleanup the test patient and potentially report failure')
+def cleanup_the_test_patient_and_potentially_report_failure(page):
+    pass #no-op, handled in @when for parameterization purposes
+
+
     
 
 
