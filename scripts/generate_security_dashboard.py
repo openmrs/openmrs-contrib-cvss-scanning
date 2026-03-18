@@ -728,7 +728,6 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
         ]
         max_cvss = max(failed_cvss_scores) if failed_cvss_scores else None
         if max_cvss is not None:
-            print("max cvss:", max_cvss)
             max_severity = max_cvss
             max_severity_color = get_severity_color(get_cvss_severity(max_severity))
             cvss_badge_html = (
