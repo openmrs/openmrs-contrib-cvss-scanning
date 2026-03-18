@@ -829,11 +829,15 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                     </script>'''
                 else:
                     trend_html = '<span style="color: #a0aec0; font-size: 12px;">Not enough data</span>'
+                if r['name'].find("/") !=-1:
+                    r['name']=r['name'].split("/")[1]
+                if r['name'].find("::") !=-1:
+                    r['name']=r['name'].split("::")[0]
 
                 if r['status'] == 'PASS':
                     out += f"""
                         <tr>
-                            <td><strong>{r['name'].replace('test_', '').replace('_', ' ').title()}</strong>{param_display}</td>
+                            <td><strong>{r['name'].replace('test_', '').replace('_', ' ').replace('.py', '').title()}</strong>{param_display}</td>
                             <td>{r['description']}</td>
                             <td><span class="status-badge {status_class}">{r['status']}</span></td>
                             <td><span class="cvss-score-pass">{cvss_display}</span></td>
@@ -845,7 +849,7 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                 else:
                     out += f"""
                         <tr>
-                            <td><strong>{r['name'].replace('test_', '').replace('_', ' ').title()}</strong>{param_display}</td>
+                            <td><strong>{r['name'].replace('test_', '').replace('_', ' ').replace('.py', '').title()}</strong>{param_display}</td>
                             <td>{r['description']}</td>
                             <td><span class="status-badge {status_class}">{r['status']}</span></td>
                             <td><span class="cvss-score-fail">{cvss_display}</span></td>
