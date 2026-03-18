@@ -126,14 +126,17 @@ def cleanupTestPatient(page,editUrl):
     page.locator("#givenName").fill("Test")
     page.locator("#familyName").fill("Patient")
     page.get_by_text("Update patient").click()
+    #waits for page to load then ends
+    child = page.get_by_text("Vitals and biometrics")
+    child.wait_for()
 
 loggedIn = False
 editUrl = None
+
 @pytest.mark.parametrize("testString",xssTestStrings)
 @pytest.mark.parametrize("testLocation",xssEditProfileLocations)
-@pytest_bdd.scenario('o3_xss_security.feature','XSS injection edit profile parameterized')
 @pytest_bdd.when('the attacker tries to edit a patient middle name using a set of potential XSS strings')
-def test_xss_injection_edit_profile(page:Page,testString,testLocation):
+def test_xss_injection_edit_profile_parameterized(page:Page,testString,testLocation):
     global loggedIn
     global editUrl
     if(not loggedIn):
@@ -145,7 +148,6 @@ def test_xss_injection_edit_profile(page:Page,testString,testLocation):
         editUrl = page.url
     if(editUrl is not None):
         page.wait_for_timeout(DEFAULT_WAIT_TIME)
-        print(f"Edit url:{editUrl}")
         page.goto(editUrl)
         page.wait_for_timeout(DEFAULT_WAIT_TIME)
         if(page.url.find("login")>=0):
@@ -153,7 +155,6 @@ def test_xss_injection_edit_profile(page:Page,testString,testLocation):
             page.wait_for_timeout(DEFAULT_WAIT_TIME)
             page.goto(editUrl)
         page.wait_for_timeout(DEFAULT_WAIT_TIME)
-        print(page.url)
     global alertPresent
 
 
@@ -163,15 +164,15 @@ def test_xss_injection_edit_profile(page:Page,testString,testLocation):
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Update patient").click()
     #The page should now be the patient's main page. There should be no alert from XSS
-    #Starting @then "see if XSS injection was successful"
+    #Starting @then: "see if XSS injection was successful"
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Show more").click()
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.on('dialog', lambda: setAlertPresent(True))
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    #Ending @then "see if XSS injection was successful"
+    #Ending @then: "see if XSS injection was successful"
 
-    #Starting @then "cleanup the test patient and potentially report failure"
+    #Starting @then: "cleanup the test patient and potentially report failure"
     #cleanup patient
     cleanupTestPatient(page,editUrl)
     if(alertPresent):
