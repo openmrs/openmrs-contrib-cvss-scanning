@@ -618,39 +618,6 @@ def generate_dashboard_html_header():
             color: white;
             border-bottom: 1px solid #3a4a5a;
         }}
-        #tabs_div{{
-            height:100%;
-        }}
-        #tabs_div>div{{
-            visibility: hidden;
-            display:none;
-        }}
-        #tabs_div>div.visible{{
-            visibility: visible;
-            display:block;
-            height:100%;
-        }}
-        .tabs_buttons{{
-            width:100%;
-            display:flex;
-            justify-content: center;
-            padding-bottom:20px;
-        }}
-        .tabs_buttons button{{
-            border-radius: 20px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background-color:white;
-            color:black;
-            width:50%;
-            height:50px;
-        }}
-        .tabs_buttons button:hover{{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background-color:#edf2f7;
-            color:black;
-            width:50%;
-            height:50px;
-        }}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script>
@@ -659,13 +626,6 @@ def generate_dashboard_html_header():
             const chevron = document.getElementById('chevron_' + id);
             const isOpen  = body.classList.toggle('open');
             chevron.classList.toggle('open', isOpen);
-        }}
-    </script>
-    <script>
-        function showDiv(id){{
-            const divs = document.querySelectorAll("#tabs_div>div");
-            divs.forEach(d=>{{d.classList.remove("visible")}});
-            document.getElementById(id).classList.add("visible");
         }}
     </script>
 </head>"""
@@ -892,13 +852,6 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
         </div>\n"""
     return html
 
-#Buttons to select tabs
-def generate_dashboard_tabs_buttons():
-    html = """  <div class = "tabs_buttons">
-        <button style="margin-right:5px;" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
-        <button style="margin-left:5px;" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
-    </div>\n"""
-    return html
 
 def generate_html_dashboard(grouped_results, summary):
     """Generate HTML dashboard with CVSS scores, grouped by test directory"""
@@ -908,15 +861,8 @@ def generate_html_dashboard(grouped_results, summary):
     html += f"""
 <body  onload='showDiv("vulnerability_testing")'>
     {generate_dashboard_page_header()}
-    {generate_dashboard_tabs_buttons()}
     <div id="tabs_div">
-        <div id="vulnerability_testing" onload = "showDiv("vulnerability_testing")">
-            {generate_dashboard_vulnerability_testing(grouped_results, summary)}
-        </div>
-        <div id="dependency_scanning">
-            <iframe id = "dependency_frame" src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/" style="flex-grow:1; border: none; width:100%;height:95vh;">
-            </iframe>
-        </div>
+        {generate_dashboard_vulnerability_testing(grouped_results, summary)}
     </div>\n"""
     html += """
         <div class="footer">
