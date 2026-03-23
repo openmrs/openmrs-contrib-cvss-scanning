@@ -209,25 +209,25 @@
         <div class="header">
             <h1>🔒 OpenMRS O3 Security Dashboard</h1>
             <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
-            <p style="margin-top: 5px; font-size: 12px;">Last Updated: 2026-03-22 21:02:17 EST</p>
+            <p style="margin-top: 5px; font-size: 12px;">Last Updated: 2026-03-23 18:18:38 EST</p>
         </div>
         
         <div class="stats">
             <div class="stat-card">
                 <h3>Total Tests</h3>
-                <p>2</p>
+                <p>5</p>
             </div>
             <div class="stat-card">
                 <h3>Passed</h3>
-                <p style="color: #38a169;">2</p>
+                <p style="color: #38a169;">0</p>
             </div>
             <div class="stat-card">
                 <h3>Failed</h3>
-                <p style="color: #e53e3e;">0</p>
+                <p style="color: #e53e3e;">5</p>
             </div>
             <div class="stat-card">
                 <h3>Duration</h3>
-                <p>8.0m</p>
+                <p>8.1m</p>
             </div>
         </div>
         
@@ -236,6 +236,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Test Category</th>
                         <th>Test Name</th>
                         <th>Description</th>
                         <th>Status</th>
@@ -249,65 +250,50 @@
                 <tbody>
 
                     <tr>
-                        <td><strong>Brute Force Password</strong></td>
-                        <td>Tests account lockout and cooldown after 7 failed login attempts with known username "admin". Uses CVSS 4.0 with dynamic scoring based on observed security mechanisms.</td>
-                        <td><span class="status-badge status-pass">PASS</span></td>
-                        <td><span class="cvss-score">5.5</span></td>
-                        <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                        <td><div class="tooltip-wrapper"><span style="color: #718096;">0.0 —</span><div class="tooltip-content">
-            <strong>Last 10 Runs (Baseline: 5.5)</strong>
-            <table class="tooltip-table">
-                <thead><tr><th>Run</th><th>Score</th><th>Delta</th></tr></thead>
-                <tbody><tr><td>Run 20 ◀</td><td>5.5</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 19</td><td>5.5</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 18</td><td>5.5</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 17</td><td>5.5</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 16</td><td>5.5</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 15</td><td>5.5</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 14</td><td>5.5</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 13</td><td>5.5</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 12</td><td>5.5</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 11</td><td>5.5</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr></tbody>
-            </table></div></div></td>
-                        <td><canvas id="chart_test_brute_force_password" width="120" height="40"></canvas>
-                        <script>
-                        new Chart(document.getElementById("chart_test_brute_force_password"), {
-                            type: "line",
-                            data: {
-                                labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14", "Run 15", "Run 16", "Run 17", "Run 18", "Run 19", "Run 20"],
-                                datasets: [{
-                                    data: [5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5, 5.5],
-                                    borderColor: "#667eea",
-                                    borderWidth: 2,
-                                    pointRadius: 2,
-                                    fill: false,
-                                    tension: 0.3
-                                }]
-                            },
-                            options: {
-                                plugins: { legend: { display: false } },
-                                scales: {
-                                    x: { display: false },
-                                    y: { display: false, min: 0, max: 10 }
-                                },
-                                animation: false
-                            }
-                        });
-                        </script></td>
+                        <td><strong>No Feature Found</strong></td>
+                        <td>No Scenario Found</td>
+                        <td>No description available</td>
+                        <td><span class="status-badge status-fail">FAIL</span></td>
+                        <td><span class="cvss-score">N/A</span></td>
+                        <td><span class="severity-badge" style="background-color: #6c757d;">None</span></td>
+                        <td><span style="color: #a0aec0;">—</span></td>
+                        <td><span style="color: #a0aec0; font-size: 12px;">Not enough data</span></td>
                         <td>7.9m</td>
                     </tr>
 
                     <tr>
-                        <td><strong>Brute Force Api Password</strong></td>
-                        <td>Brute Force Api Password security test</td>
-                        <td><span class="status-badge status-pass">PASS</span></td>
+                        <td><strong>No Feature Found</strong></td>
+                        <td>No Scenario Found</td>
+                        <td>No description available</td>
+                        <td><span class="status-badge status-fail">FAIL</span></td>
+                        <td><span class="cvss-score">N/A</span></td>
+                        <td><span class="severity-badge" style="background-color: #6c757d;">None</span></td>
+                        <td><span style="color: #a0aec0;">—</span></td>
+                        <td><span style="color: #a0aec0; font-size: 12px;">Not enough data</span></td>
+                        <td>9.78s</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>No Feature Found</strong></td>
+                        <td>No Scenario Found</td>
+                        <td>No description available</td>
+                        <td><span class="status-badge status-fail">FAIL</span></td>
                         <td><span class="cvss-score">9.2</span></td>
                         <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                        <td><div class="tooltip-wrapper"><span style="color: #28a745; font-weight: bold;">+0.3 ↑</span><div class="tooltip-content">
-            <strong>Last 10 Runs (Baseline: 9.5)</strong>
+                        <td><div class="tooltip-wrapper"><span style="color: #718096;">0.0 —</span><div class="tooltip-content">
+            <strong>Last 2 Runs (Baseline: 9.2)</strong>
             <table class="tooltip-table">
                 <thead><tr><th>Run</th><th>Score</th><th>Delta</th></tr></thead>
-                <tbody><tr><td>Run 20 ◀</td><td>9.2</td><td><span style="color: #68d391;">+0.3 ↑</span></td></tr><tr><td>Run 19</td><td>9.2</td><td><span style="color: #68d391;">+0.3 ↑</span></td></tr><tr><td>Run 18</td><td>9.2</td><td><span style="color: #68d391;">+0.3 ↑</span></td></tr><tr><td>Run 17</td><td>9.2</td><td><span style="color: #68d391;">+0.3 ↑</span></td></tr><tr><td>Run 16</td><td>9.2</td><td><span style="color: #68d391;">+0.3 ↑</span></td></tr><tr><td>Run 15</td><td>9.2</td><td><span style="color: #68d391;">+0.3 ↑</span></td></tr><tr><td>Run 14</td><td>9.2</td><td><span style="color: #68d391;">+0.3 ↑</span></td></tr><tr><td>Run 13</td><td>9.2</td><td><span style="color: #68d391;">+0.3 ↑</span></td></tr><tr><td>Run 12</td><td>9.2</td><td><span style="color: #68d391;">+0.3 ↑</span></td></tr><tr><td>Run 11</td><td>9.2</td><td><span style="color: #68d391;">+0.3 ↑</span></td></tr></tbody>
+                <tbody><tr><td>Run 2 ◀</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 1</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr></tbody>
             </table></div></div></td>
-                        <td><canvas id="chart_test_brute_force_api_password" width="120" height="40"></canvas>
+                        <td><canvas id="chart_session_management/test_cookie_httpOnly_attribute.py::test_cookies_have_session_httpOnly_attribute" width="120" height="40"></canvas>
                         <script>
-                        new Chart(document.getElementById("chart_test_brute_force_api_password"), {
+                        new Chart(document.getElementById("chart_session_management/test_cookie_httpOnly_attribute.py::test_cookies_have_session_httpOnly_attribute"), {
                             type: "line",
                             data: {
-                                labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14", "Run 15", "Run 16", "Run 17", "Run 18", "Run 19", "Run 20"],
+                                labels: ["Run 1", "Run 2"],
                                 datasets: [{
-                                    data: [9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2],
+                                    data: [9.2, 9.2],
                                     borderColor: "#667eea",
                                     borderWidth: 2,
                                     pointRadius: 2,
@@ -325,7 +311,89 @@
                             }
                         });
                         </script></td>
-                        <td>9.75s</td>
+                        <td>0.39s</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>No Feature Found</strong></td>
+                        <td>No Scenario Found</td>
+                        <td>No description available</td>
+                        <td><span class="status-badge status-fail">FAIL</span></td>
+                        <td><span class="cvss-score">5.1</span></td>
+                        <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
+                        <td><div class="tooltip-wrapper"><span style="color: #718096;">0.0 —</span><div class="tooltip-content">
+            <strong>Last 2 Runs (Baseline: 5.1)</strong>
+            <table class="tooltip-table">
+                <thead><tr><th>Run</th><th>Score</th><th>Delta</th></tr></thead>
+                <tbody><tr><td>Run 2 ◀</td><td>5.1</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 1</td><td>5.1</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr></tbody>
+            </table></div></div></td>
+                        <td><canvas id="chart_session_management/test_cookie_sameSite_attribute.py::test_cookies_have_sameSite_attribute_set_to_Strict_or_Lax" width="120" height="40"></canvas>
+                        <script>
+                        new Chart(document.getElementById("chart_session_management/test_cookie_sameSite_attribute.py::test_cookies_have_sameSite_attribute_set_to_Strict_or_Lax"), {
+                            type: "line",
+                            data: {
+                                labels: ["Run 1", "Run 2"],
+                                datasets: [{
+                                    data: [5.1, 5.1],
+                                    borderColor: "#667eea",
+                                    borderWidth: 2,
+                                    pointRadius: 2,
+                                    fill: false,
+                                    tension: 0.3
+                                }]
+                            },
+                            options: {
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    x: { display: false },
+                                    y: { display: false, min: 0, max: 10 }
+                                },
+                                animation: false
+                            }
+                        });
+                        </script></td>
+                        <td>0.38s</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>No Feature Found</strong></td>
+                        <td>No Scenario Found</td>
+                        <td>No description available</td>
+                        <td><span class="status-badge status-fail">FAIL</span></td>
+                        <td><span class="cvss-score">9.2</span></td>
+                        <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
+                        <td><div class="tooltip-wrapper"><span style="color: #718096;">0.0 —</span><div class="tooltip-content">
+            <strong>Last 2 Runs (Baseline: 9.2)</strong>
+            <table class="tooltip-table">
+                <thead><tr><th>Run</th><th>Score</th><th>Delta</th></tr></thead>
+                <tbody><tr><td>Run 2 ◀</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 1</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr></tbody>
+            </table></div></div></td>
+                        <td><canvas id="chart_session_management/test_cookie_secure_attribute.py::test_cookies_have_secure_attribute" width="120" height="40"></canvas>
+                        <script>
+                        new Chart(document.getElementById("chart_session_management/test_cookie_secure_attribute.py::test_cookies_have_secure_attribute"), {
+                            type: "line",
+                            data: {
+                                labels: ["Run 1", "Run 2"],
+                                datasets: [{
+                                    data: [9.2, 9.2],
+                                    borderColor: "#667eea",
+                                    borderWidth: 2,
+                                    pointRadius: 2,
+                                    fill: false,
+                                    tension: 0.3
+                                }]
+                            },
+                            options: {
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    x: { display: false },
+                                    y: { display: false, min: 0, max: 10 }
+                                },
+                                animation: false
+                            }
+                        });
+                        </script></td>
+                        <td>0.38s</td>
                     </tr>
 
                 </tbody>
