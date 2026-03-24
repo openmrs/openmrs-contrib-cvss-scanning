@@ -649,6 +649,40 @@ def generate_dashboard_html_header():
             padding: 2px 6px;
             max-height: 28px;
         }}
+        #tabs_div{{
+            height:100%;
+            display:block;
+        }}
+        #tabs_div>div{{
+            visibility: hidden;
+            display:none;
+        }}
+        #tabs_div>div.visible{{
+            visibility: visible;
+            display:block;
+            height:100%;
+        }}
+        .tabs_buttons{{
+            width:100%;
+            display:flex;
+            justify-content: center;
+            padding-bottom:20px;
+        }}
+        .tabs_buttons button{{
+            border-radius: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color:white;
+            color:black;
+            width:50%;
+            height:50px;
+        }}
+        .tabs_buttons button:hover{{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color:#edf2f7;
+            color:black;
+            width:50%;
+            height:50px;
+        }}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script>
@@ -657,6 +691,13 @@ def generate_dashboard_html_header():
             const chevron = document.getElementById('chevron_' + id);
             const isOpen  = body.classList.toggle('open');
             chevron.classList.toggle('open', isOpen);
+        }}
+    </script>
+    <script>
+        function showDiv(id){{
+            const divs = document.querySelectorAll("#tabs_div>div");
+            divs.forEach(d=>{{d.classList.remove("visible")}});
+            document.getElementById(id).classList.add("visible");
         }}
     </script>
 </head>"""
@@ -675,7 +716,9 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
     all_results = [r for group in grouped_results.values() for r in group]
     total_duration_sec = sum(r['duration'] for r in all_results)
     total_duration_min = total_duration_sec / 60
-    html = f"""     <div class="stats">
+    html = f"""     
+    <div id ="vulnerability_testing">
+        <div class="stats">
             <div class="stat-card">
                 <h3>Total Tests</h3>
                 <p>{summary.get('total', 0)}</p>
@@ -692,7 +735,7 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                 <h3>Duration</h3>
                 <p>{total_duration_min:.1f}m</p>
             </div>
-        </div> """
+        </div>"""
 
     for category, results in grouped_results.items():
         cat_total  = len(results)
@@ -841,15 +884,24 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
 
         html += """
             </div>
-        </div>\n"""
+        </div>
+    </div>\n"""
     return html
 
+#Buttons to select tabs
+def generate_dashboard_tabs_buttons():
+    html = """  <div class = "tabs_buttons">
+        <button style="margin-right:5px;" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
+        <button style="margin-left:5px;" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
+    </div>\n"""
+    return html
 
 def generate_html_dashboard(grouped_results, summary):
     html = generate_dashboard_html_header()
     html += f"""
 <body  onload='showDiv("vulnerability_testing")'>
     {generate_dashboard_page_header()}
+    {generate_dashboard_tabs_buttons()}
     <div id="tabs_div">
         {generate_dashboard_vulnerability_testing(grouped_results, summary)}
     </div>\n"""
