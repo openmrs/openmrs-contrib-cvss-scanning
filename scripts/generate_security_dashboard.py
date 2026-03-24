@@ -683,6 +683,11 @@ def generate_dashboard_html_header():
             width:50%;
             height:50px;
         }}
+        iframe{{
+            width:100%;
+            height:95dvh;
+        }}
+
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script>
@@ -896,6 +901,12 @@ def generate_dashboard_tabs_buttons():
     </div>\n"""
     return html
 
+def generate_dependency_scanning_tab():
+    html = f""" <div id="dependency_scanning">
+        <iframe src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/"></iframe>
+    </div>"""
+    return html
+
 def generate_html_dashboard(grouped_results, summary):
     html = generate_dashboard_html_header()
     html += f"""
@@ -904,6 +915,7 @@ def generate_html_dashboard(grouped_results, summary):
     {generate_dashboard_tabs_buttons()}
     <div id="tabs_div">
         {generate_dashboard_vulnerability_testing(grouped_results, summary)}
+        {generate_dependency_scanning_tab()}
     </div>\n"""
     html += """
         <div class="footer">
