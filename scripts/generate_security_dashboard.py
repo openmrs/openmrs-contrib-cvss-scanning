@@ -16,14 +16,9 @@ from datetime import datetime
 from datetime import timezone, timedelta
 from pathlib import Path
 
-# ============================================================================
-# SQLITE DATABASE FUNCTIONS
-# ============================================================================
-
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test_results.db')
 
 def init_db():
-    """Initialize SQLite database. Creates tables if they don't exist."""
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute('''
@@ -42,12 +37,19 @@ def init_db():
             run_at TEXT NOT NULL
         )
     ''')
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS category_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            category TEXT NOT NULL,
+            max_cvss REAL NOT NULL,
+            run_at TEXT NOT NULL
+        )
+    ''')
     conn.commit()
     conn.close()
 
 
 def save_test_result(test_name, cvss_score, status):
-    """Save result. Sets baseline if first run for this test."""
     if cvss_score is None:
         return
     conn = sqlite3.connect(DB_PATH)
@@ -67,8 +69,21 @@ def save_test_result(test_name, cvss_score, status):
     conn.close()
 
 
+def save_category_max_cvss(category, max_cvss):
+    if max_cvss is None:
+        return
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    now = datetime.now().isoformat()
+    c.execute(
+        'INSERT INTO category_history (category, max_cvss, run_at) VALUES (?, ?, ?)',
+        (category, max_cvss, now)
+    )
+    conn.commit()
+    conn.close()
+
+
 def get_baseline(test_name):
-    """Get baseline score for a test."""
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
@@ -82,7 +97,6 @@ def get_baseline(test_name):
 
 
 def get_history(test_name, limit=20):
-    """Get last N CVSS scores for trend line (chronological order)."""
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
@@ -98,83 +112,111 @@ def get_history(test_name, limit=20):
         return []
 
 
-def get_improvement_html(baseline, current, history):
-    """
-    Generate colored improvement indicator HTML with mouseover tooltip
-    showing last 10 runs with score and delta from baseline.
-    """
-    if baseline is None or current is None:
-        return '<span style="color: #a0aec0;">—</span>'
+def get_category_history(category, limit=20):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute(
+            'SELECT max_cvss FROM category_history WHERE category = ? ORDER BY run_at DESC LIMIT ?',
+            (category, limit)
+        )
+        rows = c.fetchall()
+        conn.close()
+        return [row[0] for row in reversed(rows)]
+    except Exception as e:
+        print(f'Warning: Could not get category history for {category}: {e}')
+        return []
 
-    improvement = round(baseline - current, 1)
 
-    if improvement > 0:
-        label = f'<span style="color: #28a745; font-weight: bold;">+{improvement:.1f} ↑</span>'
-    elif improvement < 0:
-        label = f'<span style="color: #dc3545; font-weight: bold;">{improvement:.1f} ↓</span>'
-    else:
-        label = '<span style="color: #718096;">0.0 —</span>'
+def generate_category_trend_html(category, history, max_cvss):
+    safe_id = ''.join(c if c.isalnum() else '_' for c in category)
+    chart_id = f"cat_trend_{safe_id}"
 
-    # Build tooltip rows from history (last 10, most recent first)
-    recent = list(reversed(history[-10:] if len(history) >= 10 else history))
+    # Improvement badge vs category baseline (first recorded max_cvss)
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute('SELECT max_cvss FROM category_history WHERE category = ? ORDER BY run_at ASC LIMIT 1', (category,))
+        row = c.fetchone()
+        conn.close()
+        cat_baseline = row[0] if row else None
+    except Exception as e:
+        print(f'Warning: Could not get category baseline for {category}: {e}')
+        cat_baseline = None
 
-    rows = ""
-    for i, score in enumerate(recent):
-        run_number = len(history) - i
-        delta = round(baseline - score, 1)
-        if delta > 0:
-            delta_str = f'<span style="color: #68d391;">+{delta:.1f} ↑</span>'
-        elif delta < 0:
-            delta_str = f'<span style="color: #fc8181;">{delta:.1f} ↓</span>'
+    if cat_baseline is not None and max_cvss is not None:
+        improvement = round(cat_baseline - max_cvss, 1)
+        if improvement > 0:
+            improvement_badge = f'<span style="color:#28a745; font-weight:bold; font-size:11px;">+{improvement:.1f} ↑</span>'
+        elif improvement < 0:
+            improvement_badge = f'<span style="color:#dc3545; font-weight:bold; font-size:11px;">{improvement:.1f} ↓</span>'
         else:
-            delta_str = '<span style="color: #a0aec0;">0.0 —</span>'
-        marker = ' ◀' if i == 0 else ''
-        rows += f"<tr><td>Run {run_number}{marker}</td><td>{score:.1f}</td><td>{delta_str}</td></tr>"
+            improvement_badge = '<span style="color:#718096; font-size:11px;">0.0 —</span>'
+    else:
+        improvement_badge = ''
 
-    tooltip = f"""<div class="tooltip-wrapper">{label}<div class="tooltip-content">
-            <strong>Last {len(recent)} Runs (Baseline: {baseline:.1f})</strong>
-            <table class="tooltip-table">
-                <thead><tr><th>Run</th><th>Score</th><th>Delta</th></tr></thead>
-                <tbody>{rows}</tbody>
-            </table></div></div>"""
+    if len(history) < 2:
+        return f'{improvement_badge} <span style="color:#a0aec0; font-size:11px;">Not enough data</span>'
 
-    return tooltip
+    history_json = json.dumps(history)
+    labels_json = json.dumps([f"Run {i+1}" for i in range(len(history))])
+
+    return f'''{improvement_badge}<canvas id="{chart_id}" width="100" height="28" style="vertical-align:middle; display:block;"></canvas>
+    <script>
+    new Chart(document.getElementById("{chart_id}"), {{
+        type: "line",
+        data: {{
+            labels: {labels_json},
+            datasets: [{{
+                data: {history_json},
+                borderColor: "#e53e3e",
+                borderWidth: 1.5,
+                pointRadius: 1.5,
+                fill: false,
+                tension: 0.3
+            }}]
+        }},
+        options: {{
+            plugins: {{ legend: {{ display: false }}, tooltip: {{
+                callbacks: {{
+                    title: function(items) {{ return items[0].label; }},
+                    label: function(item) {{ return "Max CVSS: " + item.parsed.y.toFixed(1); }}
+                }}
+            }} }},
+            scales: {{
+                x: {{ display: false }},
+                y: {{ display: false, min: 0, max: 10 }}
+            }},
+            animation: false
+        }}
+    }});
+    </script>'''
+
 
 def get_test_description_from_docstring(test_nodeid):
-    """
-    Extract description from test function docstring.
-    Falls back to manual mapping if docstring not found.
-    """
     try:
-        # Parse the nodeid
         if '::' not in test_nodeid:
             return get_test_description_fallback(test_nodeid)
         
         file_path, test_name = test_nodeid.split('::')
         
-        # Convert relative path to absolute
         abs_path = Path("tests/" + file_path).resolve()
                 
         if not abs_path.exists():
             print(f"Warning: Test file not found: {abs_path}")
             return get_test_description_fallback(test_name)
         
-        # Read the file directly and extract docstring
         with open(abs_path, 'r', encoding="utf-8") as f:
             content = f.read()
         
-        # Find the function definition and its docstring
-        # Pattern: def test_name(): followed by """docstring"""
         pattern = rf'def {re.escape(test_name)}\([^)]*\):\s*"""(.*?)"""'
         match = re.search(pattern, content, re.DOTALL)
         
         if match:
             docstring = match.group(1).strip()
-            # Clean up the docstring - join all lines
             lines = [line.strip() for line in docstring.split('\n') if line.strip()]
             description = ' '.join(lines)
             
-            # Limit length for dashboard display
             if len(description) > 250:
                 description = description[:247] + '...'
             
@@ -189,11 +231,6 @@ def get_test_description_from_docstring(test_nodeid):
 
 
 def get_test_description_fallback(test_name):
-    """
-    Fallback manual mapping if docstring extraction fails.
-    This ensures backwards compatibility.
-    """
-    # Manual mapping for existing tests
     descriptions = {
         'test_brute_force_password': 'Tests account lockout and cooldown after 7 failed login attempts with known username "admin". Uses CVSS 4.0 with dynamic scoring based on observed security mechanisms.',
         'test_credential_guessing': 'Complete credential guessing attack (random username + password)',
@@ -205,17 +242,14 @@ def get_test_description_fallback(test_name):
         'test_expired_session_reuse': 'Expired session token reuse attempt',
     }
     
-    # Try to match test name
     for key, desc in descriptions.items():
         if key in test_name:
             return desc
     
-    # Last resort: make it readable from function name
     readable_name = test_name.replace('test_', '').replace('_', ' ').title()
     return f'{readable_name} security test'
 
 def get_severity_color(severity):
-    """Return color code for severity level"""
     colors = {
         'CRITICAL': '#dc3545',
         'HIGH': '#fd7e14',
@@ -227,7 +261,6 @@ def get_severity_color(severity):
     return colors.get(severity, '#6c757d')
 
 def get_cvss_severity(cvss_score):
-    # Determine severity rating
     if cvss_score >= 9.0:
         severity = "CRITICAL"
     elif cvss_score >= 7.0:
@@ -240,9 +273,6 @@ def get_cvss_severity(cvss_score):
     return severity
 
 def parse_test_results():
-    """Parse pytest JSON report and test output log"""
-    
-    # Load JSON report
     try:
         with open('report.json', 'r') as f:
             json_report = json.load(f)
@@ -250,7 +280,6 @@ def parse_test_results():
         print("Error: report.json not found")
         sys.exit(1)
     
-    # Load test output log
     try:
         with open('test_output.log', 'r') as f:
             log_content = f.read()
@@ -258,7 +287,6 @@ def parse_test_results():
         print("Warning: test_output.log not found")
         log_content = ""
     
-    # Extract test results
     results = []
     
     for test in json_report.get('tests', []):
@@ -266,11 +294,6 @@ def parse_test_results():
         
         status = 'PASS' if test.get('outcome') == 'passed' else 'FAIL'
         
-        # Extract directory category from the FILE PATH portion of the nodeid only
-        # Split on '::' first to isolate the file path before any parameter strings
-        # e.g. "tests/xss/test_01.py::test_fn[chromium-javascript:alert('XSS')]"
-        #   -> file_path = "tests/xss/test_01.py"
-        #   -> category  = "xss"
         file_path = test_name.split('::')[0]
         path_parts = file_path.split('/')
         if len(path_parts) >= 2:
@@ -278,7 +301,6 @@ def parse_test_results():
         else:
             category = 'uncategorized'
 
-        # Extract duration correctly
         duration = test.get('call', {}).get('duration', 0)
         
         if duration == 0 or duration is None:
@@ -287,11 +309,9 @@ def parse_test_results():
             teardown_duration = test.get('teardown', {}).get('duration', 0) or 0
             duration = setup_duration + call_duration + teardown_duration
         
-        # Extract CVSS score from logs
         cvss_score = test.get('cvss_score')
         severity = test.get('severity')
         
-        # Get adaptive description from docstring
         description = test.get("scenario_description", "No description available")
         
         category = test.get("feature", "No feature found")
@@ -308,7 +328,6 @@ def parse_test_results():
             'severity': severity,
             'duration': duration,
         })
-    # Group results by category, preserving insertion order
     grouped = {}
     for r in results:
         grouped.setdefault(r['category'], []).append(r)
@@ -316,7 +335,6 @@ def parse_test_results():
     return grouped, json_report.get('summary', {})
 
 
-#generate the header for the dashboard, including css style, chart script, and js helper functions for test category id closing
 def generate_dashboard_html_header():
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -402,7 +420,6 @@ def generate_dashboard_html_header():
             margin-bottom: 20px;
         }}
 
-        /* ── Category header / dropdown toggle ── */
         .category-header {{
             display: flex;
             align-items: center;
@@ -445,7 +462,6 @@ def generate_dashboard_html_header():
             transform: rotate(180deg);
         }}
 
-        /* ── Collapsible body ── */
         .category-body {{
             display: none;
         }}
@@ -454,7 +470,6 @@ def generate_dashboard_html_header():
             display: block;
         }}
 
-        /* ── details/summary subgroups ── */
         details {{
             border-top: 1px solid #e2e8f0;
         }}
@@ -462,8 +477,6 @@ def generate_dashboard_html_header():
         details:first-of-type {{
             border-top: none;
         }}
-
-
 
         .subcategory-summary {{
             display: list-item;
@@ -618,6 +631,24 @@ def generate_dashboard_html_header():
             color: white;
             border-bottom: 1px solid #3a4a5a;
         }}
+
+        .cat-trend-label {{
+            font-size: 11px;
+            color: #718096;
+            margin-right: 2px;
+            white-space: nowrap;
+        }}
+
+        .cat-trend-wrapper {{
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 2px 6px;
+            max-height: 28px;
+        }}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script>
@@ -630,7 +661,6 @@ def generate_dashboard_html_header():
     </script>
 </head>"""
 
-#Main header with time of last update
 def generate_dashboard_page_header():
     est = timezone(timedelta(hours=-5))
     now = datetime.now(est).strftime('%Y-%m-%d %H:%M:%S EST')
@@ -641,12 +671,7 @@ def generate_dashboard_page_header():
             <p style="margin-top: 5px; font-size: 12px;">Last Updated: {now}</p>
         </div>\n"""
 
-#Vulnerability Testing Tab
 def generate_dashboard_vulnerability_testing(grouped_results, summary):
-    est = timezone(timedelta(hours=-5))
-    now = datetime.now(est).strftime('%Y-%m-%d %H:%M:%S EST')
-    
-    # Flatten all results for duration calculation
     all_results = [r for group in grouped_results.values() for r in group]
     total_duration_sec = sum(r['duration'] for r in all_results)
     total_duration_min = total_duration_sec / 60
@@ -668,25 +693,26 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                 <p>{total_duration_min:.1f}m</p>
             </div>
         </div> """
-            #One card per category 
+
     for category, results in grouped_results.items():
         cat_total  = len(results)
         cat_passed = sum(1 for r in results if r['status'] == 'PASS')
         cat_failed = cat_total - cat_passed
         cat_label  = category.replace('_', ' ').title()
 
-        # Emoji hint based on pass/fail
         cat_icon = '✅' if cat_failed == 0 else ('❌' if cat_passed == 0 else '⚠️')
 
-        # Unique id for JS toggle
         cat_id = f"cat_{category}"
 
-        # Highest CVSS among failed tests in this category
         failed_cvss_scores = [
             r['cvss_score'] for r in results
             if r['status'] == 'FAIL' and r['cvss_score'] is not None
         ]
         max_cvss = max(failed_cvss_scores) if failed_cvss_scores else None
+
+        save_category_max_cvss(category, max_cvss)
+        cat_history = get_category_history(category)
+
         if max_cvss is not None:
             max_severity = max_cvss
             max_severity_color = get_severity_color(get_cvss_severity(max_severity))
@@ -694,10 +720,16 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                 f'<span style="background-color:{max_severity_color}; color:white; '
                 f'font-weight:600; font-size:12px; padding:3px 10px; '
                 f'border-radius:10px; margin-right:8px;">'
-                f'Highest CVSS: {max_cvss:.1f} — {max_severity}</span>'
+                f'Highest CVSS: {max_cvss:.1f} — {get_cvss_severity(max_severity)}</span>'
             )
         else:
             cvss_badge_html = ''
+
+        cat_trend_html = generate_category_trend_html(category, cat_history, max_cvss)
+        cat_trend_block = f'''<span class="cat-trend-wrapper">
+                    <span class="cat-trend-label">Max CVSS trend:</span>
+                    {cat_trend_html}
+                </span>'''
 
         html += f"""
         <div class="test-results">
@@ -707,6 +739,7 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                 </span>
                 <span class="category-meta">
                     {cvss_badge_html}
+                    {cat_trend_block}
                     <span style="color:#38a169; font-weight:600;">{cat_passed} passed</span>
                     &nbsp;/&nbsp;
                     <span style="color:#e53e3e; font-weight:600;">{cat_failed} failed</span>
@@ -715,7 +748,7 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                 </span>
             </div>
             <div class="category-body" id="{cat_id}">\n"""
-        # Split results into failed and passed
+
         failed_results = [r for r in results if r['status'] == 'FAIL']
         passed_results = [r for r in results if r['status'] == 'PASS']
 
@@ -728,8 +761,6 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                             <th>Status</th>
                             <th>CVSS Score (Baseline)</th>
                             <th>Severity</th>
-                            <th>Improvement</th>
-                            <th>Trend</th>
                             <th>Duration</th>
                         </tr>
                     </thead>
@@ -745,7 +776,6 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                 duration = r['duration']
                 duration_display = f"{duration/60:.1f}m" if duration >= 60 else f"{duration:.2f}s"
 
-                improvement_html = get_improvement_html(r.get('baseline'), r.get('cvss_score'), r.get('history', []))
 
                 safe_id_name = ''.join(c if c.isalnum() else '_' for c in r['name'])
                 chart_id     = f"chart_{category}_{safe_id_name}"
@@ -756,38 +786,6 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                     if r.get('param') else ''
                 )
 
-                history      = r.get('history', [])
-                history_json = json.dumps(history)
-                labels_json  = json.dumps([f"Run {i+1}" for i in range(len(history))])
-
-                if len(history) >= 2:
-                    trend_html = f'''<canvas id="{chart_id}" width="120" height="40"></canvas>
-                    <script>
-                    new Chart(document.getElementById("{chart_id}"), {{
-                        type: "line",
-                        data: {{
-                            labels: {labels_json},
-                            datasets: [{{
-                                data: {history_json},
-                                borderColor: "#667eea",
-                                borderWidth: 2,
-                                pointRadius: 2,
-                                fill: false,
-                                tension: 0.3
-                            }}]
-                        }},
-                        options: {{
-                            plugins: {{ legend: {{ display: false }} }},
-                            scales: {{
-                                x: {{ display: false }},
-                                y: {{ display: false, min: 0, max: 10 }}
-                            }},
-                            animation: false
-                        }}
-                    }});
-                    </script>'''
-                else:
-                    trend_html = '<span style="color: #a0aec0; font-size: 12px;">Not enough data</span>'
                 if r['name'].find("/") !=-1:
                     r['name']=r['name'].split("/")[1]
                 if r['name'].find("::") !=-1:
@@ -801,8 +799,6 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                             <td><span class="status-badge {status_class}">{r['status']}</span></td>
                             <td><span class="cvss-score-pass">{cvss_display}</span></td>
                             <td><span class="severity-badge" style="background-color: {get_severity_color("NONE")};">{r['severity']}</span></td>
-                            <td>{improvement_html}</td>
-                            <td>{trend_html}</td>
                             <td>{duration_display}</td>
                         </tr>\n"""
                 else:
@@ -813,13 +809,10 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                             <td><span class="status-badge {status_class}">{r['status']}</span></td>
                             <td><span class="cvss-score-fail">{cvss_display}</span></td>
                             <td><span class="severity-badge" style="background-color: {severity_color};">{r['severity']}</span></td>
-                            <td>{improvement_html}</td>
-                            <td>{trend_html}</td>
                             <td>{duration_display}</td>
                         </tr>\n"""
             return out
 
-        # ── Failed sub-section ──
         if failed_results:
             html += f"""
                 <details open>
@@ -833,7 +826,6 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                 </table>
                 </details>\n"""
 
-        # ── Passed sub-section ──
         if passed_results:
             html += f"""
                 <details open>
@@ -854,9 +846,6 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
 
 
 def generate_html_dashboard(grouped_results, summary):
-    """Generate HTML dashboard with CVSS scores, grouped by test directory"""
-    
-    #generate the header for the dashboard, including css style
     html = generate_dashboard_html_header()
     html += f"""
 <body  onload='showDiv("vulnerability_testing")'>
@@ -878,7 +867,6 @@ def generate_html_dashboard(grouped_results, summary):
 
 
 def main():
-    """Main dashboard generation function"""
     print("="*70)
     print("OpenMRS O3 Security Dashboard Generator")
     print("="*70)
@@ -889,13 +877,20 @@ def main():
 
     print("Parsing test results...")
     results, summary = parse_test_results()
-    print(f"Found {len(results)} test(s)")
+    total = sum(len(v) for v in results.values())
+    print(f"Found {total} test(s)")
+
+    print("")
+    print("Saving test results to database...")
+    for category_results in results.values():
+        for r in category_results:
+            save_test_result(r['name'], r['cvss_score'], r['status'])
+    print("✓ Test results saved")
 
     print("")
     print("Generating HTML dashboard...")
     html_content = generate_html_dashboard(results, summary)
     
-    # Write dashboard
     with open('security_dashboard.html', 'w', encoding="utf-8") as f:
         f.write(html_content)
     
