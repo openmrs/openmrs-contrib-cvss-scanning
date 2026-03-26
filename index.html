@@ -10,12 +10,16 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+        html {
+            height:100%
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            width:100%
+            height:100%;
         }
         
         .container {
@@ -75,14 +79,98 @@
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            margin-bottom: 20px;
         }
-        
-        .test-results h2 {
-            padding: 20px;
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
             background: #f7fafc;
+            border-bottom: 2px solid #e2e8f0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .category-header:hover {
+            background: #edf2f7;
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             color: #2d3748;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .category-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #718096;
+        }
+
+        .chevron {
+            transition: transform 0.25s ease;
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .chevron.open {
+            transform: rotate(180deg);
+        }
+
+        .category-body {
+            display: none;
+        }
+
+        .category-body.open {
+            display: block;
+        }
+
+        details {
+            border-top: 1px solid #e2e8f0;
+        }
+
+        details:first-of-type {
+            border-top: none;
+        }
+
+        .subcategory-summary {
+            display: list-item;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            user-select: none;
+        }
+
+        .subcategory-summary:hover {
+            filter: brightness(0.96);
+        }
+
+        .subcategory-fail {
+            background: #fff5f5;
+            color: #c53030;
+            border-left: 4px solid #fc8181;
+        }
+
+        .subcategory-pass {
+            background: #f0fff4;
+            color: #276749;
+            border-left: 4px solid #68d391;
+        }
+
+        .subcategory-count {
+            font-size: 12px;
+            font-weight: 500;
+            color: #718096;
         }
         
         table {
@@ -141,9 +229,13 @@
             color: white;
         }
         
-        .cvss-score {
+        .cvss-score-fail {
             font-weight: bold;
             font-size: 18px;
+        }
+        .cvss-score-pass {
+            font-size: 18px;
+            color:#696969;
         }
         
         .footer {
@@ -201,21 +293,100 @@
             color: white;
             border-bottom: 1px solid #3a4a5a;
         }
+
+        .cat-trend-label {
+            font-size: 11px;
+            color: #718096;
+            margin-right: 2px;
+            white-space: nowrap;
+        }
+
+        .cat-trend-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 2px 6px;
+            max-height: 28px;
+        }
+        #tabs_div{
+            height:100%;
+            display:block;
+        }
+        #tabs_div>div{
+            visibility: hidden;
+            display:none;
+        }
+        #tabs_div>div.visible{
+            visibility: visible;
+            display:block;
+            height:100%;
+        }
+        .tabs_buttons{
+            width:100%;
+            display:flex;
+            justify-content: center;
+            padding-bottom:20px;
+        }
+        .tabs_buttons button{
+            border-radius: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color:white;
+            color:black;
+            width:50%;
+            height:50px;
+        }
+        .tabs_buttons button:hover{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color:#edf2f7;
+            color:black;
+            width:50%;
+            height:50px;
+        }
+        iframe{
+            width:100%;
+            height:95dvh;
+        }
+
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+        function toggleCategory(id) {
+            const body    = document.getElementById(id);
+            const chevron = document.getElementById('chevron_' + id);
+            const isOpen  = body.classList.toggle('open');
+            chevron.classList.toggle('open', isOpen);
+        }
+    </script>
+    <script>
+        function showDiv(id){
+            const divs = document.querySelectorAll("#tabs_div>div");
+            divs.forEach(d=>{d.classList.remove("visible")});
+            document.getElementById(id).classList.add("visible");
+        }
+    </script>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
+<body  onload='showDiv("vulnerability_testing")'>
+          <div class="header">
             <h1>🔒 OpenMRS O3 Security Dashboard</h1>
             <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
-            <p style="margin-top: 5px; font-size: 12px;">Last Updated: 2026-03-25 21:06:03 EST</p>
+            <p style="margin-top: 5px; font-size: 12px;">Last Updated: 2026-03-25 21:59:19 EST</p>
         </div>
-        
+
+      <div class = "tabs_buttons">
+        <button style="margin-right:5px;" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
+        <button style="margin-left:5px;" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
+    </div>
+
+    <div id="tabs_div">
+             
+    <div id ="vulnerability_testing">
         <div class="stats">
             <div class="stat-card">
                 <h3>Total Tests</h3>
-                <p>5</p>
+                <p>0</p>
             </div>
             <div class="stat-card">
                 <h3>Passed</h3>
@@ -223,183 +394,18 @@
             </div>
             <div class="stat-card">
                 <h3>Failed</h3>
-                <p style="color: #e53e3e;">5</p>
+                <p style="color: #e53e3e;">0</p>
             </div>
             <div class="stat-card">
                 <h3>Duration</h3>
-                <p>8.0m</p>
+                <p>0.0m</p>
             </div>
         </div>
-        
-        <div class="test-results">
-            <h2>Test Results</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Test Category</th>
-                        <th>Test Name</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th>CVSS Score (Baseline)</th>
-                        <th>Severity</th>
-                        <th>Improvement</th>
-                        <th>Trend</th>
-                        <th>Duration</th>
-                    </tr>
-                </thead>
-                <tbody>
+         <div id="dependency_scanning">
+        <iframe src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/"></iframe>
+    </div>
+    </div>
 
-                    <tr>
-                        <td><strong>No Feature Found</strong></td>
-                        <td>No Scenario Found</td>
-                        <td>No description available</td>
-                        <td><span class="status-badge status-fail">FAIL</span></td>
-                        <td><span class="cvss-score">N/A</span></td>
-                        <td><span class="severity-badge" style="background-color: #6c757d;">None</span></td>
-                        <td><span style="color: #a0aec0;">—</span></td>
-                        <td><span style="color: #a0aec0; font-size: 12px;">Not enough data</span></td>
-                        <td>7.9m</td>
-                    </tr>
-
-                    <tr>
-                        <td><strong>No Feature Found</strong></td>
-                        <td>No Scenario Found</td>
-                        <td>No description available</td>
-                        <td><span class="status-badge status-fail">FAIL</span></td>
-                        <td><span class="cvss-score">N/A</span></td>
-                        <td><span class="severity-badge" style="background-color: #6c757d;">None</span></td>
-                        <td><span style="color: #a0aec0;">—</span></td>
-                        <td><span style="color: #a0aec0; font-size: 12px;">Not enough data</span></td>
-                        <td>9.73s</td>
-                    </tr>
-
-                    <tr>
-                        <td><strong>No Feature Found</strong></td>
-                        <td>No Scenario Found</td>
-                        <td>No description available</td>
-                        <td><span class="status-badge status-fail">FAIL</span></td>
-                        <td><span class="cvss-score">9.2</span></td>
-                        <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                        <td><div class="tooltip-wrapper"><span style="color: #718096;">0.0 —</span><div class="tooltip-content">
-            <strong>Last 5 Runs (Baseline: 9.2)</strong>
-            <table class="tooltip-table">
-                <thead><tr><th>Run</th><th>Score</th><th>Delta</th></tr></thead>
-                <tbody><tr><td>Run 5 ◀</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 4</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 3</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 2</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 1</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr></tbody>
-            </table></div></div></td>
-                        <td><canvas id="chart_session_management/test_cookie_httpOnly_attribute.py::test_cookies_have_session_httpOnly_attribute" width="120" height="40"></canvas>
-                        <script>
-                        new Chart(document.getElementById("chart_session_management/test_cookie_httpOnly_attribute.py::test_cookies_have_session_httpOnly_attribute"), {
-                            type: "line",
-                            data: {
-                                labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5"],
-                                datasets: [{
-                                    data: [9.2, 9.2, 9.2, 9.2, 9.2],
-                                    borderColor: "#667eea",
-                                    borderWidth: 2,
-                                    pointRadius: 2,
-                                    fill: false,
-                                    tension: 0.3
-                                }]
-                            },
-                            options: {
-                                plugins: { legend: { display: false } },
-                                scales: {
-                                    x: { display: false },
-                                    y: { display: false, min: 0, max: 10 }
-                                },
-                                animation: false
-                            }
-                        });
-                        </script></td>
-                        <td>0.35s</td>
-                    </tr>
-
-                    <tr>
-                        <td><strong>No Feature Found</strong></td>
-                        <td>No Scenario Found</td>
-                        <td>No description available</td>
-                        <td><span class="status-badge status-fail">FAIL</span></td>
-                        <td><span class="cvss-score">5.1</span></td>
-                        <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                        <td><div class="tooltip-wrapper"><span style="color: #718096;">0.0 —</span><div class="tooltip-content">
-            <strong>Last 5 Runs (Baseline: 5.1)</strong>
-            <table class="tooltip-table">
-                <thead><tr><th>Run</th><th>Score</th><th>Delta</th></tr></thead>
-                <tbody><tr><td>Run 5 ◀</td><td>5.1</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 4</td><td>5.1</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 3</td><td>5.1</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 2</td><td>5.1</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 1</td><td>5.1</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr></tbody>
-            </table></div></div></td>
-                        <td><canvas id="chart_session_management/test_cookie_sameSite_attribute.py::test_cookies_have_sameSite_attribute_set_to_Strict_or_Lax" width="120" height="40"></canvas>
-                        <script>
-                        new Chart(document.getElementById("chart_session_management/test_cookie_sameSite_attribute.py::test_cookies_have_sameSite_attribute_set_to_Strict_or_Lax"), {
-                            type: "line",
-                            data: {
-                                labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5"],
-                                datasets: [{
-                                    data: [5.1, 5.1, 5.1, 5.1, 5.1],
-                                    borderColor: "#667eea",
-                                    borderWidth: 2,
-                                    pointRadius: 2,
-                                    fill: false,
-                                    tension: 0.3
-                                }]
-                            },
-                            options: {
-                                plugins: { legend: { display: false } },
-                                scales: {
-                                    x: { display: false },
-                                    y: { display: false, min: 0, max: 10 }
-                                },
-                                animation: false
-                            }
-                        });
-                        </script></td>
-                        <td>0.34s</td>
-                    </tr>
-
-                    <tr>
-                        <td><strong>No Feature Found</strong></td>
-                        <td>No Scenario Found</td>
-                        <td>No description available</td>
-                        <td><span class="status-badge status-fail">FAIL</span></td>
-                        <td><span class="cvss-score">9.2</span></td>
-                        <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                        <td><div class="tooltip-wrapper"><span style="color: #718096;">0.0 —</span><div class="tooltip-content">
-            <strong>Last 5 Runs (Baseline: 9.2)</strong>
-            <table class="tooltip-table">
-                <thead><tr><th>Run</th><th>Score</th><th>Delta</th></tr></thead>
-                <tbody><tr><td>Run 5 ◀</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 4</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 3</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 2</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr><tr><td>Run 1</td><td>9.2</td><td><span style="color: #a0aec0;">0.0 —</span></td></tr></tbody>
-            </table></div></div></td>
-                        <td><canvas id="chart_session_management/test_cookie_secure_attribute.py::test_cookies_have_secure_attribute" width="120" height="40"></canvas>
-                        <script>
-                        new Chart(document.getElementById("chart_session_management/test_cookie_secure_attribute.py::test_cookies_have_secure_attribute"), {
-                            type: "line",
-                            data: {
-                                labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5"],
-                                datasets: [{
-                                    data: [9.2, 9.2, 9.2, 9.2, 9.2],
-                                    borderColor: "#667eea",
-                                    borderWidth: 2,
-                                    pointRadius: 2,
-                                    fill: false,
-                                    tension: 0.3
-                                }]
-                            },
-                            options: {
-                                plugins: { legend: { display: false } },
-                                scales: {
-                                    x: { display: false },
-                                    y: { display: false, min: 0, max: 10 }
-                                },
-                                animation: false
-                            }
-                        });
-                        </script></td>
-                        <td>0.34s</td>
-                    </tr>
-
-                </tbody>
-            </table>
-        </div>
-        
         <div class="footer">
             <p>OpenMRS O3 Continuous Security Testing</p>
             <p>Powered by <a href="https://www.first.org/cvss/v4.0/" target="_blank">CVSS 4.0</a> | 
