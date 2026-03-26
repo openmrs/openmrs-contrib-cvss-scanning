@@ -2,17 +2,12 @@ import pytest
 import pytest_bdd
 
 from playwright.sync_api import sync_playwright
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL, O3_LOGIN_URL
 
 import os
 from dotenv import load_dotenv
 
 DEFAULT_LOAD_TIME = 1000
-
-# URL configuration
-O3_BASE_URL = os.getenv('O3_BASE_URL', 'http://localhost/openmrs/spa')
-O3_LOGIN_URL = f'{O3_BASE_URL}/login'
-O3_HOME_URL = f'{O3_BASE_URL}/home'
 
 @pytest.fixture
 def context_data():
@@ -55,3 +50,34 @@ def when_cookies_are_accessed_from_the_browser(new_page, context_data):
     
     context_data["cookies"] = cookies
 
+@pytest_bdd.given('cookie information is saved')
+def given_cookie_information_is_saved(new_page, context_data):
+    # This function represents what will be run before the When and Then
+    # steps. It is to put the system into a known state.
+    #
+    # If different givens exist, it is important to name the functions
+    # differently. This function should be renamed to reflect what the
+    # Given's functionality is.
+    
+    cookies = new_page.context.cookies()
+    context_data["cookies"] = cookies
+
+@pytest_bdd.given('the user logs out of their account')
+def given_user_logs_out(new_page):
+    # This function represents what will happen during the When step of the scenario.
+    new_page.wait_for_timeout(1000)
+    new_page.get_by_role("button", name="My Account").click()
+    new_page.wait_for_timeout(1000)
+    new_page.get_by_role("button", name="Logout").click()
+
+@pytest_bdd.then('the login page should be shown')
+def then(new_page):
+    # This function represents what will happen during the Then step of the scenario.
+    new_page.wait_for_url(O3_LOGIN_URL)
+    assert new_page.url == O3_LOGIN_URL
+
+@pytest_bdd.when('the url is directed at /spa')
+def when_url_is_directed_at_spa(new_page):
+    # This function represents what will happen during the When step of the scenario.
+    new_page.wait_for_url(O3_LOGIN_URL)
+    new_page.goto(O3_BASE_URL)
