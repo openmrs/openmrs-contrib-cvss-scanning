@@ -17,7 +17,7 @@ def new_page():
     """Setup Playwright browser for testing"""
     with sync_playwright() as p:
         browser = p.chromium.launch(
-            headless=os.getenv('CI') == True,
+            headless= True,
             args=[
                 '--no-sandbox',
                 '--disable-dev-shm-usage',
