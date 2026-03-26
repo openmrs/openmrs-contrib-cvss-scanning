@@ -889,8 +889,11 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
 
         html += """
             </div>
-        </div>
-    </div>\n"""
+        </div>\n"""
+
+    html += """
+    </div>\n""" 
+
     return html
 
 #Buttons to select tabs
