@@ -2,6 +2,8 @@
 .pytest_cache/
 __pycache__/
 
+tests/*/__pycache__/
+
 # Generated test reports and artifacts
 report.html
 report.json
@@ -29,3 +31,4 @@ out/
 # OS generated files
 .DS_Store
 Thumbs.db
+test_results.db
