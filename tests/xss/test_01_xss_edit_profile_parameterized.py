@@ -11,7 +11,7 @@ O3_HOMEPAGE_URL = 'http://0.0.0.0:80/openmrs/spa/home/service-queues#'
 DEFAULT_WAIT_TIME = 1000
 alertPresent=False
 
-pytest_bdd.scenarios('o3_xss_security.feature')
+#pytest_bdd.scenarios('o3_xss_security.feature')
 xssTestStrings= [
         '<script>alert("XSS")</script>',
         '<img src=x onerror=alert("XSS")>',
@@ -32,8 +32,6 @@ xssEditProfileLocations = [
     "#phone", 
 ]
 
-
-#@ptest_bdd.scenario('o3_xss_security.feature','XSS injection edit profile parameterized')
 #def test_example_scenario():
     # it is required by pytest that the scenario file starts with test_
 
@@ -140,10 +138,15 @@ def cleanupTestPatient(page,editUrl):
 loggedIn = False
 editUrl = None
 
+#@pytest_bdd.scenario('o3_xss_security.feature','XSS injection on edit profile page, parameterized')
+#def test_xss_injection_on_edit_profile_page_parameterized():
+#    pass
+
+
 @pytest.mark.parametrize("testString",xssTestStrings)
 @pytest.mark.parametrize("testLocation",xssEditProfileLocations)
+@pytest_bdd.scenario('o3_xss_security.feature','XSS injection on edit profile page, parameterized')
 @pytest_bdd.when('the attacker tries to edit a patient middle name using a set of potential XSS strings')
-
 def test_xss_injection_on_edit_profile_page_parameterized(page:Page,testString,testLocation):
     global loggedIn
     global editUrl
