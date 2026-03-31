@@ -108,7 +108,9 @@ def verifyTestPatientExists(page:Page):
 def navigateToTestPatient(page:Page):
     page.goto(O3_HOMEPAGE_URL)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
-
+    
+    if(page.get_by_placeholder('Search for a patient by name or identifier number').count()<1):
+        page.get_by_label('Search patient',exact=True).click()    
     page.get_by_placeholder('Search for a patient by name or identifier number').fill("Test Patient")
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
