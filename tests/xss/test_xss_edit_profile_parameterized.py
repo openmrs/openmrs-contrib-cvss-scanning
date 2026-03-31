@@ -67,7 +67,7 @@ def login(page:Page):
 
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
-    if(page.url==O3_WELCOME_URL):
+    if(page.url.find("/openmrs/spa/login/location")!=-1):
         page.get_by_text("Outpatient Clinic").click()
         page.get_by_text("Remember my location").click()
         page.get_by_text("Confirm").click()
