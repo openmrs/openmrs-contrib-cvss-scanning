@@ -53,7 +53,7 @@ def scenarioString(request):
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
     #print cvss information
-    cvss_score=calculate_cvss_v4_score('M','L','N','H','N','H','H','H','N','N','N',)
+    cvss_score=calculate_cvss_v4_score('N','L','N','L','N','H','H','H','N','N','N',)
     severity = get_cvss_severity(cvss_score)
     save_cvss_result(request, cvss_score, severity)
 
