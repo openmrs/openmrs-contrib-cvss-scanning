@@ -1,24 +1,26 @@
 import re
 import pytest
 import pytest_bdd
+from pytest_bdd import parsers, scenarios, scenario
 from playwright.sync_api import Page, expect
 from tests.utils import display_results,get_cvss_severity,calculate_cvss_v4_score
 from tests.conftest import save_cvss_result
-import conftest
+
+
 O3_LOGIN_URL = 'http://0.0.0.0:80/openmrs/spa/login'
 O3_WELCOME_URL = 'http://0.0.0.0:80/openmrs/spa/login/location'
 O3_HOMEPAGE_URL = 'http://0.0.0.0:80/openmrs/spa/home/service-queues#'
 DEFAULT_WAIT_TIME = 1000
 alertPresent=False
+loggedIn = False
+editUrl = None
 
-#pytest_bdd.scenarios('o3_xss_security.feature')
 xssTestStrings= [
-        '<script>alert("XSS")</script>',
-        '<img src=x onerror=alert("XSS")>',
-        '<svg onload=alert("XSS")>',
-        '"><script>alert("XSS")</script>',
-        "javascript:alert('XSS')"
+        "<img src/onerror=prompt('XSS')",
+        '<img src=x onerror=prompt("XSS")>',
+        '<svg onload=prompt("XSS")>'
     ]
+#currently unused
 xssEditProfileLocations = [
     "#givenName",
     "#middleName",
@@ -31,14 +33,23 @@ xssEditProfileLocations = [
     "#postalCode",
     "#phone", 
 ]
+scenarioStrings=[
+    "first name",
+    "middle name",
+    "family name",
+    "address 1",
+    "address 2",
+    "city",
+    "state",
+    "country",
+    "postal code",
+    "phone number"
+]
 
-#def test_example_scenario():
-    # it is required by pytest that the scenario file starts with test_
+@pytest.fixture(params=scenarioStrings)
+def scenarioString(request):
+    return request.param
 
-    # This function below the decorator represents what will be run
-    # when the Scenario is run. The name of the function may be changed
-    # but should represent the scenario being called.
-    #pass
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
     #print cvss information
@@ -72,7 +83,7 @@ def createTestPatient(page:Page):
     page.get_by_text("Other").click()
 
     #date of birth -> no, estimated age
-    page.locator('[class="cds--content-switcher cds--layout-constraint--size__default-md cds--layout-constraint--size__min-sm cds--layout-constraint--size__max-lg"]').get_by_text('No').click()
+    page.locator("button").get_by_text('No').last.click()
     page.locator('#yearsEstimated').fill("26")
     page.locator('#monthsEstimated').fill("0")
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
@@ -82,124 +93,99 @@ def createTestPatient(page:Page):
 @pytest_bdd.given('a test patient has been created')
 def verifyTestPatientExists(page:Page):
     page.goto(O3_HOMEPAGE_URL)
-    #page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    #page.get_by_label('Search patient',exact=True).click()
-    #page.get_by_placeholder('Search for a patient by name or identifier number').fill("Test Patient")
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    #if(page.get_by_text("Other").count()>=1):
-        #page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    #else:
-        #createTestPatient(page)
-        #page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    page.get_by_label('Search patient',exact=True).click()
+    page.get_by_placeholder('Search for a patient by name or identifier number').fill("Test Patient")
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    if(page.get_by_text("Other").count()>=1):
+        "hello"
+    else:
+        createTestPatient(page)
+        page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.given('the OpenMRS 3 edit patient page is displayed')
 def navigateToTestPatient(page:Page):
     page.goto(O3_HOMEPAGE_URL)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.get_by_label('Search patient',exact=True).click()
+
     page.get_by_placeholder('Search for a patient by name or identifier number').fill("Test Patient")
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
-    child = page.get_by_text("Other")
-    child.click()
-    #parent = page.locator(".a").filter(has=child)
-    #parent.click()
-    page.wait_for_timeout(DEFAULT_WAIT_TIME*2)
+    page.get_by_role("button",name="Search").first.click()
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
     #find and click actions button
     child = page.get_by_text("Actions")
     child.click()
-    #parent = page.location("button").filter(has=child)
-    #parent.click()
     #find and click actions button
     page.wait_for_timeout(DEFAULT_WAIT_TIME/5)
     child = page.get_by_text("Edit patient details")
     child.click()
-    #parent = page.location("button").filter(has=child)
-    #parent.click()
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    global editUrl
+    editUrl=page.url
 
 
 def setAlertPresent(val):
         alertPresent=val
    
-def cleanupTestPatient(page,editUrl):
-    #not finished
-    page.goto(editUrl)
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    for field in xssEditProfileLocations:
-        page.locator(field).fill("")
-    page.locator("#givenName").fill("Test")
-    page.locator("#familyName").fill("Patient")
-    page.get_by_text("Update patient").click()
-    #waits for page to load then ends
-    child = page.get_by_text("Vitals and biometrics")
-    child.wait_for()
-
-loggedIn = False
-editUrl = None
-
 #@pytest_bdd.scenario('o3_xss_security.feature','XSS injection on edit profile page, parameterized')
 #def test_xss_injection_on_edit_profile_page_parameterized():
 #    pass
 
 
 @pytest.mark.parametrize("testString",xssTestStrings)
-@pytest.mark.parametrize("testLocation",xssEditProfileLocations)
-@pytest_bdd.scenario('o3_xss_security.feature','XSS injection on edit profile page, parameterized')
-@pytest_bdd.when('the attacker tries to edit a patient middle name using a set of potential XSS strings')
-def test_xss_injection_on_edit_profile_page_parameterized(page:Page,testString,testLocation):
-    global loggedIn
-    global editUrl
-    if(not loggedIn):
-        login(page)
-        verifyTestPatientExists(page)
-        navigateToTestPatient(page)
-        loggedIn=True
-    if (editUrl==None):
-        editUrl = page.url
-    if(editUrl is not None):
-        page.wait_for_timeout(DEFAULT_WAIT_TIME)
-        page.goto(editUrl)
-        page.wait_for_timeout(DEFAULT_WAIT_TIME)
-        if(page.url.find("login")>=0):
-            login(page)
-            page.wait_for_timeout(DEFAULT_WAIT_TIME)
-            page.goto(editUrl)
-        page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    global alertPresent
-
-
+@scenario('o3_xss_security.feature', 'XSS injection on <scenarioString> field of edit patient page, parameterized')
+@pytest_bdd.when(parsers.parse('the attacker tries to edit a patient {scenarioString} using a set of potential XSS strings'))
+def test_xss_injection_on_edit_profile_page_parameterized(page:Page,testString):
+    print("hello!")
     #run the test
     #fill in field and update patient
-    page.locator(testLocation).fill(testString)
+    global editUrl
+    page.goto(editUrl)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    page.locator("#middleName").fill(testString)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Update patient").click()
-    #The page should now be the patient's main page. There should be no alert from XSS
-    #Starting @then: "see if XSS injection was successful"
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.get_by_text("Show more").click()
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.on('dialog', lambda: setAlertPresent(True))
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    #Ending @then: "see if XSS injection was successful"
 
-    #Starting @then: "cleanup the test patient and potentially report failure"
-    #cleanup patient
-    cleanupTestPatient(page,editUrl)
-    if(alertPresent):
-        #trigger test failure
-        assert False
-    #Ending @then "cleanup the test patient and potentially report failure"
 
 
 @pytest_bdd.then('see if XSS injection was successful')
 def see_if_XSS_injection_was_successful(page):
-    pass #no-op, handled in @when for parameterization purposes
+    #Starting @then: "see if XSS injection was successful"
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    page.get_by_text("Show more").click()
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    #if Cancel and Ok shows up on this page, a dialog has opened up - there is an XSS vulnerability
+    if(page.get_by_text("Cancel").count()!=1 and page.get_by_text("Ok").count()!=1):
+        #trigger test failure
+        assert False
 
+@pytest.fixture(scope="function",autouse=True)
+def cleanupTestPatient(page):
+    yield
+    global editUrl
+    print("cleaning up!")
+    if editUrl!=None:
+        page.goto(editUrl)
+        page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
-@pytest_bdd.then('cleanup the test patient and potentially report failure')
-def cleanup_the_test_patient_and_potentially_report_failure(page):
-    pass #no-op, handled in @when for parameterization purposes
+        page.locator("#givenName").fill("Test")
+        page.locator("#middleName").fill("Ing")
+        page.locator("#familyName").fill("Patient")
+        page.locator("#address1").fill("10000 Avenue Road")
+        page.locator("#address2").fill("243")
+        page.locator("#cityVillage").fill("Village Town")
+        page.locator("#stateProvince").fill("St.Mrs Province")
+        page.locator("#country").fill("USA")
+        page.locator("#postalCode").fill("00000")
+        page.locator("#phone").fill("XXX-555-XXXX")
+        page.get_by_text("Update patient").click()
+        #waits for page to load then ends
+        child = page.get_by_text("Vitals and biometrics")
+        child.wait_for()
+    else:
+        print("url was none")
+
 
 
     

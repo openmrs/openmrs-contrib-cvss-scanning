@@ -8,9 +8,21 @@ Feature: XSS
     Given logged into OpenMRS O3
     Given a test patient has been created
     Given the OpenMRS 3 edit patient page is displayed
-    
-  Scenario: XSS injection on edit profile page, parameterized
-    A parameterized test to try several potential XSS injection strings on each field of the edit profile page.
-    When the attacker tries to edit a patient middle name using a set of potential XSS strings
-    Then see if XSS injection was successful
-    Then cleanup the test patient and potentially report failure
+
+  Scenario Outline: XSS injection on <scenarioString> field of edit patient page, parameterized
+    A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.
+      When the attacker tries to edit a patient <scenarioString> using a set of potential XSS strings
+      Then see if XSS injection was successful
+      
+  Examples:
+    | scenarioString |
+    | first name     |
+    | middle name    |
+    | family name    |
+    | address 1      |
+    | address 2      |
+    | city           |
+    | state          |
+    | country        |
+    | postal code    |
+    | phone number   |
