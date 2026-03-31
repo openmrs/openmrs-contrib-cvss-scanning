@@ -71,6 +71,7 @@ def login(page:Page):
         page.get_by_text("Outpatient Clinic").click()
         page.get_by_text("Remember my location").click()
         page.get_by_text("Confirm").click()
+        page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 
 def createTestPatient(page:Page):
@@ -137,7 +138,6 @@ def setAlertPresent(val):
 @scenario('o3_xss_security.feature', 'XSS injection on <scenarioString> field of edit patient page, parameterized')
 @pytest_bdd.when(parsers.parse('the attacker tries to edit a patient {scenarioString} using a set of potential XSS strings'))
 def test_xss_injection_on_edit_profile_page_parameterized(page:Page,testString):
-    print("hello!")
     #run the test
     #fill in field and update patient
     global editUrl
@@ -164,7 +164,6 @@ def see_if_XSS_injection_was_successful(page):
 def cleanupTestPatient(page):
     yield
     global editUrl
-    print("cleaning up!")
     if editUrl!=None:
         page.goto(editUrl)
         page.wait_for_timeout(DEFAULT_WAIT_TIME)
@@ -183,8 +182,6 @@ def cleanupTestPatient(page):
         #waits for page to load then ends
         child = page.get_by_text("Vitals and biometrics")
         child.wait_for()
-    else:
-        print("url was none")
 
 
 
