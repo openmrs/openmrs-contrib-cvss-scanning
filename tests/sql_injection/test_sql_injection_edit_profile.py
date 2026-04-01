@@ -3,20 +3,16 @@ import pytest
 import pytest_bdd
 from pytest_bdd import parsers, scenarios, scenario
 from playwright.sync_api import Page, expect
-from tests.utils import display_results,get_cvss_severity,calculate_cvss_v4_score
+from tests.utils import display_results,get_cvss_severity,calculate_cvss_v4_score, O3_LOGIN_URL, O3_WELCOME_URL,O3_HOME_URL,DEFAULT_WAIT_TIME
 from tests.conftest import save_cvss_result
 
 
-O3_LOGIN_URL = 'http://0.0.0.0:80/openmrs/spa/login'
-O3_WELCOME_URL = 'http://0.0.0.0:80/openmrs/spa/login/location'
-O3_HOMEPAGE_URL = 'http://0.0.0.0:80/openmrs/spa/home/service-queues#'
-DEFAULT_WAIT_TIME = 1000
-alertPresent=False
+
 loggedIn = False
 editUrl = None
 
 sqlTestStrings= [
-#    "'",                    # Most fundamental probe — breaks unparameterized queries instantly
+    "'",                    # Most fundamental probe — breaks unparameterized queries instantly
     "' OR 'a'='a",         # Tautology in pure string context — no numbers needed
     "';--",                 # Statement termination — tests for multi-statement execution
     "O'Brien",              # Realistic input — catches basic escaping failures without looking malicious
@@ -62,7 +58,7 @@ def login(page:Page):
 
 
 def createTestPatient(page:Page):
-    page.goto(O3_HOMEPAGE_URL)
+    page.goto(O3_HOME_URL)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_label('Add patient').click()
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
@@ -80,20 +76,18 @@ def createTestPatient(page:Page):
 
 @pytest_bdd.given('a test patient has been created')
 def verifyTestPatientExists(page:Page):
-    page.goto(O3_HOMEPAGE_URL)
+    page.goto(O3_HOME_URL)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_label('Search patient',exact=True).click()
     page.get_by_placeholder('Search for a patient by name or identifier number').fill("Test Patient")
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    if(page.get_by_text("Other").count()>=1):
-        "hello"
-    else:
+    if(not page.get_by_text("Other").count()>=1):
         createTestPatient(page)
         page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.given('the OpenMRS 3 edit patient page is displayed')
 def navigateToTestPatient(page:Page):
-    page.goto(O3_HOMEPAGE_URL)
+    page.goto(O3_HOME_URL)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     
     if(page.get_by_placeholder('Search for a patient by name or identifier number').count()<1):
@@ -115,13 +109,6 @@ def navigateToTestPatient(page:Page):
     editUrl=page.url
 
 
-def setAlertPresent(val):
-        alertPresent=val
-   
-#@pytest_bdd.scenario('o3_xss_security.feature','XSS injection on edit profile page, parameterized')
-#def test_xss_injection_on_edit_profile_page_parameterized():
-#    pass
-
 
 @pytest.mark.parametrize("testString",sqlTestStrings)
 @scenario('sql_injection.feature', 'SQL injection on <personNameSQLString> field of edit patient page')
@@ -141,8 +128,7 @@ def test_xss_injection_on_edit_profile_page_parameterized(page:Page,testString,r
 
 
 @pytest_bdd.then('see if SQL injection was successful')
-def see_if_XSS_injection_was_successful(page):
-    #Starting @then: "see if XSS injection was successful"
+def see_if_SQL_injection_was_successful(page):
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Show more").click()
     someTestStringFound=False
