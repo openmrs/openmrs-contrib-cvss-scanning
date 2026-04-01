@@ -3,13 +3,9 @@ import pytest
 import pytest_bdd
 from pytest_bdd import parsers, scenarios, scenario
 from playwright.sync_api import Page, expect
-from tests.utils import display_results,get_cvss_severity,calculate_cvss_v4_score
+from tests.utils import display_results,get_cvss_severity,calculate_cvss_v4_score,O3_BASE_URL, O3_HOME_URL, O3_LOGIN_URL,O3_WELCOME_URL,DEFAULT_WAIT_TIME
 from tests.conftest import save_cvss_result
 
-
-O3_LOGIN_URL = 'http://0.0.0.0:80/openmrs/spa/login'
-O3_WELCOME_URL = 'http://0.0.0.0:80/openmrs/spa/login/location'
-O3_HOMEPAGE_URL = 'http://0.0.0.0:80/openmrs/spa/home/service-queues#'
 DEFAULT_WAIT_TIME = 1000
 alertPresent=False
 loggedIn = False
@@ -60,7 +56,7 @@ def login(page:Page):
 
 
 def createTestPatient(page:Page):
-    page.goto(O3_HOMEPAGE_URL)
+    page.goto(O3_HOME_URL)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_label('Add patient').click()
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
@@ -78,7 +74,7 @@ def createTestPatient(page:Page):
 
 @pytest_bdd.given('a test patient has been created')
 def verifyTestPatientExists(page:Page):
-    page.goto(O3_HOMEPAGE_URL)
+    page.goto(O3_HOME_URL)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_label('Search patient',exact=True).click()
     page.get_by_placeholder('Search for a patient by name or identifier number').fill("Test Patient")
@@ -91,7 +87,7 @@ def verifyTestPatientExists(page:Page):
 
 @pytest_bdd.given('the OpenMRS 3 edit patient page is displayed')
 def navigateToTestPatient(page:Page):
-    page.goto(O3_HOMEPAGE_URL)
+    page.goto(O3_HOME_URL)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     
     if(page.get_by_placeholder('Search for a patient by name or identifier number').count()<1):
@@ -116,11 +112,6 @@ def navigateToTestPatient(page:Page):
 def setAlertPresent(val):
         alertPresent=val
    
-#@pytest_bdd.scenario('o3_xss_security.feature','XSS injection on edit profile page, parameterized')
-#def test_xss_injection_on_edit_profile_page_parameterized():
-#    pass
-
-
 @pytest.mark.parametrize("testString",xssTestStrings)
 @scenario('o3_xss_security.feature', 'XSS injection on <scenarioString> field of edit patient page, parameterized')
 @pytest_bdd.when(parsers.parse('the attacker tries to edit a patient {scenarioString} using a set of potential XSS strings'))
@@ -137,7 +128,6 @@ def test_xss_injection_on_edit_profile_page_parameterized(page:Page,testString,r
 
 @pytest_bdd.then('see if XSS injection was successful')
 def see_if_XSS_injection_was_successful(page):
-    #Starting @then: "see if XSS injection was successful"
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Show more").click()
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
