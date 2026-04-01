@@ -15,6 +15,19 @@ alertPresent=False
 loggedIn = False
 editUrl = None
 
+xssEditProfileLocations = {
+    "first name":    "#givenName",
+    "middle name":   "#middleName",
+    "family name":   "#familyName",
+    "address 1":     "#address1",
+    "address 2":     "#address2",
+    "city":          "#cityVillage",
+    "state":         "#stateProvince",
+    "country":       "#country",
+    "postal code":   "#postalCode",
+    "phone number":  "#phone",
+}
+
 xssTestStrings= [
         "<img src/onerror=prompt('XSS')",
         '<img src=x onerror=prompt("XSS")>',
