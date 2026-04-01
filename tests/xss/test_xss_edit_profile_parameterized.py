@@ -20,35 +20,7 @@ xssTestStrings= [
         '<img src=x onerror=prompt("XSS")>',
         '<svg onload=prompt("XSS")>'
     ]
-#currently unused
-xssEditProfileLocations = [
-    "#givenName",
-    "#middleName",
-    "#familyName",
-    "#address1",
-    "#address2",
-    "#cityVillage",
-    "#stateProvince",
-    "#country",
-    "#postalCode",
-    "#phone", 
-]
-scenarioStrings=[
-    "first name",
-    "middle name",
-    "family name",
-    "address 1",
-    "address 2",
-    "city",
-    "state",
-    "country",
-    "postal code",
-    "phone number"
-]
 
-@pytest.fixture(params=scenarioStrings)
-def scenarioString(request):
-    return request.param
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -139,13 +111,12 @@ def setAlertPresent(val):
 @pytest.mark.parametrize("testString",xssTestStrings)
 @scenario('o3_xss_security.feature', 'XSS injection on <scenarioString> field of edit patient page, parameterized')
 @pytest_bdd.when(parsers.parse('the attacker tries to edit a patient {scenarioString} using a set of potential XSS strings'))
-def test_xss_injection_on_edit_profile_page_parameterized(page:Page,testString):
-    #run the test
-    #fill in field and update patient
+def test_xss_injection_on_edit_profile_page_parameterized(page:Page,testString,request):
     global editUrl
     page.goto(editUrl)
+    scenarioString = request.getfixturevalue('_pytest_bdd_example')['scenarioString']
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.locator("#middleName").fill(testString)
+    page.locator(xssEditProfileLocations[scenarioString]).fill(testString)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Update patient").click()
 
