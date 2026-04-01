@@ -16,9 +16,26 @@ loggedIn = False
 editUrl = None
 
 sqlTestStrings= [
-        "<img src/onerror=prompt('XSS')",
-    ]
+#    "'",                    # Most fundamental probe — breaks unparameterized queries instantly
+    "' OR 'a'='a",         # Tautology in pure string context — no numbers needed
+    "';--",                 # Statement termination — tests for multi-statement execution
+    "O'Brien",              # Realistic input — catches basic escaping failures without looking malicious
+    "' OR ''='",            # Minimal tautology — slips past naive filters that block keywords like OR+number
+]
 
+sqlEditProfileNameLocations = {
+    "first name":    "#givenName",
+    "middle name":   "#middleName",
+    "family name":   "#familyName",
+}
+sqlEditProfileAddressLocations = {
+    "address 1":     "#address1",
+    "address 2":     "#address2",
+    "city":          "#cityVillage",
+    "state":         "#stateProvince",
+    "country":       "#country",
+    "postal code":   "#postalCode",
+}
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -114,8 +131,10 @@ def test_xss_injection_on_edit_profile_page_parameterized(page:Page,testString,r
     #fill in field and update patient
     global editUrl
     page.goto(editUrl)
+    scenarioString = request.getfixturevalue('_pytest_bdd_example')['personNameSQLString']
+    print(scenarioString)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.locator("#middleName").fill(testString)
+    page.locator(sqlEditProfileNameLocations[scenarioString]).fill(testString)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Update patient").click()
 
@@ -126,11 +145,16 @@ def see_if_XSS_injection_was_successful(page):
     #Starting @then: "see if XSS injection was successful"
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Show more").click()
+    someTestStringFound=False
+
+    for testString in sqlTestStrings:
+        #at least one of the test strings should be on the page, if not there was an injection and we can assert a test fail
+        if(page.locator("aside").get_by_text(re.compile(testString, re.IGNORECASE)).count()>=1):
+            someTestStringFound=True
+        
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    #if Cancel and Ok shows up on this page, a dialog has opened up - there is an XSS vulnerability
-    if(page.get_by_text("Cancel").count()!=1 and page.get_by_text("Ok").count()!=1):
-        #trigger test failure
-        assert False
+    #if one of the test strings wasnt found this will be false indicating an injection
+    assert someTestStringFound
 
 @pytest.fixture(scope="function",autouse=True)
 def cleanupTestPatient(page):
