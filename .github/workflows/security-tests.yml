@@ -58,7 +58,7 @@ jobs:
       run: |
         # Run pytest and capture ALL output (including CVSS scores)
         pytest tests/ \
-          --html=report.html \
+          --html=detailed-report.html \
           --self-contained-html \
           --json-report \
           --json-report-file=report.json \
@@ -91,7 +91,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: security-test-report-html
-        path: report.html
+        path: detailed-report.html
         retention-days: 30
 
     - name: Upload JSON Results
@@ -107,7 +107,7 @@ jobs:
       run: |
         mkdir -p gh-pages
         cp security_dashboard.html gh-pages/index.html
-        cp report.html gh-pages/detailed-report.html
+        cp detailed-report.html gh-pages/detailed-report.html
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
