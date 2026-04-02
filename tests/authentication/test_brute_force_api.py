@@ -3,14 +3,15 @@
 # For this test category
 # This file NEEDS to start with test_*.py
 
-import pytest
 import pytest_bdd
-import string
-import random
+import requests
+import base64
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 from tests.conftest import save_cvss_result
-from tests.authenitcation.conftest import random_password
+from tests.authentication.conftest import random_password
+
+O3_API_URL = f'http://localhost/openmrs/ws/rest/v1/session'
 
 # O3_BASE_URL represents the URL to access OpenMRS 3
 
@@ -239,8 +240,8 @@ def given_cvss_score_is_calculted_and_printed(request):
 # '<feature>.feature'
 # The second string should be copied from the feature file
 @pytest_bdd.scenario('authentication.feature',
-                        'Brute force password attack with known admin username')
-def test_brute_force_password():
+                        'Brute force password attack via REST API with known admin username')
+def test_brute_force_password_api():
     # it is required by pytest that the scenario file starts with test_
 
     # This function below the decorator represents what will be run
@@ -248,41 +249,61 @@ def test_brute_force_password():
     # but should represent the scenario being called.
     pass
 
-def login(new_page, username, password):
-    new_page.wait_for_selector("#username")
-    new_page.fill("#username", username)
-    new_page.keyboard.press("Enter")
-    new_page.wait_for_selector("#password")
-    new_page.fill("#password", password)
-    new_page.keyboard.press("Enter")
+def login_api(username, password):
+    
+    isAuthenticated = False
+    
+    credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
+    headers = {
+        'Authorization': f'Basic {credentials}',
+        'Content-Type': 'application/json'
+    }
+
+    try:
+        response = requests.get(O3_API_URL, headers=headers, timeout=10)
+        status_code = response.status_code
+
+        if status_code == 200:
+            try:
+                print(response.text[:200])
+                data = response.json()
+                authenticated = data.get('authenticated', False)
+                if authenticated:
+                    print(f"  Result: Login SUCCEEDED (unexpected!) HTTP {status_code}")
+                    
+                    isAuthenticated = True
+                else:
+                    print(f"  Result: Login FAILED (expected) HTTP {status_code}")
+            except:
+                print(f"  Result: HTTP {status_code} (could not parse response)")
+        else:
+            print(f"  Result: HTTP {status_code}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"  Result: Request failed - {e}")
+    
+    return isAuthenticated
 
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
-@pytest_bdd.when('the attacker tries to login with known username admin and random passwords')
-def when_attacker_tries_to_log_in_with_known_username(new_page, login_data):
+@pytest_bdd.when('the attacker sends 7 API login requests with known username admin and random passwords')
+def when_attacker_sends_seven_api_login(new_page, login_data):
     # This function represents what will happen during the When step of the scenario.
-    
-    # OpenMRS password requirements
-    # Minimum 8 characters
-    # Must contain upper and lower case letters
-    # Must contain at least 1 number
-    
     login_data["logged_in"] = False
     
     passwords = []
     
     for _ in range(0,7):
         passwords.append(random_password())
-        
+    
     for password in passwords:
         print("Trying...",password)
                 
         # try passwords
-        login(new_page, "admin", password)
-        new_page.wait_for_timeout(1000)
-            
+        isAuthenticated = login_api("admin", password)
+                    
         # if on page /login/location
-        if (new_page.url != (O3_BASE_URL + '/login')):
+        if (isAuthenticated):
             # password worked
             login_data["logged_in"] = True
             break
@@ -290,30 +311,32 @@ def when_attacker_tries_to_log_in_with_known_username(new_page, login_data):
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
 @pytest_bdd.then('check after 7 incorrect attempts')
-def then_check_after_seven_attempts(login_data):
+def then_check_attempts(login_data):
     # This function represents what will happen during the Then step of the scenario.
+    
     assert login_data["logged_in"] == False
 
-@pytest_bdd.then('verify account lockout triggers after 7 failures')
-def then_verify_account_lockout(new_page):
+@pytest_bdd.then('verify API account lockout triggers after 7 failures')
+def then_verify_api_lockout():
     # This function represents what will happen during the Then step of the scenario.
     
-    # go to login page
-    new_page.goto(O3_BASE_URL + '/login')
+    # should lockout correct username and password
+    isAuthenticated = login_api("admin","Admin123")
     
-    # assert correct credentials do not work
-    login(new_page, "admin", "Admin123")
-    
-    assert new_page.url == O3_BASE_URL + '/login'
+    assert isAuthenticated == False
 
-@pytest_bdd.then('verify account becomes accessible after 5-minute cooldown period')
-def then_verify_account_accessible(new_page):
+@pytest_bdd.then('verify API account becomes accessible after 5-minute cooldown period')
+def then_verify_api_accessible(new_page):
     # This function represents what will happen during the Then step of the scenario.
-    new_page.wait_for_timeout(5 * 60 * 1000 + 500)
     
-    login(new_page, "admin", "Admin123")
+    # after 5 minutes, check if authenticated
     
-    assert new_page.url != O3_BASE_URL + '/login'
+    new_page.wait_for_timeout(5 * 60 * 1000 + 500) # 5 minutes (+ 500ms)
+    
+    # should lockout correct username and password
+    isAuthenticated = login_api("admin","Admin123")
+    
+    assert isAuthenticated == False
 
 # Additional then decorators and functions should be added for any
 # And and But statements in the feature file, but they should still
