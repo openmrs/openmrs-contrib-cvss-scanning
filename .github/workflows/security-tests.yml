@@ -53,6 +53,7 @@ jobs:
       continue-on-error: true  # First run won't have a DB artifact yet
 
     - name: Run Security Tests
+      id: run-security-tests
       if: always() && (steps.wait-for-omrs-instance.outcome == 'success')
       run: |
         # Run pytest and capture ALL output (including CVSS scores)
@@ -116,6 +117,22 @@ jobs:
         publish_dir: ./gh-pages
         cname: cvss-report.openmrs.org
         keep_files: false
+
+    - name: Parse test results for slack notification
+      id: parse-results-for-slack
+      if: always() && (steps.run-security-tests.outcome == 'success')
+      run: |
+        FAILURE_COUNT=$(grep -oP '\d+(?= failed)' test_output.log | head -1)
+        echo "failure_count=${FAILURE_COUNT:-0}" >> $GITHUB_ENV
+      
+    - name: Share recent changes with a channel
+      if: always() && (steps.parse-results-for-slack.outcome == 'success')
+      uses: slackapi/slack-github-action@v3.0.1
+      with:
+        webhook: "https://hooks.slack.com/triggers/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"
+        webhook-type: webhook-trigger
+        payload: |
+          {"failure_count": "${{ env.failure_count }}"}
 
     - name: Comment on PR
       if: ${{ github.event_name == 'pull_request' && github.repository_owner == 'openmrs' }}
