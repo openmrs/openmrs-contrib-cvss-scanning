@@ -129,7 +129,7 @@ jobs:
       if: always() && (steps.parse-results-for-slack.outcome == 'success')
       uses: slackapi/slack-github-action@v3.0.1
       with:
-        webhook: "https://hooks.slack.com/triggers/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"
+        webhook: "SLACK_NOTIFICATION_WEBHOOK_URL"
         webhook-type: webhook-trigger
         payload: |
           {"failure_count": "${{ env.failure_count }}"}
