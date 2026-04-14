@@ -113,7 +113,7 @@ def navigateToTestPatient(page:Page):
 @pytest.mark.parametrize("testString",sqlTestStrings)
 @scenario('sql_injection.feature', 'SQL injection on <personNameSQLString> field of edit patient page')
 @pytest_bdd.when(parsers.parse('the attacker tries to edit a patient {personNameSQLString} using a set of potential SQL strings'))
-def test_xss_injection_on_edit_profile_page_parameterized(page:Page,testString,request):
+def test_sql_injection_on_edit_profile_page_parameterized(page:Page,testString,request):
     #run the test
     #fill in field and update patient
     global editUrl
