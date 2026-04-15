@@ -1,0 +1,80 @@
+name: Test email sending
+on:
+  schedule:
+    - cron: '30 0 * * MON'
+  workflow_dispatch:
+jobs:
+  run:
+    name: Send mail
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Download previous test report.json file
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          name: security-test-report-json
+          path: .
+        continue-on-error: true
+        
+      - name: Prepare email body
+        run: |
+          python scripts/prepare_email_report.py security-test-report-json > email_body.html
+
+      #In the case of NO critical vulnerabilites, the email shouldn't be sent. 
+      - name: Check if email should be sent
+        id: check_email
+        run: |
+          if grep -q "NO FAILING TESTS" email_body.html; then
+            echo "should_send=false" >> $GITHUB_OUTPUT
+          else
+            echo "should_send=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Send mail
+        if: steps.check_email.outputs.should_send == 'true'
+        uses: dawidd6/action-send-mail@v6
+        with:
+          #data
+          # Required mail server address if not connection_url:
+          server_address: ${{secrets.SMTP_SERVER}}
+          # Server port, default 25:
+          server_port: ${{secrets.SMTP_PORT}}
+          # Optional whether this connection use TLS (default is true if server_port is 465)
+          secure: false
+          # Optional (recommended) mail server username:
+          username: ${{secrets.MAIL_USERNAME}}
+          # Optional (recommended) mail server password:
+          password: ${{secrets.MAIL_PASSWORD}}
+          # Required mail subject:
+          subject: Github Actions testing
+          # Optional recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
+          to: chrhochg@iu.edu
+          # Required sender (supported formats: see "Supported address formats" below)
+          from: 'OpenMRS Security Dashboard <${{secrets.MAIL_USERNAME}}>'
+          # Optional plain body:
+          html_body: file://email_body.html
+      
+          # Optional priority: 'high', 'normal' (default) or 'low'
+          # priority: low
+      
+          # Optional custom headers:
+          #headers: '{"X-Priority": "3 (Normal)", "X-My-Header": "MyValue"}'
+      
+          # Optional nodemailerlog: true/false
+          #nodemailerlog: false
+      
+          # Optional nodemailerdebug: true/false if true nodemailerlog will also be set true
+          #nodemailerdebug: false
+      
+          # Optional custom SMTP MAIL FROM address (overrides username):
+          #envelope_from: mailer@example.com
+      
+          # Optional custom SMTP RCPT TO addresses (overrides to, cc, bcc). Separate multiple addresses by a comma (possibly surrounded by whitespace):
+          #envelope_to: mailer@example.com, admin@example.com
