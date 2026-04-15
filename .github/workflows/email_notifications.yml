@@ -55,7 +55,7 @@ jobs:
           # Required mail subject:
           subject: Github Actions testing
           # Optional recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
-          to: chrhochg@iu.edu
+          to: security@openmrs.org
           # Required sender (supported formats: see "Supported address formats" below)
           from: 'OpenMRS Security Dashboard <${{secrets.MAIL_USERNAME}}>'
           # Optional plain body:
