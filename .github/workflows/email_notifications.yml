@@ -53,7 +53,7 @@ jobs:
           # Optional (recommended) mail server password:
           password: ${{secrets.MAIL_PASSWORD}}
           # Required mail subject:
-          subject: Github Actions testing
+          subject: Automated Security Test Results
           # Optional recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
           to: security@openmrs.org
           # Required sender (supported formats: see "Supported address formats" below)
