@@ -3,7 +3,22 @@ import os
 import sys
 from datetime import datetime, timezone, timedelta
 
+def get_category_history(category, limit=20 ,db_path):
+    try:
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+        c.execute(
+            'SELECT max_cvss FROM category_history WHERE category = ? ORDER BY run_at DESC LIMIT ?',
+            (category, limit)
+        )
+        rows = c.fetchall()
+        conn.close()
+        return [row[0] for row in reversed(rows)]
+    except Exception as e:
+        print(f'Warning: Could not get category history for {category}: {e}')
+        return []
 
+    
 def parse_test_results(file_name):
     try:
         with open(file_name, 'r') as f:
@@ -79,13 +94,16 @@ Please see the <a href = 'https://github.com/openmrs/openmrs-contrib-cvss-scanni
     email_text += "\nThe failing tests and their CVSS scores follow:<br><br>\n"
     #print(data[0])
     failing_categories =[]
+    failing_categories_max_cvss={}
     add_br = False
+
+    #scan failing tests for CVSS scores > 7 and the max failing test in each category
     for category in data[0]:
         if(add_br):
             email_text += "<br>"
             add_br=False
         for test in data[0][category]:
-            if test['cvss_score']>=7 and status == "FAIL":
+            if test['cvss_score']>=7 and test['status'] == "FAIL":
                 if(category not in failing_categories):
                     failing_categories.insert(0,category)
                     email_text+=f"\n{category}:<br>\n"
@@ -93,8 +111,35 @@ Please see the <a href = 'https://github.com/openmrs/openmrs-contrib-cvss-scanni
                 test_file = test["full_name"].split("::")[0].split("/")
                 test_file = test_file[len(test_file)-1]
                 email_text+= f"<b>{test_file}</b> : {test['cvss_score']} <br>\n"
+            else if test['status'] == "FAIL":
+                if(category not in failing_categories_max_cvss):
+                    failing_categories_max_cvss[category]= test['cvss_score']
+                if failing_categories_max_cvss[category] < test['cvss+score']:
+                    failing_categories_max_cvss[category] = test['cvss+score']
+
     #scan for failing tests with cvss 9.0 or greater, save test file, cvss score
-    if(len(failing_categories)==0):
+    if(len(failing_categories)==0 and len(failing_categories_max_cvss)==0):
         email_text+="\nNO FAILING TESTS\n"
+    else if (len(failing_categories==0)):
+        email_text+= "No tests failed with a high or critical score.<br>"
+
+    categories_with_score_increase = {}
+    if(len(failing_categories_max_cvss)>=1):
+        #only need to run this if there are failing tests, no failing tests is good and means there aren't 
+        try:
+            for category in failing_categories:
+                #get cvss history for category
+                category_history = get_category_history(category, 1,sys.argv[1])[0]
+                #see if the test historic score is < than the max
+                if(failing_categories_max_cvss[category]>category_history):
+                    categories_with_score_increase[category] = failing_categories_max_cvss[category]-category_history
+        except:
+            "ignore category"
+
+    if(len(categories_with_score_increase) >1):
+        email_text += "<br> These testing categories saw their highest testing CVSS score increase: <br>"
+        for(category in categories_with_score_increase):
+            email_text += f"<b>{category}</b>: +{categories_with_score_increase[category]}<br>"
+
     print(email_text)
 main()
