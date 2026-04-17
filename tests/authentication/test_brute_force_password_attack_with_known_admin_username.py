@@ -2,6 +2,15 @@ import pytest_bdd
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 from tests.conftest import save_cvss_result
+from tests.authentication.conftest import random_password
+
+def login(new_page, username, password):
+    new_page.wait_for_selector("#username")
+    new_page.fill("#username", username)
+    new_page.keyboard.press("Enter")
+    new_page.wait_for_selector("#password")
+    new_page.fill("#password", password)
+    new_page.keyboard.press("Enter")
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -133,7 +142,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of confidentiality.
     
-    VC = BaseMetrics.Confidentiality.VulnerableSystem.NONE
+    VC = BaseMetrics.Confidentiality.VulnerableSystem.HIGH
 
 
     # Impact to the Subsequent System (SC) / .SubsequentSystem
@@ -169,7 +178,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of integrity.
     
-    VI = BaseMetrics.Integrity.VulnerableSystem.NONE
+    VI = BaseMetrics.Integrity.VulnerableSystem.HIGH
 
 
     # Impact to the Subsequent System (SI) / .SubsequentSystem
@@ -209,7 +218,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no impact to availability.
     
-    VA = BaseMetrics.Availability.VulnerableSystem.NONE
+    VA = BaseMetrics.Availability.VulnerableSystem.HIGH
 
 
     # Impact to the Subsequent System (SA) / .SubsequentSystem
@@ -249,16 +258,34 @@ def given_cvss_score_is_calculted_and_printed(request):
 def test_brute_force_password_attack_with_known_admin_username():
  pass
 
-@pytest_bdd.given('the OpenMRS 3 login page is displayed')
-def given_the_openmrs_3_login_page_is_displayed():
-  pass
-
 @pytest_bdd.when('the attacker tries to login with known username admin and random passwords')
-def when_the_attacker_tries_to_login_with_known_username_admin_and_random_passwords():
- pass
+def when_the_attacker_tries_to_login_with_known_username_admin_and_random_passwords(new_page):
+    # This function represents what will happen during the When step of the scenario.
+    
+    # OpenMRS password requirements
+    # Minimum 8 characters
+    # Must contain upper and lower case letters
+    # Must contain at least 1 number
+
+    passwords = []
+
+    for _ in range(0,7):
+        passwords.append(random_password())
+        
+    for password in passwords:
+        print("Trying...", password)
+                
+        # try passwords
+        login(new_page, "admin", password)
+        new_page.wait_for_timeout(1000)
+            
+        # if on page /login/location
+        if (new_page.url != (O3_BASE_URL + '/login')):
+            # password worked
+            break
 
 @pytest_bdd.then('the login page should be displayed')
-def then_the_login_page_should_be_displayed():
- pass
+def then_the_login_page_should_be_displayed(new_page):
+    assert new_page.url == O3_BASE_URL + '/login'
 
 #cleanup step
