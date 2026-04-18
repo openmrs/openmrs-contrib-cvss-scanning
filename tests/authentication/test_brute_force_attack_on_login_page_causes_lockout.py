@@ -267,8 +267,30 @@ def then_the_login_page_should_block_the_correct_credentials(new_page):
     assert new_page.url == O3_BASE_URL + '/login'
 
 @pytest.fixture(scope="function",autouse=True)
-def cleanupTestPatient(new_page):
+def cleanupTestPatient(new_page, cursor):
     yield
     print("Cleanup---")
     
+    # This updates the current account to 0 loginAttempts, but does not seem to unlock the account
+    
     # remove lock out by changing number of attempts for a user in
+    # This involves the database
+    sql_query = """
+    SELECT users.username, user_property.property, user_property.property_value 
+    FROM user_property, users 
+    WHERE users.user_id = user_property.user_id
+    AND user_property.property = 'loginAttempts';
+    """
+    
+    update_doctor_login_attempts_query = """
+    UPDATE user_property
+    JOIN users ON users.user_id = user_property.user_id
+    SET user_property.property_value = 0
+    WHERE user_property.property = 'loginAttempts'
+    AND users.username = 'doctor';
+    """
+    
+    cursor.execute(update_doctor_login_attempts_query)
+    print("UPDATING")
+    cursor.execute(sql_query)
+    print(cursor.fetchall())

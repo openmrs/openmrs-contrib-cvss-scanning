@@ -1,9 +1,13 @@
 import pytest
 import json
 import os
+import mysql.connector
 
+from mysql.connector import MySQLConnection
+from mysql.connector.cursor import MySQLCursor
 from playwright.sync_api import sync_playwright
 from dotenv import load_dotenv
+from typing import Generator
 
 # Load environment variables
 load_dotenv()
@@ -70,3 +74,24 @@ def pytest_json_modifyreport(json_report):
             test["feature"] = _scenario_names[test_name]["feature"]
             test["scenario"] = _scenario_names[test_name]["scenario"]
             test["scenario_description"] = _scenario_names[test_name]["scenario_description"]
+
+# Database access
+@pytest.fixture(scope="session")
+def db():
+    connection : MySQLConnection = mysql.connector.connect(
+        host="localhost",
+        port=3306,
+        user="root",
+        password="openmrs",
+        database="openmrs"
+    )
+    
+    yield connection
+    connection.close()
+
+@pytest.fixture
+def cursor(db:MySQLConnection) -> Generator[MySQLCursor, None, None]:
+    cursor : MySQLCursor = db.cursor(dictionary=True)
+    yield cursor
+    db.rollback()
+    cursor.close()
