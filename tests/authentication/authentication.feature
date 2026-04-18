@@ -22,6 +22,7 @@ Feature: Authentication
   Scenario: Brute force attack on login page causes lockout
     Tests whether the system will lockout an attacker from a brute force attack.
 
+    Given the OpenMRS 3 login page is displayed
     When an attacker fails 7 login attempts on the login page
     Then the login page should block the correct credentials
 
@@ -35,6 +36,7 @@ Feature: Authentication
     Tests whether an account is accessible after a 5 minute waiting period
     and if the attacker has locked out the user from using their account
 
+    Given the OpenMRS 3 login page is displayed
     Given the login page is locked out from 7 failed login attempts
     When a user waits 5 minutes
     And a user logs in to the login page with the correct credentials

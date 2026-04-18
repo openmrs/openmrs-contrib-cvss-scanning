@@ -2,15 +2,7 @@ import pytest_bdd
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 from tests.conftest import save_cvss_result
-from tests.authentication.conftest import random_password
-
-def login(new_page, username, password):
-    new_page.wait_for_selector("#username")
-    new_page.fill("#username", username)
-    new_page.keyboard.press("Enter")
-    new_page.wait_for_selector("#password")
-    new_page.fill("#password", password)
-    new_page.keyboard.press("Enter")
+from tests.authentication.conftest import random_password, login
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):

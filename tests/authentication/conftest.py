@@ -31,3 +31,11 @@ def given_login_page_shown(new_page):
 def random_password(length=8):
     letters = string.ascii_letters + string.digits
     return ''.join(random.choice(letters) for _ in range(length))
+
+def login(new_page, username, password):
+    new_page.wait_for_selector("#username")
+    new_page.fill("#username", username)
+    new_page.keyboard.press("Enter")
+    new_page.wait_for_selector("#password")
+    new_page.fill("#password", password)
+    new_page.keyboard.press("Enter")

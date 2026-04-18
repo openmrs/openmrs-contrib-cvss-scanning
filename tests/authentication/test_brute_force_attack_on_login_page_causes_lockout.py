@@ -1,7 +1,9 @@
 import pytest_bdd
+import pytest
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 from tests.conftest import save_cvss_result
+from tests.authentication.conftest import login
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -250,11 +252,23 @@ def test_brute_force_attack_on_login_page_causes_lockout():
  pass
 
 @pytest_bdd.when('an attacker fails 7 login attempts on the login page')
-def when_an_attacker_fails_7_login_attempts_on_the_login_page():
- pass
+def when_an_attacker_fails_7_login_attempts_on_the_login_page(new_page):
+    for i in range(0, 7):
+        login(new_page, f"doctor", f"wrong_password{i}")
 
 @pytest_bdd.then('the login page should block the correct credentials')
-def then_the_login_page_should_block_the_correct_credentials():
- pass
+def then_the_login_page_should_block_the_correct_credentials(new_page):
+    # use correct username and password
+    # Then it should be NOT off of the login page because it is locked out
+    login(new_page, "doctor", "Doctor123")
+    
+    new_page.wait_for_timeout(1000)
+    
+    assert new_page.url == O3_BASE_URL + '/login'
 
-#cleanup step
+@pytest.fixture(scope="function",autouse=True)
+def cleanupTestPatient(new_page):
+    yield
+    print("Cleanup---")
+    
+    # remove lock out by changing number of attempts for a user in
