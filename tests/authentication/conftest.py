@@ -36,6 +36,8 @@ def login(new_page, username, password):
     new_page.wait_for_selector("#username")
     new_page.fill("#username", username)
     new_page.keyboard.press("Enter")
+    new_page.wait_for_timeout(500)
     new_page.wait_for_selector("#password")
     new_page.fill("#password", password)
     new_page.keyboard.press("Enter")
+    new_page.wait_for_timeout(500)
