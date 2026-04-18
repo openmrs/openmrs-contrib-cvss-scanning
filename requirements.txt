@@ -13,3 +13,6 @@ pytest-json-report==1.5.0
 # Environment configuration
 python-dotenv==1.2.1
 requests==2.32.3
+
+# Accessing the database
+mysql-connector-python
