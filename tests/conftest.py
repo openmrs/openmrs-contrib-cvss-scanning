@@ -19,9 +19,12 @@ _scenario_names = {}
 @pytest.fixture(scope="function")
 def new_page():
     """Setup Playwright browser for testing"""
+    
+    HEADLESS = True if os.getenv("HEADLESS", "True") == "True" else False
+    
     with sync_playwright() as p:
         browser = p.chromium.launch(
-            headless= True,
+            headless=HEADLESS,
             args=[
                 '--no-sandbox',
                 '--disable-dev-shm-usage',
