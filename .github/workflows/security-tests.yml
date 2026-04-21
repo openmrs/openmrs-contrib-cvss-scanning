@@ -120,13 +120,13 @@ jobs:
 
     - name: Parse test results for slack notification
       id: parse-results-for-slack
-      if: always() && (steps.run-security-tests.outcome == 'success')
+      if: always() && (steps.run-security-tests.outcome == 'success') && github.ref == 'refs/heads/main'
       run: |
         FAILURE_COUNT=$(grep -oP '\d+(?= failed)' test_output.log | head -1)
         echo "failure_count=${FAILURE_COUNT:-0}" >> $GITHUB_ENV
       
     - name: Share recent changes with a channel
-      if: always() && (steps.parse-results-for-slack.outcome == 'success')
+      if: always() && (steps.parse-results-for-slack.outcome == 'success') && github.ref == 'refs/heads/main'
       uses: slackapi/slack-github-action@v3.0.1
       with:
         webhook: "SLACK_NOTIFICATION_WEBHOOK_URL"
