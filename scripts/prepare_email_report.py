@@ -92,7 +92,6 @@ def main():
 Testing indicates several failing tests of high or critical severity, as defined by CVSS 4.0. <br>
 Please see the <a href = 'https://github.com/openmrs/openmrs-contrib-cvss-scanning'>GitHub repository's</a> tests directory for the tests themselves. <br>"""
     email_text += "\nThe failing tests and their CVSS scores follow:<br><br>\n"
-    #print(data[0])
     failing_categories =[]
     failing_categories_max_cvss={}
     add_br = False
