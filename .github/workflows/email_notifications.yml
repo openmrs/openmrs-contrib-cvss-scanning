@@ -25,7 +25,7 @@ jobs:
         
       - name: Prepare email body
         run: |
-          python scripts/prepare_email_report.py security-test-report-json > email_body.html
+          python scripts/prepare_email_report.py security-test-report-json 
 
       #In the case of NO critical vulnerabilites, the email shouldn't be sent. 
       - name: Check if email should be sent
