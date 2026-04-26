@@ -10,6 +10,7 @@ from tests.conftest import save_cvss_result
 
 loggedIn = False
 editUrl = None
+testLocation = None
 
 sqlTestStrings= [
     "'",                    # Most fundamental probe — breaks unparameterized queries instantly
@@ -118,8 +119,9 @@ def test_sql_injection_on_edit_profile_page_parameterized(page:Page,testString,r
     #fill in field and update patient
     global editUrl
     page.goto(editUrl)
+    global testLocation
     scenarioString = request.getfixturevalue('_pytest_bdd_example')['personNameSQLString']
-    print(scenarioString)
+    testLocation=scenarioString
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.locator(sqlEditProfileNameLocations[scenarioString]).fill(testString)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
@@ -130,12 +132,17 @@ def test_sql_injection_on_edit_profile_page_parameterized(page:Page,testString,r
 @pytest_bdd.then('see if SQL injection was successful')
 def see_if_SQL_injection_was_successful(page):
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.get_by_text("Show more").click()
+    global editUrl
+    page.goto(editUrl)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+
+    global testLocation
     someTestStringFound=False
 
+    inputValue=page.locator(sqlEditProfileNameLocations[testLocation]).input_value()
     for testString in sqlTestStrings:
         #at least one of the test strings should be on the page, if not there was an injection and we can assert a test fail
-        if(page.locator("aside").get_by_text(re.compile(testString, re.IGNORECASE)).count()>=1):
+        if(inputValue==testString):
             someTestStringFound=True
         
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
