@@ -78,3 +78,8 @@ jobs:
       
           # Optional custom SMTP RCPT TO addresses (overrides to, cc, bcc). Separate multiple addresses by a comma (possibly surrounded by whitespace):
           #envelope_to: mailer@example.com, admin@example.com
+
+      - name: clean up directory, remove email body
+        run: |
+          rm email_body.html
+
