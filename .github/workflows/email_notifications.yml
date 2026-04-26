@@ -38,7 +38,7 @@ jobs:
           fi
       
       - name: Send mail
-        if: steps.check_email.outputs.should_send == 'true'
+        if: steps.check_email.outputs.should_send == 'true' && github.ref == 'refs/heads/main'
         uses: dawidd6/action-send-mail@v6
         with:
           #data
