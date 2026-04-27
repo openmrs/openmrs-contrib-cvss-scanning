@@ -25,7 +25,7 @@ jobs:
         
       - name: Prepare email body
         run: |
-          python scripts/prepare_email_report.py security-test-report-json > email_body.html
+          python scripts/prepare_email_report.py security-test-report-json 
 
       #In the case of NO critical vulnerabilites, the email shouldn't be sent. 
       - name: Check if email should be sent
@@ -38,7 +38,7 @@ jobs:
           fi
       
       - name: Send mail
-        if: steps.check_email.outputs.should_send == 'true'
+        if: steps.check_email.outputs.should_send == 'true' && github.ref == 'refs/heads/main'
         uses: dawidd6/action-send-mail@v6
         with:
           #data
@@ -78,3 +78,8 @@ jobs:
       
           # Optional custom SMTP RCPT TO addresses (overrides to, cc, bcc). Separate multiple addresses by a comma (possibly surrounded by whitespace):
           #envelope_to: mailer@example.com, admin@example.com
+
+      - name: clean up directory, remove email body
+        run: |
+          rm email_body.html
+
