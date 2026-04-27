@@ -1,15 +1,15 @@
 # Testing framework
-pytest==7.4.3
+pytest==9.0.3
 pytest-bdd==8.1.0
 
 # Browser automation
 playwright==1.57.0
-pytest-playwright==0.7.1
+pytest-playwright==0.7.2
 
 # Test reporting
 pytest-html==4.1.1
 pytest-json-report==1.5.0
 
 # Environment configuration
-python-dotenv==1.2.1
-requests==2.32.3
+python-dotenv==1.2.2
+requests==2.33.0

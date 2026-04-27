@@ -17,7 +17,7 @@ jobs:
           python-version: '3.11'
 
       - name: Download previous test report.json file
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v6
         with:
           name: security-test-report-json
           path: .
