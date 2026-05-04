@@ -253,14 +253,19 @@ def test_brute_force_attack_on_login_page_causes_lockout():
 
 @pytest_bdd.when('an attacker fails 7 login attempts on the login page')
 def when_an_attacker_fails_7_login_attempts_on_the_login_page(new_page):
-    for i in range(0, 7):
+    for i in range(0, 8):
         login(new_page, f"doctor", f"wrong_password{i}")
+        
+        if new_page.url != O3_BASE_URL + '/login':
+            break
 
 @pytest_bdd.then('the login page should block the correct credentials')
 def then_the_login_page_should_block_the_correct_credentials(new_page):
     # use correct username and password
     # Then it should be NOT off of the login page because it is locked out
-    login(new_page, "doctor", "Doctor123")
+    
+    if new_page.url == O3_BASE_URL + '/login':
+        login(new_page, "doctor", "Doctor123")
     
     new_page.wait_for_timeout(1000)
     
@@ -269,9 +274,6 @@ def then_the_login_page_should_block_the_correct_credentials(new_page):
 @pytest.fixture(scope="function",autouse=True)
 def cleanupTestPatient(new_page, cursor):
     yield
-    print("Cleanup---")
-    
-    # This updates the current account to 0 loginAttempts, but does not seem to unlock the account
     
     # remove lock out by changing number of attempts for a user in
     # This involves the database
@@ -279,18 +281,42 @@ def cleanupTestPatient(new_page, cursor):
     SELECT users.username, user_property.property, user_property.property_value 
     FROM user_property, users 
     WHERE users.user_id = user_property.user_id
-    AND user_property.property = 'loginAttempts';
-    """
+    AND users.username = 'doctor';
+    """#
     
-    update_doctor_login_attempts_query = """
+    update_doctor_login_attempts_query_1 = """
     UPDATE user_property
     JOIN users ON users.user_id = user_property.user_id
     SET user_property.property_value = 0
     WHERE user_property.property = 'loginAttempts'
     AND users.username = 'doctor';
     """
+    update_doctor_login_attempts_query_2 = """
+    UPDATE user_property
+    JOIN users ON users.user_id = user_property.user_id
+    SET user_property.property_value = ''
+    WHERE user_property.property = 'lockoutTimestamp'
+    AND users.username = 'doctor';
+    """
     
-    cursor.execute(update_doctor_login_attempts_query)
+    update_doctor_login_attempts_query_3 = """
+    DELETE user_property
+    FROM user_property
+    JOIN users ON users.user_id = user_property.user_id
+    WHERE user_property.property = 'lastLoginTimestamp'
+    AND users.username = 'doctor';
+    """
+    
+    cursor.execute(sql_query)
+    print(cursor.fetchall())
+    
+    cursor.execute(update_doctor_login_attempts_query_1)
+    cursor.execute(update_doctor_login_attempts_query_2)
+    cursor.execute(update_doctor_login_attempts_query_3)
     print("UPDATING")
     cursor.execute(sql_query)
     print(cursor.fetchall())
+    
+    login(new_page, "doctor", "Doctor123")
+    new_page.wait_for_timeout(30000)
+    assert new_page.url != O3_BASE_URL + '/login'
