@@ -134,7 +134,7 @@ def see_if_SQL_injection_was_successful(page):
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     global editUrl
     page.goto(editUrl)
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME*1.5)
 
     global testLocation
     someTestStringFound=False
