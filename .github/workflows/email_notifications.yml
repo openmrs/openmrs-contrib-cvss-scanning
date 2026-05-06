@@ -11,9 +11,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      - name: Install unzip
-        run: |
-          sudo apt install unzip
+     # - name: Install unzip
+     #   run: |
+     #     sudo apt install unzip
           
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,17 +25,17 @@ jobs:
         with:
           workflow: security-tests.yml
           name: security-test-report-json
-          path: report.json
+          path: .
         continue-on-error: true
 
-      - name: Unzip downloaded artifact
-        run: |
-          unzip security-test-report-json.zip
+    #  - name: Unzip downloaded artifact
+     #   run: |
+     #     unzip security-test-report-json.zip
           
           
       - name: Prepare email body
         run: |
-          python scripts/prepare_email_report.py security-test-report-json 
+          python scripts/prepare_email_report.py report.json 
 
       #In the case of NO critical vulnerabilites, the email shouldn't be sent. 
       - name: Check if email should be sent
