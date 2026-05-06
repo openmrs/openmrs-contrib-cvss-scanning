@@ -10,7 +10,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+        
+      - name: Install unzip
+        run: |
+          sudo apt install unzip
+          
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -23,7 +27,12 @@ jobs:
           name: security-test-report-json
           path: report.json
         continue-on-error: true
-        
+
+      - name: Unzip downloaded artifact
+        run: |
+          unzip security-test-report-json.zip
+          
+          
       - name: Prepare email body
         run: |
           python scripts/prepare_email_report.py security-test-report-json 
