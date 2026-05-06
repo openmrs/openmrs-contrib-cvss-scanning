@@ -10,10 +10,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
-     # - name: Install unzip
-     #   run: |
-     #     sudo apt install unzip
           
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -26,18 +22,14 @@ jobs:
           workflow: security-tests.yml
           name: security-test-report-json
           path: .
-        continue-on-error: true
-
-    #  - name: Unzip downloaded artifact
-     #   run: |
-     #     unzip security-test-report-json.zip
-          
+        continue-on-error: false       
           
       - name: Prepare email body
         run: |
           python scripts/prepare_email_report.py report.json 
 
       #In the case of NO critical vulnerabilites, the email shouldn't be sent. 
+      #The email body will contain the text "NO FAILING TESTS" Which is a flag to not send the emails
       - name: Check if email should be sent
         id: check_email
         run: |
@@ -66,8 +58,7 @@ jobs:
           # Required mail subject:
           subject: Automated Security Test Results
           # Optional recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
-          #to: security@openmrs.org
-          to: chrhochg@iu.edu
+          to: security@openmrs.org
           # Required sender (supported formats: see "Supported address formats" below)
           from: 'OpenMRS Security Dashboard <${{secrets.MAIL_USERNAME}}>'
           # Optional plain body:
