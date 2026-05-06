@@ -102,6 +102,14 @@ jobs:
         path: report.json
         retention-days: 30
 
+    - name: Upload Test Output
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-test-output
+        path: test_output.log
+        retention-days: 30
+
     - name: Prepare GitHub Pages Deployment
       if: github.ref == 'refs/heads/main'
       run: |
