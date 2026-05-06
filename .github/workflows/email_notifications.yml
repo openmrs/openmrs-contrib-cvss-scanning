@@ -19,6 +19,7 @@ jobs:
       - name: Download previous test report.json file
         uses: dawidd6/action-download-artifact@v6
         with:
+          workflow: security-tests.yml
           name: security-test-report-json
           path: report.json
         continue-on-error: true
