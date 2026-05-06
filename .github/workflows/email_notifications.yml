@@ -20,7 +20,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v6
         with:
           name: security-test-report-json
-          path: .
+          path: report.json
         continue-on-error: true
         
       - name: Prepare email body
@@ -38,7 +38,8 @@ jobs:
           fi
       
       - name: Send mail
-        if: steps.check_email.outputs.should_send == 'true' && github.ref == 'refs/heads/main'
+        #if: steps.check_email.outputs.should_send == 'true' && github.ref == 'refs/heads/main'
+        if: steps.check_email.outputs.should_send == 'true' #&& github.ref == 'refs/heads/main'
         uses: dawidd6/action-send-mail@v6
         with:
           #data
@@ -55,7 +56,8 @@ jobs:
           # Required mail subject:
           subject: Automated Security Test Results
           # Optional recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
-          to: security@openmrs.org
+          #to: security@openmrs.org
+          to: chrhochg@iu.edu
           # Required sender (supported formats: see "Supported address formats" below)
           from: 'OpenMRS Security Dashboard <${{secrets.MAIL_USERNAME}}>'
           # Optional plain body:
