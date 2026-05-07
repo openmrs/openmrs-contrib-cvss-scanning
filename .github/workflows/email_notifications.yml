@@ -1,7 +1,7 @@
 name: Test email sending
 on:
   schedule:
-    - cron: '30 0 * * MON'
+    - cron: '30 2 * * MON'
   workflow_dispatch:
 jobs:
   run:
@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+          
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -19,15 +19,17 @@ jobs:
       - name: Download previous test report.json file
         uses: dawidd6/action-download-artifact@v6
         with:
+          workflow: security-tests.yml
           name: security-test-report-json
           path: .
-        continue-on-error: true
-        
+        continue-on-error: false       
+          
       - name: Prepare email body
         run: |
-          python scripts/prepare_email_report.py security-test-report-json 
+          python scripts/prepare_email_report.py report.json 
 
       #In the case of NO critical vulnerabilites, the email shouldn't be sent. 
+      #The email body will contain the text "NO FAILING TESTS" Which is a flag to not send the emails
       - name: Check if email should be sent
         id: check_email
         run: |
@@ -38,7 +40,8 @@ jobs:
           fi
       
       - name: Send mail
-        if: steps.check_email.outputs.should_send == 'true' && github.ref == 'refs/heads/main'
+        #if: steps.check_email.outputs.should_send == 'true' && github.ref == 'refs/heads/main'
+        if: steps.check_email.outputs.should_send == 'true' #&& github.ref == 'refs/heads/main'
         uses: dawidd6/action-send-mail@v6
         with:
           #data
