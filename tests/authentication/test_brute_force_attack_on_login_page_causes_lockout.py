@@ -5,6 +5,10 @@ from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_resu
 from tests.conftest import save_cvss_result
 from tests.authentication.conftest import login
 
+from mysql.connector import MySQLConnection
+from mysql.connector.cursor import MySQLCursor
+from playwright.sync_api import Page
+
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
 
@@ -252,54 +256,50 @@ def test_brute_force_attack_on_login_page_causes_lockout():
  pass
 
 @pytest_bdd.when('an attacker fails 7 login attempts on the login page')
-def when_an_attacker_fails_7_login_attempts_on_the_login_page(new_page):
+def when_an_attacker_fails_7_login_attempts_on_the_login_page(page:Page):
     for i in range(0, 8):
-        login(new_page, f"doctor", f"wrong_password{i}")
+        login(page, f"doctor", f"wrong_password{i}")
         
-        if new_page.url != O3_BASE_URL + '/login':
+        if page.url != O3_BASE_URL + '/login':
             break
 
 @pytest_bdd.then('the login page should block the correct credentials')
-def then_the_login_page_should_block_the_correct_credentials(new_page):
+def then_the_login_page_should_block_the_correct_credentials(page:Page):
     # use correct username and password
     # Then it should be NOT off of the login page because it is locked out
     
-    if new_page.url == O3_BASE_URL + '/login':
-        login(new_page, "doctor", "Doctor123")
+    if page.url == O3_BASE_URL + '/login':
+        login(page, "doctor", "Doctor123")
     
-    new_page.wait_for_timeout(1000)
+    page.wait_for_timeout(1000)
     
-    assert new_page.url == O3_BASE_URL + '/login'
+    assert page.url == O3_BASE_URL + '/login'
 
+# https://openmrs.atlassian.net/wiki/spaces/docs/pages/25477734/Administering+Users#Managing-User-Lockout
 @pytest.fixture(scope="function",autouse=True)
-def cleanupTestPatient(new_page, cursor):
+def cleanupTestPatient(page:Page, cursor:MySQLCursor, connection:MySQLConnection):
     yield
     
-    # remove lock out by changing number of attempts for a user in
-    # This involves the database
-    sql_query = """
-    SELECT users.username, user_property.property, user_property.property_value 
-    FROM user_property, users 
-    WHERE users.user_id = user_property.user_id
-    AND users.username = 'doctor';
-    """#
+    # clear number of attempts
+    # clear last attempted time
     
-    update_doctor_login_attempts_query_1 = """
-    UPDATE user_property
+    delete_login_attempts = """
+    DELETE user_property
+    FROM user_property
     JOIN users ON users.user_id = user_property.user_id
-    SET user_property.property_value = 0
     WHERE user_property.property = 'loginAttempts'
     AND users.username = 'doctor';
     """
-    update_doctor_login_attempts_query_2 = """
-    UPDATE user_property
+    
+    delete_lockout_timestamp = """
+    DELETE user_property
+    FROM user_property
     JOIN users ON users.user_id = user_property.user_id
-    SET user_property.property_value = ''
     WHERE user_property.property = 'lockoutTimestamp'
     AND users.username = 'doctor';
     """
     
-    update_doctor_login_attempts_query_3 = """
+    delete_last_login_timestamp = """
     DELETE user_property
     FROM user_property
     JOIN users ON users.user_id = user_property.user_id
@@ -307,16 +307,18 @@ def cleanupTestPatient(new_page, cursor):
     AND users.username = 'doctor';
     """
     
-    cursor.execute(sql_query)
-    print(cursor.fetchall())
+    cursor.execute(delete_login_attempts)
+    cursor.execute(delete_lockout_timestamp)
+    cursor.execute(delete_last_login_timestamp)
     
-    cursor.execute(update_doctor_login_attempts_query_1)
-    cursor.execute(update_doctor_login_attempts_query_2)
-    cursor.execute(update_doctor_login_attempts_query_3)
-    print("UPDATING")
-    cursor.execute(sql_query)
-    print(cursor.fetchall())
+    # commit to db
+    connection.commit()
     
-    login(new_page, "doctor", "Doctor123")
-    new_page.wait_for_timeout(30000)
-    assert new_page.url != O3_BASE_URL + '/login'
+    # refresh the page
+    page.wait_for_timeout(1000)
+    page.reload()
+    page.wait_for_timeout(1000)
+    
+    login(page, "doctor", "Doctor123")
+    page.wait_for_timeout(1000)
+    assert page.url != O3_BASE_URL + '/login'
