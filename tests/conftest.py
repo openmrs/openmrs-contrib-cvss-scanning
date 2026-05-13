@@ -73,3 +73,10 @@ def pytest_json_modifyreport(json_report):
             test["feature"] = _scenario_names[test_name]["feature"]
             test["scenario"] = _scenario_names[test_name]["scenario"]
             test["scenario_description"] = _scenario_names[test_name]["scenario_description"]
+
+# settings for page from pytest-playwright plugin
+@pytest.fixture(scope="session") 
+def browser_launch_options():
+    return {
+        "args": ["--no-sandbox", "--disable-dev-shm-usage"] if os.getenv("CI") else []
+    }

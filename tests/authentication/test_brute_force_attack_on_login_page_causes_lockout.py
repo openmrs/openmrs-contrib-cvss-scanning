@@ -256,7 +256,7 @@ def test_brute_force_attack_on_login_page_causes_lockout():
  pass
 
 @pytest_bdd.when('an attacker fails 7 login attempts on the login page')
-def when_an_attacker_fails_7_login_attempts_on_the_login_page(page:Page):
+def when_an_attacker_fails_7_login_attempts_on_the_login_page(page:Page):    
     for i in range(0, 8):
         login(page, f"doctor", f"wrong_password{i}")
         

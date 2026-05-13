@@ -4,6 +4,8 @@ from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_resu
 from tests.conftest import save_cvss_result
 from tests.authentication.conftest import random_password, login
 
+from playwright.sync_api import Page
+
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
 
@@ -251,7 +253,7 @@ def test_brute_force_password_attack_with_known_admin_username():
  pass
 
 @pytest_bdd.when('the attacker tries to login with known username admin and random passwords')
-def when_the_attacker_tries_to_login_with_known_username_admin_and_random_passwords(new_page):
+def when_the_attacker_tries_to_login_with_known_username_admin_and_random_passwords(page:Page):
     # This function represents what will happen during the When step of the scenario.
     
     # OpenMRS password requirements
@@ -268,16 +270,16 @@ def when_the_attacker_tries_to_login_with_known_username_admin_and_random_passwo
         print("Trying...", password)
                 
         # try passwords
-        login(new_page, "admin", password)
-        new_page.wait_for_timeout(1000)
+        login(page, "admin", password)
+        page.wait_for_timeout(1000)
             
         # if on page /login/location
-        if (new_page.url != (O3_BASE_URL + '/login')):
+        if (page.url != (O3_BASE_URL + '/login')):
             # password worked
             break
 
 @pytest_bdd.then('the login page should be displayed')
-def then_the_login_page_should_be_displayed(new_page):
-    assert new_page.url == O3_BASE_URL + '/login'
+def then_the_login_page_should_be_displayed(page:Page):
+    assert page.url == O3_BASE_URL + '/login'
 
-#cleanup step
+# cleanup step to make sure the database is not locked
