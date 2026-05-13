@@ -1,7 +1,7 @@
 import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL, DEFAULT_WAIT_TIME
 from tests.conftest import save_cvss_result
 from tests.authentication.conftest import random_password, login
 
@@ -273,7 +273,7 @@ def when_the_attacker_tries_to_login_with_known_username_admin_and_random_passwo
                 
         # try passwords
         login(page, "admin", password)
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(DEFAULT_WAIT_TIME)
             
         # if on page /login/location
         if (page.url != (O3_BASE_URL + '/login')):

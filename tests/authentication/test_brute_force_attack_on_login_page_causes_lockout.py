@@ -1,7 +1,7 @@
 import pytest_bdd
 import pytest
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL, DEFAULT_WAIT_TIME
 from tests.conftest import save_cvss_result
 from tests.authentication.conftest import login
 
@@ -272,6 +272,6 @@ def then_the_login_page_should_block_the_correct_credentials(page:Page):
     if page.url == O3_BASE_URL + '/login':
         login(page, "doctor", "Doctor123")
     
-    page.wait_for_timeout(1000)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
     
     assert page.url == O3_BASE_URL + '/login'
