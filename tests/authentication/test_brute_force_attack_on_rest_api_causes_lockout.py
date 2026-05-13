@@ -1,7 +1,9 @@
+import pytest
 import pytest_bdd
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 from tests.conftest import save_cvss_result
+from tests.authentication.conftest import login_api
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -245,16 +247,21 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
+@pytest.mark.parametrize("cleanup_clear_user_lockout", ["doctor"], indirect=True)
 @pytest_bdd.scenario('authentication.feature', 'Brute force attack on REST API causes lockout')
-def test_brute_force_attack_on_rest_api_causes_lockout():
+def test_brute_force_attack_on_rest_api_causes_lockout(cleanup_clear_user_lockout):
  pass
 
 @pytest_bdd.when('an attacker fails 7 login attempts through the REST API')
 def when_an_attacker_fails_7_login_attempts_through_the_rest_api():
- pass
+
+    for i in range(0,8):
+        login_api("doctor", f"BADPASS{i}")
+        
 
 @pytest_bdd.then('the REST API should block the correct credentials')
 def then_the_rest_api_should_block_the_correct_credentials():
- pass
-
-#cleanup step
+    
+    isAuthenticated = login_api("doctor", "Doctor123")
+    
+    assert isAuthenticated == False
