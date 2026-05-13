@@ -1,7 +1,11 @@
+import pytest
 import pytest_bdd
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 from tests.conftest import save_cvss_result
+from tests.authentication.conftest import login
+
+from playwright.sync_api import Page
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -245,24 +249,33 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
+@pytest.mark.parametrize("cleanup_clear_user_lockout", ["doctor"], indirect=True)
 @pytest_bdd.scenario('authentication.feature', 'Lockout on login page is accessible after 5 minutes')
-def test_lockout_on_login_page_is_accessible_after_5_minutes():
+def test_lockout_on_login_page_is_accessible_after_5_minutes(cleanup_clear_user_lockout):
  pass
 
 @pytest_bdd.given('the login page is locked out from 7 failed login attempts')
-def given_the_login_page_is_locked_out_from_7_failed_login_attempts():
-  pass
+def given_the_login_page_is_locked_out_from_7_failed_login_attempts(page:Page):
+    
+    for i in range(0,8):
+        login(page, "doctor", f"BADPASS{i}")
 
 @pytest_bdd.when('a user waits 5 minutes')
-def when_a_user_waits_5_minutes():
- pass
+def when_a_user_waits_5_minutes(page:Page):
+    waitTimeMs = 5 * 60 * 1000
+    bufferMs = 2000
+    
+    page.wait_for_timeout(waitTimeMs + bufferMs)
 
 @pytest_bdd.when('a user logs in to the login page with the correct credentials')
-def when_a_user_logs_in_to_the_login_page_with_the_correct_credentials():
- pass
+def when_a_user_logs_in_to_the_login_page_with_the_correct_credentials(page:Page):
+    login(page, "doctor", "Doctor123")
 
-@pytest_bdd.then('the correct credentials should log into the login page')
-def then_the_correct_credentials_should_log_into_the_login_page():
- pass
-
-#cleanup step
+@pytest_bdd.then('the location selection or home page should be shown')
+def then_the_location_selection_or_home_page_should_be_shown(page:Page):
+    
+    page.reload()
+    
+    isOnLoginPageOrHomePage = page.url == O3_BASE_URL + "/login/location" or page.url == O3_BASE_URL + "/home/service-queues"
+    
+    assert isOnLoginPageOrHomePage

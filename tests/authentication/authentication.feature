@@ -40,7 +40,7 @@ Feature: Authentication
     Given the login page is locked out from 7 failed login attempts
     When a user waits 5 minutes
     And a user logs in to the login page with the correct credentials
-    Then the correct credentials should log into the login page
+    Then the location selection or home page should be shown
 
   Scenario: Lockout on REST API is accessible after 5 minutes
     Tests whether an account is accessible after a 5 minute waiting period
