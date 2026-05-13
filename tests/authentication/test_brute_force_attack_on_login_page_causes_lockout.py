@@ -251,8 +251,9 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
+@pytest.mark.parametrize('cleanup_clear_user_lockout', ["doctor"], indirect=True)
 @pytest_bdd.scenario('authentication.feature', 'Brute force attack on login page causes lockout')
-def test_brute_force_attack_on_login_page_causes_lockout():
+def test_brute_force_attack_on_login_page_causes_lockout(cleanup_clear_user_lockout):
  pass
 
 @pytest_bdd.when('an attacker fails 7 login attempts on the login page')
@@ -274,51 +275,3 @@ def then_the_login_page_should_block_the_correct_credentials(page:Page):
     page.wait_for_timeout(1000)
     
     assert page.url == O3_BASE_URL + '/login'
-
-# https://openmrs.atlassian.net/wiki/spaces/docs/pages/25477734/Administering+Users#Managing-User-Lockout
-@pytest.fixture(scope="function",autouse=True)
-def cleanupTestPatient(page:Page, cursor:MySQLCursor, connection:MySQLConnection):
-    yield
-    
-    # clear number of attempts
-    # clear last attempted time
-    
-    delete_login_attempts = """
-    DELETE user_property
-    FROM user_property
-    JOIN users ON users.user_id = user_property.user_id
-    WHERE user_property.property = 'loginAttempts'
-    AND users.username = 'doctor';
-    """
-    
-    delete_lockout_timestamp = """
-    DELETE user_property
-    FROM user_property
-    JOIN users ON users.user_id = user_property.user_id
-    WHERE user_property.property = 'lockoutTimestamp'
-    AND users.username = 'doctor';
-    """
-    
-    delete_last_login_timestamp = """
-    DELETE user_property
-    FROM user_property
-    JOIN users ON users.user_id = user_property.user_id
-    WHERE user_property.property = 'lastLoginTimestamp'
-    AND users.username = 'doctor';
-    """
-    
-    cursor.execute(delete_login_attempts)
-    cursor.execute(delete_lockout_timestamp)
-    cursor.execute(delete_last_login_timestamp)
-    
-    # commit to db
-    connection.commit()
-    
-    # refresh the page
-    page.wait_for_timeout(1000)
-    page.reload()
-    page.wait_for_timeout(1000)
-    
-    login(page, "doctor", "Doctor123")
-    page.wait_for_timeout(1000)
-    assert page.url != O3_BASE_URL + '/login'

@@ -1,3 +1,4 @@
+import pytest
 import pytest_bdd
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
@@ -248,8 +249,9 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
+@pytest.mark.parametrize('cleanup_clear_user_lockout', ["admin"], indirect=True)
 @pytest_bdd.scenario('authentication.feature', 'Brute force password attack with known admin username')
-def test_brute_force_password_attack_with_known_admin_username():
+def test_brute_force_password_attack_with_known_admin_username(cleanup_clear_user_lockout):
  pass
 
 @pytest_bdd.when('the attacker tries to login with known username admin and random passwords')
@@ -281,5 +283,3 @@ def when_the_attacker_tries_to_login_with_known_username_admin_and_random_passwo
 @pytest_bdd.then('the login page should be displayed')
 def then_the_login_page_should_be_displayed(page:Page):
     assert page.url == O3_BASE_URL + '/login'
-
-# cleanup step to make sure the database is not locked
