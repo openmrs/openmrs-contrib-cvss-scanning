@@ -13,7 +13,7 @@ from typing import Generator
 from playwright.sync_api import Page
 from pytest import FixtureRequest
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def login_data():
     return {}
 
@@ -64,6 +64,9 @@ def cleanup_clear_user_lockout(request:FixtureRequest, cursor:MySQLCursor, conne
     # get account to clear lockout
     # expects a string
     lockoutAccount:str = request.param
+    
+    # if the username is admin, the database treats this as an empty string
+    lockoutAccount = "" if lockoutAccount == "admin" else lockoutAccount
     
     yield
         

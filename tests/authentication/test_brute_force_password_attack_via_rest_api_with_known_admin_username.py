@@ -1,9 +1,11 @@
+import pytest
 import pytest_bdd
 import requests
 import base64
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_API_URL
 from tests.conftest import save_cvss_result
+from tests.authentication.conftest import random_password
 
 def login_api(username, password):
     
@@ -282,16 +284,32 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
+@pytest.mark.parametrize("cleanup_clear_user_lockout", ["admin"], indirect=True) # the admin does not have a username in the system
 @pytest_bdd.scenario('authentication.feature', 'Brute force password attack via REST API with known admin username')
-def test_brute_force_password_attack_via_rest_api_with_known_admin_username():
+def test_brute_force_password_attack_via_rest_api_with_known_admin_username(cleanup_clear_user_lockout):
  pass
 
 @pytest_bdd.when('the attacker sends 7 API login requests with known username admin and random passwords')
-def when_the_attacker_sends_7_api_login_requests_with_known_username_admin_and_random_passwords():
- pass
+def when_the_attacker_sends_7_api_login_requests_with_known_username_admin_and_random_passwords(login_data):
+    login_data["logged_in"] = False
+    
+    passwords = []
+    
+    for _ in range(0,7):
+        passwords.append(random_password())
+    
+    for password in passwords:
+        print("Trying...",password)
+                
+        # try passwords
+        isAuthenticated = login_api("admin", password)
+        
+        if (isAuthenticated):
+            # password worked
+            login_data["logged_in"] = True
+            break
 
 @pytest_bdd.then('the user should not be authenticated')
-def then_the_user_should_not_be_authenticated():
- pass
+def then_the_user_should_not_be_authenticated(login_data):
 
-#cleanup step
+    assert login_data["logged_in"] == False
