@@ -42,11 +42,17 @@ Feature: Authentication
     And a user logs in to the login page with the correct credentials
     Then the location selection or home page should be shown
 
-  Scenario: Lockout on REST API is accessible after 5 minutes
+  Scenario: Lockout on REST API is not accessible at 4 minutes and 50 seconds
     Tests whether an account is accessible after a 5 minute waiting period
     and if the attacker has locked out the user from using their account
 
     Given the REST API is locked out from 7 failed login attempts
+    When a user waits 4 miuntes and 50 seconds
+    And a user logs in to the REST API with the correct credentials
+    Then the user should not be authenticated
+
+  Scenario: Lockout on REST API is accessible after 5 minutes
+    Given the REST API is locked out from 7 failed login attempts
     When a user waits 5 minutes
     And a user logs in to the REST API with the correct credentials
-    Then the correct credentials should log into the REST API
+    Then the user should be authenticated

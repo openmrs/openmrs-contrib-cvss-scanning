@@ -11,7 +11,7 @@ from mysql.connector.cursor import MySQLCursor
 from typing import Generator
 from playwright.sync_api import Page
 from pytest import FixtureRequest
-from tests.utils import O3_BASE_URL, O3_API_URL
+from tests.utils import O3_BASE_URL, O3_API_URL, DEFAULT_WAIT_TIME
 
 ### SHARED STEPS ###
 
@@ -19,6 +19,83 @@ from tests.utils import O3_BASE_URL, O3_API_URL
 def given_login_page_shown(page:Page):
     page.goto(O3_BASE_URL + '/login')
     page.wait_for_url(O3_BASE_URL + '/login')
+
+@pytest_bdd.given('the REST API is locked out from 7 failed login attempts')
+def given_the_rest_api_is_locked_out_from_7_failed_login_attempts():
+
+    for i in range(0,8):
+        login_api("doctor", f"BADPASS{i}")
+    
+    # checks the lockout
+    assert login_api("doctor", "Doctor123") == False
+
+@pytest_bdd.when('a user logs in to the REST API with the correct credentials')
+def when_a_user_logs_in_to_the_rest_api_with_the_correct_credentials(login_data):
+    
+    login_data["is_authenticated"] = login_api("doctor", "Doctor123")
+
+@pytest_bdd.when('a user waits 4 miuntes and 50 seconds')
+def when_a_user_waits_5_minutes(cursor:MySQLCursor, connection:MySQLConnection):
+    
+    select_lockout_query = """
+    SELECT user_property.property_value
+    FROM user_property
+    JOIN users ON users.user_id = user_property.user_id
+    WHERE user_property.property = 'lockoutTimestamp'
+    AND users.username = 'doctor';
+    """
+    
+    cursor.execute(select_lockout_query)
+    currentLockoutTimestamp = cursor.fetchone()['property_value']
+    currentLockoutTimestamp = int(currentLockoutTimestamp)
+        
+    # subtract 5 minutes
+    currentLockoutTimestamp -= 5 * 60 * 1000
+    
+    # add 10 seconds to test before
+    currentLockoutTimestamp += 10 * 1000
+    
+    update_lockout_query = """
+    UPDATE user_property
+    JOIN users ON users.user_id = user_property.user_id
+    SET user_property.property_value = %s
+    WHERE user_property.property = 'lockoutTimestamp'
+    AND users.username = 'doctor';
+    """
+    
+    cursor.execute(update_lockout_query, [currentLockoutTimestamp])
+    
+    connection.commit()
+
+@pytest_bdd.when('a user waits 5 minutes')
+def when_a_user_waits_5_minutes(cursor:MySQLCursor, connection:MySQLConnection):
+    
+    select_lockout_query = """
+    SELECT user_property.property_value
+    FROM user_property
+    JOIN users ON users.user_id = user_property.user_id
+    WHERE user_property.property = 'lockoutTimestamp'
+    AND users.username = 'doctor';
+    """
+    
+    cursor.execute(select_lockout_query)
+    currentLockoutTimestamp = cursor.fetchone()['property_value']
+    currentLockoutTimestamp = int(currentLockoutTimestamp)
+        
+    # subtract 5 minutes
+    currentLockoutTimestamp -= 5 * 60 * 1000
+    
+    update_lockout_query = """
+    UPDATE user_property
+    JOIN users ON users.user_id = user_property.user_id
+    SET user_property.property_value = %s
+    WHERE user_property.property = 'lockoutTimestamp'
+    AND users.username = 'doctor';
+    """
+    
+    cursor.execute(update_lockout_query, [currentLockoutTimestamp])
+    
+    connection.commit()
 
 ### SHARED FUNCATIONALITY ###
 

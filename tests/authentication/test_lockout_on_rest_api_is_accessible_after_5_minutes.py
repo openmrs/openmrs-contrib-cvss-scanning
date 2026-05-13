@@ -1,7 +1,9 @@
+import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
 from tests.conftest import save_cvss_result
+from tests.authentication.conftest import login_api
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -245,24 +247,12 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
+@pytest.mark.parametrize("cleanup_clear_user_lockout", ["doctor"], indirect=True)
 @pytest_bdd.scenario('authentication.feature', 'Lockout on REST API is accessible after 5 minutes')
-def test_lockout_on_rest_api_is_accessible_after_5_minutes():
+def test_lockout_on_rest_api_is_accessible_after_5_minutes(cleanup_clear_user_lockout):
  pass
+    
+@pytest_bdd.then('the user should be authenticated')
+def then_the_correct_credentials_should_log_into_the_rest_api(login_data):
 
-@pytest_bdd.given('the REST API is locked out from 7 failed login attempts')
-def given_the_rest_api_is_locked_out_from_7_failed_login_attempts():
-  pass
-
-@pytest_bdd.when('a user waits 5 minutes')
-def when_a_user_waits_5_minutes():
- pass
-
-@pytest_bdd.when('a user logs in to the REST API with the correct credentials')
-def when_a_user_logs_in_to_the_rest_api_with_the_correct_credentials():
- pass
-
-@pytest_bdd.then('the correct credentials should log into the REST API')
-def then_the_correct_credentials_should_log_into_the_rest_api():
- pass
-
-#cleanup step
+    assert login_data["is_authenticated"] == True
