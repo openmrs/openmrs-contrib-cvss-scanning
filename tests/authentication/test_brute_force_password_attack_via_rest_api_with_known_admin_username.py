@@ -1,46 +1,9 @@
 import pytest
 import pytest_bdd
-import requests
-import base64
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_API_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
 from tests.conftest import save_cvss_result
-from tests.authentication.conftest import random_password
-
-def login_api(username, password):
-    
-    isAuthenticated = False
-    
-    credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
-    headers = {
-        'Authorization': f'Basic {credentials}',
-        'Content-Type': 'application/json'
-    }
-
-    try:
-        response = requests.get(O3_API_URL, headers=headers, timeout=10)
-        status_code = response.status_code
-
-        if status_code == 200:
-            try:
-                print(response.text[:200])
-                data = response.json()
-                authenticated = data.get('authenticated', False)
-                if authenticated:
-                    print(f"  Result: Login SUCCEEDED (unexpected!) HTTP {status_code}")
-                    
-                    isAuthenticated = True
-                else:
-                    print(f"  Result: Login FAILED (expected) HTTP {status_code}")
-            except:
-                print(f"  Result: HTTP {status_code} (could not parse response)")
-        else:
-            print(f"  Result: HTTP {status_code}")
-
-    except requests.exceptions.RequestException as e:
-        print(f"  Result: Request failed - {e}")
-    
-    return isAuthenticated
+from tests.authentication.conftest import random_password, login_api
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):

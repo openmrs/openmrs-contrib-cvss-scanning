@@ -2,25 +2,25 @@ import pytest
 import pytest_bdd
 import string
 import random
-
-from tests.utils import O3_BASE_URL
-
 import mysql.connector
+import requests
+import base64
+
 from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from typing import Generator
-
 from playwright.sync_api import Page
 from pytest import FixtureRequest
+from tests.utils import O3_BASE_URL, O3_API_URL
 
-@pytest.fixture(scope="function")
-def login_data():
-    return {}
+### SHARED STEPS ###
 
 @pytest_bdd.given('the OpenMRS 3 login page is displayed')
 def given_login_page_shown(page:Page):
     page.goto(O3_BASE_URL + '/login')
     page.wait_for_url(O3_BASE_URL + '/login')
+
+### SHARED FUNCATIONALITY ###
 
 # generate random passwords
 def random_password(length=8):
@@ -36,6 +36,47 @@ def login(page:Page, username, password):
     page.fill("#password", password)
     page.keyboard.press("Enter")
     page.wait_for_timeout(500)
+
+def login_api(username, password):
+    
+    isAuthenticated = False
+    
+    credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
+    headers = {
+        'Authorization': f'Basic {credentials}',
+        'Content-Type': 'application/json'
+    }
+
+    try:
+        response = requests.get(O3_API_URL, headers=headers, timeout=10)
+        status_code = response.status_code
+
+        if status_code == 200:
+            try:
+                print(response.text[:200])
+                data = response.json()
+                authenticated = data.get('authenticated', False)
+                if authenticated:
+                    print(f"  Result: Login SUCCEEDED (unexpected!) HTTP {status_code}")
+                    
+                    isAuthenticated = True
+                else:
+                    print(f"  Result: Login FAILED (expected) HTTP {status_code}")
+            except:
+                print(f"  Result: HTTP {status_code} (could not parse response)")
+        else:
+            print(f"  Result: HTTP {status_code}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"  Result: Request failed - {e}")
+    
+    return isAuthenticated
+
+### PYTEST FIXTURES ###
+
+@pytest.fixture(scope="function")
+def login_data():
+    return {}
 
 # Database access
 @pytest.fixture(scope="session")
