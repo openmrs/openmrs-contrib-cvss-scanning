@@ -4,6 +4,5 @@
   "given": "@pytest_bdd.given('{}')\ndef given_{}():\n  pass",
   "scenario": "@pytest_bdd.scenario('{}', '{}')\ndef test_{}():\n pass\n",
   "when": "@pytest_bdd.when('{}')\ndef when_{}():\n pass",
-  "then": "@pytest_bdd.then('{}')\ndef then_{}():\n pass",
-  "footer": "#cleanup step"
+  "then": "@pytest_bdd.then('{}')\ndef then_{}():\n pass"
 }
