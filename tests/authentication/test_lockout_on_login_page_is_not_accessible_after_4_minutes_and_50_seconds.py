@@ -1,12 +1,10 @@
-import pytest_bdd
 import pytest
+import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL, DEFAULT_WAIT_TIME
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 from tests.conftest import save_cvss_result
 from tests.authentication.conftest import login
 
-from mysql.connector import MySQLConnection
-from mysql.connector.cursor import MySQLCursor
 from playwright.sync_api import Page
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
@@ -251,15 +249,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
-@pytest.mark.parametrize('cleanup_clear_user_lockout', ["doctor"], indirect=True)
-@pytest_bdd.scenario('authentication.feature', 'Brute force attack on login page causes lockout')
-def test_brute_force_attack_on_login_page_causes_lockout(cleanup_clear_user_lockout):
+@pytest.mark.parametrize("cleanup_clear_user_lockout", ["doctor"], indirect=True)
+@pytest_bdd.scenario('authentication.feature', 'Lockout on login page is not accessible at 4 minutes and 50 seconds')
+def test_lockout_on_login_page_not_is_accessible_after_4_minutes_and_50_seconds(cleanup_clear_user_lockout):
  pass
-
-@pytest_bdd.when('an attacker fails 7 login attempts on the login page')
-def when_an_attacker_fails_7_login_attempts_on_the_login_page(page:Page):    
-    for i in range(0, 8):
-        login(page, f"doctor", f"wrong_password{i}")
-        
-        if page.url != O3_BASE_URL + '/login':
-            break

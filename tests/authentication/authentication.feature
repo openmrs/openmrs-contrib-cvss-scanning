@@ -32,12 +32,19 @@ Feature: Authentication
     When an attacker fails 7 login attempts through the REST API
     Then the REST API should block the correct credentials
 
+  Scenario: Lockout on login page is not accessible at 4 minutes and 50 seconds
+    Given the OpenMRS 3 login page is displayed
+    And the login page is locked out from 7 failed login attempts
+    When a user waits 4 minutes and 50 seconds
+    And a user logs in to the login page with the correct credentials
+    Then the login page should block the correct credentials
+
   Scenario: Lockout on login page is accessible after 5 minutes
     Tests whether an account is accessible after a 5 minute waiting period
     and if the attacker has locked out the user from using their account
 
     Given the OpenMRS 3 login page is displayed
-    Given the login page is locked out from 7 failed login attempts
+    And the login page is locked out from 7 failed login attempts
     When a user waits 5 minutes
     And a user logs in to the login page with the correct credentials
     Then the location selection or home page should be shown
@@ -47,7 +54,7 @@ Feature: Authentication
     and if the attacker has locked out the user from using their account
 
     Given the REST API is locked out from 7 failed login attempts
-    When a user waits 4 miuntes and 50 seconds
+    When a user waits 4 minutes and 50 seconds
     And a user logs in to the REST API with the correct credentials
     Then the user should not be authenticated
 

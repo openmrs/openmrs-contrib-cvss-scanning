@@ -254,16 +254,6 @@ def given_cvss_score_is_calculted_and_printed(request):
 def test_lockout_on_login_page_is_accessible_after_5_minutes(cleanup_clear_user_lockout):
  pass
 
-@pytest_bdd.given('the login page is locked out from 7 failed login attempts')
-def given_the_login_page_is_locked_out_from_7_failed_login_attempts(page:Page):
-    
-    for i in range(0,8):
-        login(page, "doctor", f"BADPASS{i}")
-
-@pytest_bdd.when('a user logs in to the login page with the correct credentials')
-def when_a_user_logs_in_to_the_login_page_with_the_correct_credentials(page:Page):
-    login(page, "doctor", "Doctor123")
-
 @pytest_bdd.then('the location selection or home page should be shown')
 def then_the_location_selection_or_home_page_should_be_shown(page:Page):
     

@@ -29,13 +29,22 @@ def given_the_rest_api_is_locked_out_from_7_failed_login_attempts():
     # checks the lockout
     assert login_api("doctor", "Doctor123") == False
 
+@pytest_bdd.given('the login page is locked out from 7 failed login attempts')
+def given_the_login_page_is_locked_out_from_7_failed_login_attempts(page:Page):
+    
+    for i in range(0,8):
+        login(page, "doctor", f"BADPASS{i}")
+    
+    login(page, "doctor", "Doctor123")
+    assert page.url == O3_BASE_URL + "/login"
+
 @pytest_bdd.when('a user logs in to the REST API with the correct credentials')
 def when_a_user_logs_in_to_the_rest_api_with_the_correct_credentials(login_data):
     
     login_data["is_authenticated"] = login_api("doctor", "Doctor123")
 
-@pytest_bdd.when('a user waits 4 miuntes and 50 seconds')
-def when_a_user_waits_5_minutes(cursor:MySQLCursor, connection:MySQLConnection):
+@pytest_bdd.when('a user waits 4 minutes and 50 seconds')
+def when_a_user_waits_4_minutes_and_50_seconds(cursor:MySQLCursor, connection:MySQLConnection):
     
     select_lockout_query = """
     SELECT user_property.property_value
@@ -96,6 +105,23 @@ def when_a_user_waits_5_minutes(cursor:MySQLCursor, connection:MySQLConnection):
     cursor.execute(update_lockout_query, [currentLockoutTimestamp])
     
     connection.commit()
+
+@pytest_bdd.when('a user logs in to the login page with the correct credentials')
+def when_a_user_logs_in_to_the_login_page_with_the_correct_credentials(page:Page):
+    
+    login(page, "doctor", "Doctor123")
+
+@pytest_bdd.then('the login page should block the correct credentials')
+def then_the_login_page_should_block_the_correct_credentials(page:Page):
+    # use correct username and password
+    # Then it should be NOT off of the login page because it is locked out
+    
+    if page.url == O3_BASE_URL + '/login':
+        login(page, "doctor", "Doctor123")
+    
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    
+    assert page.url == O3_BASE_URL + '/login'
 
 ### SHARED FUNCATIONALITY ###
 
