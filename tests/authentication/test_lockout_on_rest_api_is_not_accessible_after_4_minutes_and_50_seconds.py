@@ -249,7 +249,7 @@ def given_cvss_score_is_calculted_and_printed(request):
 
 @pytest.mark.parametrize("cleanup_clear_user_lockout", ["doctor"], indirect=True)
 @pytest_bdd.scenario('authentication.feature', 'Lockout on REST API is not accessible at 4 minutes and 50 seconds')
-def test_lockout_on_rest_api_is_accessible_after_5_minutes(cleanup_clear_user_lockout):
+def test_lockout_on_rest_api_is_accessible_after_4_minutes_and_50_seconds(cleanup_clear_user_lockout):
  pass
     
 @pytest_bdd.then('the user should not be authenticated')
