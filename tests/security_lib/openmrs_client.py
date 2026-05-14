@@ -15,8 +15,18 @@ class OpenMRSClient:
     ):
         self.base_url = (base_url or os.getenv("O3_BASE_URL", "http://localhost/openmrs")).rstrip("/")
         self.rest_url = (rest_url or os.getenv("O3_REST_URL", self.base_url + "/ws/rest/v1")).rstrip("/")
-        self.username = username or os.getenv("O3_TEST_USERNAME") or os.getenv("O3_ADMIN_USERNAME")
-        self.password = password or os.getenv("O3_TEST_PASSWORD") or os.getenv("O3_ADMIN_PASSWORD")
+        self.username = (
+            username
+            or os.getenv("O3_TEST_USERNAME")
+            or os.getenv("O3_ADMIN_USERNAME")
+            or "admin"
+        )
+        self.password = (
+            password
+            or os.getenv("O3_TEST_PASSWORD")
+            or os.getenv("O3_ADMIN_PASSWORD")
+            or "Admin123"
+        )
         self.timeout = timeout
         self.session = requests.Session()
 
