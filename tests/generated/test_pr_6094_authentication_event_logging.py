@@ -38,17 +38,13 @@ def _(openmrs_client):
 
 @given("a test user account is available for authentication")
 def _(openmrs_client):
-    test_user = os.getenv("O3_TEST_USERNAME") or os.getenv("O3_ADMIN_USERNAME")
-    if not test_user:
-        pytest.skip("Test user not configured in environment variables")
+    if not openmrs_client.username:
+        pytest.skip("Test user not configured in OpenMRSClient")
 
 @when("the test user performs a login attempt")
 def _(openmrs_client, runtime_observation):
-    test_user = os.getenv("O3_TEST_USERNAME") or os.getenv("O3_ADMIN_USERNAME")
-    test_password = os.getenv("O3_TEST_PASSWORD") or os.getenv("O3_ADMIN_PASSWORD")
-
-    if not test_user or not test_password:
-        pytest.skip("Test user credentials not configured")
+    if not openmrs_client.username or not openmrs_client.password:
+        pytest.skip("Test user credentials not configured in OpenMRSClient")
 
     try:
         response = openmrs_client.login()
