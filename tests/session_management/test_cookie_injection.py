@@ -7,6 +7,7 @@ import pytest_bdd
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL, O3_LOGIN_URL
 from tests.conftest import save_cvss_result
+from playwright.sync_api import Page
 
 # O3_BASE_URL represents the URL to access OpenMRS 3
 
@@ -245,10 +246,10 @@ def test_session_cookie_highjacked():
     pass
 
 @pytest_bdd.when('an attacker injects an old cookie')
-def when_url_is_directed_at_spa(new_page, context_data):
+def when_url_is_directed_at_spa(page:Page, context_data):
     # This function represents what will happen during the When step of the scenario.
-    new_page.context.clear_cookies()
-    new_page.context.add_cookies(context_data["cookies"])
+    page.context.clear_cookies()
+    page.context.add_cookies(context_data["cookies"])
 
 # Additional then decorators and functions should be added for any
 # And and But statements in the feature file, but they should still

@@ -5,8 +5,9 @@
 
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL, O3_LOGIN_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
 from tests.conftest import save_cvss_result
+from playwright.sync_api import Page
 
 # O3_BASE_URL represents the URL to access OpenMRS 3
 
@@ -251,9 +252,9 @@ def test_session_cookie_changed():
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
 @pytest_bdd.then('the cookies expire and new cookies with different IDs are generated')
-def then(new_page, context_data):
+def then(page:Page, context_data):
     # This function represents what will happen during the Then step of the scenario.
-    new_cookies = new_page.context.cookies()
+    new_cookies = page.context.cookies()
     old_cookies = context_data["cookies"]
     
     for new_cookie in new_cookies:
