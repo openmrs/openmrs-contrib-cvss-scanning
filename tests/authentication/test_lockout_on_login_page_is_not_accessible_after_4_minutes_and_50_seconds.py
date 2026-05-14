@@ -1,11 +1,8 @@
 import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
 from tests.conftest import save_cvss_result
-from tests.authentication.conftest import login
-
-from playwright.sync_api import Page
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -137,7 +134,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of confidentiality.
     
-    VC = BaseMetrics.Confidentiality.VulnerableSystem.NONE
+    VC = BaseMetrics.Confidentiality.VulnerableSystem.HIGH
 
 
     # Impact to the Subsequent System (SC) / .SubsequentSystem
@@ -154,7 +151,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #   None        There is no loss of confidentiality.
 
 
-    SC = BaseMetrics.Confidentiality.SubsequentSystem.NONE
+    SC = BaseMetrics.Confidentiality.SubsequentSystem.LOW
 
 
     # Integrity (VI/SI) / BaseMetrics.Integrity
@@ -173,7 +170,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of integrity.
     
-    VI = BaseMetrics.Integrity.VulnerableSystem.NONE
+    VI = BaseMetrics.Integrity.VulnerableSystem.HIGH
 
 
     # Impact to the Subsequent System (SI) / .SubsequentSystem
@@ -188,7 +185,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #   None        There is no loss of integrity.
 
 
-    SI = BaseMetrics.Integrity.SubsequentSystem.NONE
+    SI = BaseMetrics.Integrity.SubsequentSystem.LOW
 
 
     # Availability (VA/SA) BaseMetrics.Availability

@@ -211,7 +211,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no impact to availability.
     
-    VA = BaseMetrics.Availability.VulnerableSystem.NONE
+    VA = BaseMetrics.Availability.VulnerableSystem.HIGH
 
 
     # Impact to the Subsequent System (SA) / .SubsequentSystem
@@ -228,7 +228,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #   None        There is no impact to availability.
 
 
-    SA = BaseMetrics.Availability.SubsequentSystem.NONE
+    SA = BaseMetrics.Availability.SubsequentSystem.HIGH
 
 
     # Calculate CVSS 4.0 score
