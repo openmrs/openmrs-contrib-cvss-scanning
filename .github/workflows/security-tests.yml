@@ -3,8 +3,8 @@ name: Security Tests
 on:
   push:
     branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
+  #pull_request:
+    #branches: [ main, develop ]
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
@@ -12,7 +12,6 @@ on:
 jobs:
   security-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
 
     steps:
     - name: Checkout code
@@ -47,18 +46,19 @@ jobs:
       run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
 
     - name: Download previous test results DB
-      uses: dawidd6/action-download-artifact@v3
+      uses: dawidd6/action-download-artifact@v6
       with:
         name: test-results-db
         path: .
       continue-on-error: true  # First run won't have a DB artifact yet
 
     - name: Run Security Tests
+      id: run-security-tests
       if: always() && (steps.wait-for-omrs-instance.outcome == 'success')
       run: |
         # Run pytest and capture ALL output (including CVSS scores)
         pytest tests/ \
-          --html=report.html \
+          --html=detailed-report.html \
           --self-contained-html \
           --json-report \
           --json-report-file=report.json \
@@ -91,7 +91,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: security-test-report-html
-        path: report.html
+        path: detailed-report.html
         retention-days: 30
 
     - name: Upload JSON Results
@@ -102,12 +102,20 @@ jobs:
         path: report.json
         retention-days: 30
 
+    - name: Upload Test Output
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-test-output
+        path: test_output.log
+        retention-days: 30
+
     - name: Prepare GitHub Pages Deployment
       if: github.ref == 'refs/heads/main'
       run: |
         mkdir -p gh-pages
         cp security_dashboard.html gh-pages/index.html
-        cp report.html gh-pages/detailed-report.html
+        cp detailed-report.html gh-pages/detailed-report.html
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
@@ -115,7 +123,7 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./gh-pages
-        cname: cvss-report.openmrs.org
+        cname: security-dashboard.openmrs.org
         keep_files: false
 
     - name: Comment on PR

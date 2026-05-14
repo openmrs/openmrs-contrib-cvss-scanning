@@ -2,12 +2,16 @@
 .pytest_cache/
 __pycache__/
 
+tests/*/__pycache__/
+
 # Generated test reports and artifacts
+detailed-report.html
 report.html
 report.json
 security_dashboard.html
 debug_output.txt
 security_results.json
+test_results.db
 
 # IntelliJ IDEA
 .idea/
@@ -28,3 +32,4 @@ out/
 # OS generated files
 .DS_Store
 Thumbs.db
+test_results.db
