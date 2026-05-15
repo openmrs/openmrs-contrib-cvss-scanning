@@ -2,9 +2,7 @@ import pytest
 import pytest_bdd
 
 from playwright.sync_api import Page
-from tests.utils import O3_BASE_URL, O3_LOGIN_URL
-
-DEFAULT_LOAD_TIME = 1000
+from tests.utils import O3_BASE_URL, O3_LOGIN_URL, DEFAULT_WAIT_TIME
 
 @pytest.fixture
 def context_data():
@@ -31,12 +29,14 @@ def given_openMRS_page_logged_in(page:Page):
     page.wait_for_selector("#password")
     page.fill("#password", "Admin123")
     page.keyboard.press("Enter")
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
     
     # when it asks for the site
-    page.wait_for_timeout(DEFAULT_LOAD_TIME)
-    page.click("text=Outpatient Clinic")
-    page.keyboard.press("Enter")
-    page.wait_for_timeout(DEFAULT_LOAD_TIME)
+    if page.url == O3_BASE_URL + "/login/location":
+        page.click("text=Outpatient Clinic")
+        page.keyboard.press("Enter")
+    
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.when('Cookies are accessed from the browser')
 def when_cookies_are_accessed_from_the_browser(page:Page, context_data):
