@@ -924,7 +924,7 @@ def generate_html_dashboard(grouped_results, summary):
         <div class="footer">
             <p>OpenMRS O3 Continuous Security Testing</p>
             <p>Powered by <a href="https://www.first.org/cvss/v4.0/" target="_blank">CVSS 4.0</a> | 
-            <a href="https://github.com/openmrs/openmrs-contrib-cvss-scanning" target="_blank">GitHub Repository</a></p>
+            <a href="https://github.com/openmrs/openmrs-contrib-cvss-scanning" target="_blank">GitHub Repository</a> | <a href='/detailed-report.html'>PyTest Report</a></p>
         </div>
     </div>
 </body>

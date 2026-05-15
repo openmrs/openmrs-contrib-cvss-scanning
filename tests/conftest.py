@@ -1,4 +1,5 @@
 import pytest
+import html
 import os
 
 from dotenv import load_dotenv
@@ -55,3 +56,21 @@ def browser_launch_options():
     return {
         "args": ["--no-sandbox", "--disable-dev-shm-usage"] if os.getenv("CI") else []
     }
+
+def pytest_html_results_table_row(report, cells):
+    # This hook changes the names of the tests to sanatize them for possible XSS strings
+    # The second parameter is the test name with parameter
+    
+    cellTestName : str = cells[1]
+    
+    # remove the <td class="col-testId"> and </td> from front and back
+    tags = ['<td class="col-testId">','</td>']
+    
+    cellTestName = cellTestName.replace(tags[0], '')
+    cellTestName = cellTestName.replace(tags[1], '')
+    
+    # sanatize
+    cellTestName = html.escape(cellTestName, quote=True)
+    
+    # Add td tags back
+    cells[1] = tags[0] + cellTestName + tags[1]
