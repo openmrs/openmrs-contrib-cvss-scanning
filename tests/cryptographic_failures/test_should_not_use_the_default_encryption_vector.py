@@ -33,18 +33,18 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
-@pytest_bdd.scenario('cryptographic_failures.feature','The OpenMRS application should not use the default encryption key')
-def test_should_not_use_default_encryption_key():
+@pytest_bdd.scenario('cryptographic_failures.feature','The OpenMRS application should not use the default encryption vector')
+def test_should_not_use_default_encryption_vector():
     pass
 
-@pytest_bdd.given('the default encrpytion key')
-def given_the_default_encryption_key(encryption_data):
-    encryption_data["default_key"] = "dTfyELRrAICGDwzjHDjuhw=="
+@pytest_bdd.given('the default encrpytion vector')
+def given_the_default_encryption_vector(encryption_data):
+    encryption_data["default_vector"] = "9wyBUNglFCRVSUhMfsTa3Q=="
 
-@pytest_bdd.when('the encryption key is found')
-def when_the_encryption_key_is_found(encryption_data):
+@pytest_bdd.when('the encryption vector is found')
+def when_the_encryption_vector_is_found(encryption_data):
     
-    key:str = ""
+    vector:str = ""
     
     raw:str = encryption_data["runtime_properties"]
     lines = raw.split('\n')
@@ -52,15 +52,15 @@ def when_the_encryption_key_is_found(encryption_data):
     for line in lines:
         # match encryption.key=
         
-        if re.search(r"encryption\.key=", line):
-            key = re.split(r"encryption\.key=", line)[1]
-            key = key.replace("\\", "")
+        if re.search(r"encryption\.vector=", line):
+            vector = re.split(r"encryption\.vector=", line)[1]
+            vector = vector.replace("\\", "")
     
-    assert key != ""
+    assert vector != ""
     
-    encryption_data["current_key"] = key
+    encryption_data["current_vector"] = vector
 
-@pytest_bdd.then('the encryption key should not equal to the default key')
-def then_the_encryption_key_should_not_equal_to_the_default_key(encryption_data):
+@pytest_bdd.then('the encryption vector should not equal to the default vector')
+def then_the_encryption_vector_should_not_equal_to_the_default_vector(encryption_data):
     
-    assert encryption_data["current_key"] != encryption_data["default_key"]
+    assert encryption_data["current_vector"] != encryption_data["default_vector"]

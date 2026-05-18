@@ -11,10 +11,10 @@ Feature: Cryptographic Failures
     And the encryption key is found
     Then the encryption key should not equal to the default key
   
-  # Scenario: The OpenMRS application should not use the default encryption vector
-  #   The current encrpytion vector should not match the default vector for the system.
+  Scenario: The OpenMRS application should not use the default encryption vector
+    The current encrpytion vector should not match the default vector for the system.
 
-  #   Given the default encrpytion vector is 9wyBUNglFCRVSUhMfsTa3Q==
-  #   When the runtime properties are accessed
-  #   And the encryption vector is found
-  #   Then the encryption vector should not equal to the default vector
+    Given the default encrpytion vector
+    When the runtime properties are accessed
+    And the encryption vector is found
+    Then the encryption vector should not equal to the default vector
