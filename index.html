@@ -372,7 +372,7 @@
           <div class="header">
             <h1>🔒 OpenMRS O3 Security Dashboard</h1>
             <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
-            <p style="margin-top: 5px; font-size: 12px;">Last Updated: 2026-05-18 22:20:25 EST</p>
+            <p style="margin-top: 5px; font-size: 12px;">Last Updated: 2026-05-19 13:23:07 EST</p>
         </div>
 
       <div class = "tabs_buttons">
@@ -386,31 +386,31 @@
         <div class="stats">
             <div class="stat-card">
                 <h3>Total Tests</h3>
-                <p>39</p>
+                <p>45</p>
             </div>
             <div class="stat-card">
                 <h3>Passed</h3>
-                <p style="color: #38a169;">4</p>
+                <p style="color: #38a169;">44</p>
             </div>
             <div class="stat-card">
                 <h3>Failed</h3>
-                <p style="color: #e53e3e;">35</p>
+                <p style="color: #e53e3e;">1</p>
             </div>
             <div class="stat-card">
                 <h3>Duration</h3>
-                <p>28.2m</p>
+                <p>9.5m</p>
             </div>
         </div>
         <div class="test-results">
             <div class="category-header" onclick="toggleCategory('cat_Authentication')">
                 <span class="category-title">
-                    ❌&nbsp;Authentication
+                    ✅&nbsp;Authentication
                 </span>
                 <span class="category-meta">
-                    <span style="background-color:#dc3545; color:white; font-weight:600; font-size:12px; padding:3px 10px; border-radius:10px; margin-right:8px;">Highest CVSS: 9.2 — CRITICAL</span>
+                    
                     <span class="cat-trend-wrapper">
                     <span class="cat-trend-label">Max CVSS trend:</span>
-                    <span style="color:#718096; font-size:11px;">0.0 —</span><canvas id="cat_trend_Authentication" width="100" height="28" style="vertical-align:middle; display:block;"></canvas>
+                    <canvas id="cat_trend_Authentication" width="100" height="28" style="vertical-align:middle; display:block;"></canvas>
     <script>
     new Chart(document.getElementById("cat_trend_Authentication"), {
         type: "line",
@@ -441,19 +441,19 @@
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">0 passed</span>
+                    <span style="color:#38a169; font-weight:600;">8 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">2 failed</span>
-                    &nbsp;·&nbsp;2 tests
+                    <span style="color:#e53e3e; font-weight:600;">0 failed</span>
+                    &nbsp;·&nbsp;8 tests
                     <span class="chevron" id="chevron_cat_Authentication">▼</span>
                 </span>
             </div>
             <div class="category-body" id="cat_Authentication">
 
                 <details open>
-                    <summary class="subcategory-summary subcategory-fail">
-                        <span>Failed Tests</span>
-                        <span class="subcategory-count">2 tests</span>
+                    <summary class="subcategory-summary subcategory-pass">
+                        <span>Passed Tests</span>
+                        <span class="subcategory-count">8 tests</span>
                     </summary>
                     
                 <table>
@@ -471,23 +471,75 @@
 
                     
                         <tr>
+                            <td><strong>Brute Force Attack On Login Page Causes Lockout</strong></td>
+                            <td>Tests whether the system will lockout an attacker from a brute force attack.</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">9.2</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
+                            <td>11.72s</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>Brute Force Attack On Rest Api Causes Lockout</strong></td>
+                            <td>Tests whether the system will lockout an attacker from a brute force attack.</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">9.2</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
+                            <td>0.11s</td>
+                        </tr>
+
+                        <tr>
                             <td><strong>Brute Force Password Attack Via Rest Api With Known Admin Username</strong></td>
-                            <td>Tests account lockout and cooldown after 7 failed API login attempts with known
-username "admin". Uses CVSS 4.0 with dynamic scoring based on observed API-layer
-security mechanisms. Compares defense consistency with frontend brute force test.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">9.2</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>2.15s</td>
+                            <td>Tests whether an attacker can login accross the API using a known username and random passwords.</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">10.0</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
+                            <td>0.09s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Brute Force Password Attack With Known Admin Username</strong></td>
-                            <td>Tests account lockout and cooldown after 7 failed login attempts with known username "admin". Uses CVSS 4.0 with dynamic scoring based on observed security mechanisms.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">9.2</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>5.7m</td>
+                            <td>Tests whether an attacker can login to the login page using a known username and random passwords.</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">10.0</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
+                            <td>15.19s</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>Lockout On Login Page Is Accessible After 5 Minutes</strong></td>
+                            <td>Tests whether an account is accessible after a 5 minute waiting period</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">9.0</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
+                            <td>11.51s</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>Lockout On Login Page Is Not Accessible At 4 Minutes And 50 Seconds</strong></td>
+                            <td>Tests whether an account is accessible after a 4 minute and 50 second waiting period</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">9.2</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
+                            <td>13.41s</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>Lockout On Rest Api Is Accessible After 5 Minutes</strong></td>
+                            <td>Tests whether an account is accessible after a 5 minute waiting period</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">9.0</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
+                            <td>0.14s</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>Lockout On Rest Api Is Not Accessible At 4 Minutes And 50 Seconds</strong></td>
+                            <td>Tests whether an account is accessible after a 4 minute and 50 second waiting period</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">9.2</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
+                            <td>0.10s</td>
                         </tr>
 
                     </tbody>
@@ -602,9 +654,9 @@ security mechanisms. Compares defense consistency with frontend brute force test
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">2 passed</span>
+                    <span style="color:#38a169; font-weight:600;">4 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">3 failed</span>
+                    <span style="color:#e53e3e; font-weight:600;">1 failed</span>
                     &nbsp;·&nbsp;5 tests
                     <span class="chevron" id="chevron_cat_Session Management">▼</span>
                 </span>
@@ -614,7 +666,40 @@ security mechanisms. Compares defense consistency with frontend brute force test
                 <details open>
                     <summary class="subcategory-summary subcategory-fail">
                         <span>Failed Tests</span>
-                        <span class="subcategory-count">3 tests</span>
+                        <span class="subcategory-count">1 test</span>
+                    </summary>
+                    
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>CVSS Score (Baseline)</th>
+                            <th>Severity</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    
+                        <tr>
+                            <td><strong>Cookies Have Secure Attribute</strong></td>
+                            <td>Test whether cookies have the secure attribute enabled.</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td><span class="cvss-score-fail">9.2</span></td>
+                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
+                            <td>2.89s</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </details>
+
+                <details open>
+                    <summary class="subcategory-summary subcategory-pass">
+                        <span>Passed Tests</span>
+                        <span class="subcategory-count">4 tests</span>
                     </summary>
                     
                 <table>
@@ -635,62 +720,29 @@ security mechanisms. Compares defense consistency with frontend brute force test
                             <td><strong>Session Cookie Should Change When Logging Out</strong></td>
                             <td>After a user logs out of a system, the cookie holding information
 about the login should expire and a new one should be created</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">9.2</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>35.28s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">9.2</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
+                            <td>5.49s</td>
                         </tr>
 
-                        <tr>
-                            <td><strong>Session Cookie Hijacked</strong></td>
-                            <td>After a user logs out of a system, the cookie holding information
-about the login is used to try and regain access</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">9.2</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>35.48s</td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Cookies Have Secure Attribute</strong></td>
-                            <td>Test whether cookies have the secure attribute enabled.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">9.2</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>3.34s</td>
-                        </tr>
-
-                    </tbody>
-                </table>
-                </details>
-
-                <details open>
-                    <summary class="subcategory-summary subcategory-pass">
-                        <span>Passed Tests</span>
-                        <span class="subcategory-count">2 tests</span>
-                    </summary>
-                    
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Test Name</th>
-                            <th>Description</th>
-                            <th>Status</th>
-                            <th>CVSS Score (Baseline)</th>
-                            <th>Severity</th>
-                            <th>Duration</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    
                         <tr>
                             <td><strong>Cookies Have Httponly Attribute</strong></td>
                             <td>Test whether cookies have the HTTPOnly attribute enabled.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>3.21s</td>
+                            <td>2.88s</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>Session Cookie Hijacked</strong></td>
+                            <td>After a user logs out of a system, the cookie holding information
+about the login is used to try and regain access</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">9.2</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
+                            <td>5.48s</td>
                         </tr>
 
                         <tr>
@@ -699,7 +751,7 @@ about the login is used to try and regain access</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">5.1</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>3.22s</td>
+                            <td>2.85s</td>
                         </tr>
 
                     </tbody>
@@ -712,13 +764,13 @@ about the login is used to try and regain access</td>
         <div class="test-results">
             <div class="category-header" onclick="toggleCategory('cat_XSS')">
                 <span class="category-title">
-                    ❌&nbsp;Xss
+                    ✅&nbsp;Xss
                 </span>
                 <span class="category-meta">
-                    <span style="background-color:#ffc107; color:white; font-weight:600; font-size:12px; padding:3px 10px; border-radius:10px; margin-right:8px;">Highest CVSS: 4.4 — MEDIUM</span>
+                    
                     <span class="cat-trend-wrapper">
                     <span class="cat-trend-label">Max CVSS trend:</span>
-                    <span style="color:#718096; font-size:11px;">0.0 —</span><canvas id="cat_trend_XSS" width="100" height="28" style="vertical-align:middle; display:block;"></canvas>
+                    <canvas id="cat_trend_XSS" width="100" height="28" style="vertical-align:middle; display:block;"></canvas>
     <script>
     new Chart(document.getElementById("cat_trend_XSS"), {
         type: "line",
@@ -749,9 +801,9 @@ about the login is used to try and regain access</td>
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">0 passed</span>
+                    <span style="color:#38a169; font-weight:600;">30 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">30 failed</span>
+                    <span style="color:#e53e3e; font-weight:600;">0 failed</span>
                     &nbsp;·&nbsp;30 tests
                     <span class="chevron" id="chevron_cat_XSS">▼</span>
                 </span>
@@ -759,8 +811,8 @@ about the login is used to try and regain access</td>
             <div class="category-body" id="cat_XSS">
 
                 <details open>
-                    <summary class="subcategory-summary subcategory-fail">
-                        <span>Failed Tests</span>
+                    <summary class="subcategory-summary subcategory-pass">
+                        <span>Passed Tests</span>
                         <span class="subcategory-count">30 tests</span>
                     </summary>
                     
@@ -781,271 +833,271 @@ about the login is used to try and regain access</td>
                         <tr>
                             <td><strong>Xss Injection On First Name Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>49.82s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>24.08s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On First Name Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.09s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.56s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On First Name Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.28s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.75s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Middle Name Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.39s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.45s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Middle Name Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.00s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.24s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Middle Name Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.37s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.08s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Family Name Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.05s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.34s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Family Name Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.11s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.12s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Family Name Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.86s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.22s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Address 1 Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.96s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.28s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Address 1 Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.98s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.40s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Address 1 Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.13s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.24s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Address 2 Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.20s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.23s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Address 2 Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.98s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.70s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Address 2 Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.17s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.61s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On City Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.34s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.72s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On City Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.93s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.16s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On City Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.25s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.23s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On State Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.87s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.35s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On State Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.90s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.31s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On State Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.85s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.27s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Country Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.20s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.68s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Country Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.11s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Country Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.94s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.18s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Postal Code Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.78s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.20s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Postal Code Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.86s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.18s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Postal Code Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.07s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.20s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Phone Number Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>42.25s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.92s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Phone Number Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.87s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.24s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Phone Number Field Of Edit Patient Page, Parameterized</strong></td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">4.4</span></td>
-                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>41.87s</td>
+                            <td><span class="status-badge status-pass">PASS</span></td>
+                            <td><span class="cvss-score-pass">4.4</span></td>
+                            <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
+                            <td>16.22s</td>
                         </tr>
 
                     </tbody>
