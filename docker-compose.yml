@@ -31,3 +31,5 @@ services:
   db:
     image: openmrs/openmrs-reference-application-3-db:nightly-with-data
     restart: "unless-stopped"
+    ports:
+      - "3306:3306"

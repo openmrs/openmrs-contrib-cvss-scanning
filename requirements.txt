@@ -14,5 +14,8 @@ pytest-json-report==1.5.0
 python-dotenv==1.2.2
 requests==2.33.0
 
+# Accessing the database
+mysql-connector-python
+
 # docker
 docker

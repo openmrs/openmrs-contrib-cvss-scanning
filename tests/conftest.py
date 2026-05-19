@@ -2,7 +2,6 @@ import pytest
 import html
 import os
 
-from playwright.sync_api import sync_playwright
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -11,26 +10,6 @@ load_dotenv()
 # Store CVSS results during test runs
 _cvss_results = {}
 _scenario_names = {}
-
-@pytest.fixture(scope="function")
-def new_page():
-    """Setup Playwright browser for testing"""
-    with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless= True,
-            args=[
-                '--no-sandbox',
-                '--disable-dev-shm-usage',
-            ] if os.getenv('CI') else []
-        )
-        context = browser.new_context()
-        page = context.new_page()
-        page.set_default_timeout(30000)
-        
-        yield page
-        
-        context.close()
-        browser.close()
 
 def save_cvss_result(request, cvss_score, severity):
     _cvss_results[request.node.name] = {
@@ -70,6 +49,13 @@ def pytest_json_modifyreport(json_report):
             test["feature"] = _scenario_names[test_name]["feature"]
             test["scenario"] = _scenario_names[test_name]["scenario"]
             test["scenario_description"] = _scenario_names[test_name]["scenario_description"]
+
+# settings for page from pytest-playwright plugin
+@pytest.fixture(scope="session") 
+def browser_launch_options():
+    return {
+        "args": ["--no-sandbox", "--disable-dev-shm-usage"] if os.getenv("CI") else []
+    }
 
 def pytest_html_results_table_row(report, cells):
     # This hook changes the names of the tests to sanatize them for possible XSS strings
