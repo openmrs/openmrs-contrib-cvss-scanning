@@ -43,8 +43,8 @@ def when_a_user_logs_in_to_the_rest_api_with_the_correct_credentials(login_data)
     
     login_data["is_authenticated"] = login_api("doctor", "Doctor123")
 
-@pytest_bdd.when('a user waits 4 minutes and 50 seconds')
-def when_a_user_waits_4_minutes_and_50_seconds(cursor:MySQLCursor, connection:MySQLConnection):
+@pytest_bdd.when('a user simulates waiting 4 minutes and 50 seconds for a lockout')
+def when_a_user_simulates_waiting_4_minutes_and_50_seconds_for_a_lockout(cursor:MySQLCursor, connection:MySQLConnection):
     
     select_lockout_query = """
     SELECT user_property.property_value
@@ -76,8 +76,8 @@ def when_a_user_waits_4_minutes_and_50_seconds(cursor:MySQLCursor, connection:My
     
     connection.commit()
 
-@pytest_bdd.when('a user waits 5 minutes')
-def when_a_user_waits_5_minutes(cursor:MySQLCursor, connection:MySQLConnection):
+@pytest_bdd.when('a user simulates waiting 5 minutes for a lockout')
+def when_a_user_simulates_waiting_5_minutes_for_a_lockout(cursor:MySQLCursor, connection:MySQLConnection):
     
     select_lockout_query = """
     SELECT user_property.property_value

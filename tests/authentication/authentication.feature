@@ -37,7 +37,7 @@ Feature: Authentication
 
     Given the OpenMRS 3 login page is displayed
     And the login page is locked out from 7 failed login attempts
-    When a user waits 4 minutes and 50 seconds
+    When a user simulates waiting 4 minutes and 50 seconds for a lockout
     And a user logs in to the login page with the correct credentials
     Then the login page should block the correct credentials
 
@@ -46,7 +46,7 @@ Feature: Authentication
 
     Given the OpenMRS 3 login page is displayed
     And the login page is locked out from 7 failed login attempts
-    When a user waits 5 minutes
+    When a user simulates waiting 5 minutes for a lockout
     And a user logs in to the login page with the correct credentials
     Then the location selection or home page should be shown
 
@@ -54,7 +54,7 @@ Feature: Authentication
     Tests whether an account is accessible after a 4 minute and 50 second waiting period
 
     Given the REST API is locked out from 7 failed login attempts
-    When a user waits 4 minutes and 50 seconds
+    When a user simulates waiting 4 minutes and 50 seconds for a lockout
     And a user logs in to the REST API with the correct credentials
     Then the user should not be authenticated
 
@@ -62,6 +62,6 @@ Feature: Authentication
     Tests whether an account is accessible after a 5 minute waiting period
 
     Given the REST API is locked out from 7 failed login attempts
-    When a user waits 5 minutes
+    When a user simulates waiting 5 minutes for a lockout
     And a user logs in to the REST API with the correct credentials
     Then the user should be authenticated
