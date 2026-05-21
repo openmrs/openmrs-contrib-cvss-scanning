@@ -1,16 +1,9 @@
 
 import pytest_bdd
 import os
-from mysql.connector import MySQLConnection
-from mysql.connector.cursor import MySQLCursor
-from tests.utils import O3_LOGIN_URL,O3_HOME_URL, O3_BASE_URL, DEFAULT_WAIT_TIME
+from tests.utils import O3_LOGIN_URL,O3_HOME_URL, DEFAULT_WAIT_TIME
 from playwright.sync_api import Page
 import pytest
-
-# URL configuration
-O3_BASE_URL = os.getenv('O3_BASE_URL', 'http://localhost/openmrs/spa')
-O3_LOGIN_URL = f'{O3_BASE_URL}/login'
-O3_HOME_URL = f'{O3_BASE_URL}/home'
 
 @pytest_bdd.given("logged into OpenMRS O3")
 def login(page:Page):
