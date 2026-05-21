@@ -2,13 +2,11 @@ import pytest
 import pytest_bdd
 import string
 import random
-import mysql.connector
 import requests
 import base64
 
 from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
-from typing import Generator
 from playwright.sync_api import Page
 from pytest import FixtureRequest
 from tests.utils import O3_BASE_URL, O3_API_URL, DEFAULT_WAIT_TIME
@@ -180,27 +178,6 @@ def login_api(username, password):
 @pytest.fixture(scope="function")
 def login_data():
     return {}
-
-# Database access
-@pytest.fixture(scope="session")
-def connection():
-    connection : MySQLConnection = mysql.connector.connect(
-        host="localhost",
-        port=3306,
-        user="root",
-        password="openmrs",
-        database="openmrs"
-    )
-    
-    yield connection
-    connection.close()
-
-@pytest.fixture
-def cursor(connection:MySQLConnection) -> Generator[MySQLCursor, None, None]:
-    cursor : MySQLCursor = connection.cursor(dictionary=True)
-    yield cursor
-    connection.rollback()
-    cursor.close()
 
 @pytest.fixture(scope="function")
 def cleanup_clear_user_lockout(request:FixtureRequest, cursor:MySQLCursor, connection:MySQLConnection):
