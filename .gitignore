@@ -5,6 +5,7 @@ __pycache__/
 tests/*/__pycache__/
 
 # Generated test reports and artifacts
+detailed-report.html
 report.html
 report.json
 security_dashboard.html

@@ -1,29 +1,23 @@
-# Test implementation template
-# This file represents one scenario in the feature file
-# For this test category
-# This file NEEDS to start with test_*.py
-
+import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 from tests.conftest import save_cvss_result
-from playwright.sync_api import Page
+from tests.authentication.conftest import login_api
 
-# O3_BASE_URL represents the URL to access OpenMRS 3
-
-# This given is the implementation of the first Given in the background
-# It should not be removed. It may be modified to pick the correct CVSS
-# metrics for this specific scenario.
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
 
+
     # For an indepth reference to CVSS 4.0
     # https://www.first.org/cvss/v4.0/specification-document
+
 
     # To determine the CVSS score, the following metrics will need
     # to be decided. Here is each metric, and the possible values.
     # These are basic descriptions of the metrics. For further clarification
     # inspect the specification document linked above.
+
 
     # Attack Vector (AV) / BaseMetrics.AttackVector
     # This metric relfects the context for which vulnerability exploitation is possible.
@@ -36,7 +30,9 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   Physical    The attack requires the attacker to physically touch or manipulate the vulnerable system.
 
+
     AV = BaseMetrics.AttackVector.NETWORK
+
 
     # Attack Complexity (AC) / BaseMetrics.AttackComplexity
     # This metric caputres the actions taken by an attacker to evade existing built-in security
@@ -48,7 +44,9 @@ def given_cvss_score_is_calculted_and_printed(request):
     #               gather some target-specific secret before the attack 
     #               can be successful.
 
+
     AC = BaseMetrics.AttackComplexity.LOW
+
 
     # Attack Requirements (AT) / BaseMetrics.AttackRequirements
     # This metric captures the prerequisites or conditions to access the vulnerability.
@@ -63,7 +61,9 @@ def given_cvss_score_is_calculted_and_printed(request):
     #               themselves into the logical network path between 
     #               the target and the resource requested by the victim.
 
+
     AT = BaseMetrics.AttackRequirements.NONE
+
 
     # Privileges Required (PR) / BaseMetrics.PriviledgesRequired
     # This metric describes the level of priviledges an attacker must possess prior to exploiting a vulnerability.
@@ -78,7 +78,9 @@ def given_cvss_score_is_calculted_and_printed(request):
     #               significant (e.g., administrative) control over the 
     #               vulnerable system allowing full access
 
+
     PR = BaseMetrics.PriviledgesRequired.NONE
+
 
     # User Interaction (UI) / BaseMetrics.UserInteraction
     # This metric captures the requirement of a non-attacker human user to access the vulnerability
@@ -96,7 +98,9 @@ def given_cvss_score_is_calculted_and_printed(request):
     #               conscious interactions with the vulnerable system 
     #               and the attacker’s payload
 
-    UI = BaseMetrics.UserInteraction.PASSIVE
+
+    UI = BaseMetrics.UserInteraction.NONE
+
 
     # Impact Metrics
     # The Impact metrics capture the effects of a successfully 
@@ -109,6 +113,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     # The vulnerable system is the specfic area of software that 
     # contains the vulnerability. The subsequent system is everything 
     # outside of that area.
+
 
     # Confidentiality (VC/SC) BaseMetrics.Confidentiality
     # This measures the impact to the confidentiality of the information
@@ -132,6 +137,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     
     VC = BaseMetrics.Confidentiality.VulnerableSystem.HIGH
 
+
     # Impact to the Subsequent System (SC) / .SubsequentSystem
     #   High        There is a total loss of confidentiality, resulting 
     #               in all resources within the Subsequent System being 
@@ -145,7 +151,9 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of confidentiality.
 
-    SC = BaseMetrics.Confidentiality.SubsequentSystem.HIGH
+
+    SC = BaseMetrics.Confidentiality.SubsequentSystem.LOW
+
 
     # Integrity (VI/SI) / BaseMetrics.Integrity
     # This metric measures the impact to integrity of a successfully 
@@ -165,6 +173,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     
     VI = BaseMetrics.Integrity.VulnerableSystem.HIGH
 
+
     # Impact to the Subsequent System (SI) / .SubsequentSystem
     #   High        There is a total loss of integrity, or a complete 
     #               loss of protection.
@@ -176,7 +185,9 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of integrity.
 
-    SI = BaseMetrics.Integrity.SubsequentSystem.HIGH
+
+    SI = BaseMetrics.Integrity.SubsequentSystem.LOW
+
 
     # Availability (VA/SA) BaseMetrics.Availability
     # This metric measures the impact to the availability of the 
@@ -202,6 +213,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     
     VA = BaseMetrics.Availability.VulnerableSystem.NONE
 
+
     # Impact to the Subsequent System (SA) / .SubsequentSystem
     #   High        There is a total loss of availability, resulting in 
     #               the attacker being able to fully deny access to 
@@ -215,53 +227,41 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no impact to availability.
 
+
     SA = BaseMetrics.Availability.SubsequentSystem.NONE
+
 
     # Calculate CVSS 4.0 score
     cvss_score = calculate_cvss_v4_score(
         AV = AV, AC = AC, AT = AT, PR = PR, UI = UI, VC = VC, VI = VI, VA = VA, SC = SC, SI = SI, SA = SA
         )
 
+
     # This is calculated automatically
     # It has possible values of Low, Medium, High, Critical
     severity = get_cvss_severity(cvss_score)
 
+
     display_results(cvss_score=cvss_score, severity=severity)
-        
+    
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
-# In the scenario decorator, fill out the "tests/"
-# string by adding the relevant folder and feature file
-# '<feature>.feature'
-# The second string should be copied from the feature file
-@pytest_bdd.scenario('session_management.feature',
-                        'Session cookie should change when logging out')
-def test_session_cookie_changed():
-    # it is required by pytest that the scenario file starts with test_
+@pytest.mark.parametrize("cleanup_clear_user_lockout", ["doctor"], indirect=True)
+@pytest_bdd.scenario('authentication.feature', 'Brute force attack on REST API causes lockout')
+def test_brute_force_attack_on_rest_api_causes_lockout(cleanup_clear_user_lockout):
+ pass
 
-    # This function below the decorator represents what will be run
-    # when the Scenario is run. The name of the function may be changed
-    # but should represent the scenario being called.
-    pass
+@pytest_bdd.when('an attacker fails 7 login attempts through the REST API')
+def when_an_attacker_fails_7_login_attempts_through_the_rest_api():
 
-# In the given decorator, fill out the parameter as the text of the
-# Given statement in Background or the Scenario. For each given in the
-# Background and Scenario, a new decorator should be made.
+    for i in range(0,8):
+        login_api("doctor", f"BADPASS{i}")
+        
 
-# In the when decorator, fill out the parameter as the text of the
-# When statement in the Scenario. It should be copied and pasted.
-@pytest_bdd.then('the cookies expire and new cookies with different IDs are generated')
-def then(page:Page, context_data):
-    # This function represents what will happen during the Then step of the scenario.
-    new_cookies = page.context.cookies()
-    old_cookies = context_data["cookies"]
+@pytest_bdd.then('the REST API should block the correct credentials')
+def then_the_rest_api_should_block_the_correct_credentials():
     
-    for new_cookie in new_cookies:
-        for old_cookie in old_cookies:
-            if (new_cookie["name"] == old_cookie["name"]):
-                assert new_cookie["value"] != old_cookie["value"]
-
-# Additional then decorators and functions should be added for any
-# And and But statements in the feature file, but they should still
-# use the @pytest_bdd.then('') format
+    isAuthenticated = login_api("doctor", "Doctor123")
+    
+    assert isAuthenticated == False

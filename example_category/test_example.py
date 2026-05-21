@@ -2,10 +2,10 @@
 # This file represents one scenario in the feature file
 # For this test category
 # This file NEEDS to start with test_*.py
-
+import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
 from tests.conftest import save_cvss_result
 
 # O3_BASE_URL represents the URL to access OpenMRS 3
@@ -236,7 +236,7 @@ def given_cvss_score_is_calculted_and_printed(request):
 # The second string should be copied from the feature file
 @pytest_bdd.scenario('example.feature',
                         '')
-def test_example_scenario():
+def test_example_scenario(cleanup_statement):
     # it is required by pytest that the scenario file starts with test_
 
     # This function below the decorator represents what will be run
@@ -248,7 +248,7 @@ def test_example_scenario():
 # Given statement in Background or the Scenario. For each given in the
 # Background and Scenario, a new decorator should be made.
 @pytest_bdd.given('')
-def given():
+def given_statement():
     # This function represents what will be run before the When and Then
     # steps. It is to put the system into a known state.
     #
@@ -260,17 +260,25 @@ def given():
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
 @pytest_bdd.when('')
-def when():
+def when_statement():
     # This function represents what will happen during the When step of the scenario.
     pass
 
 # In the when decorator, fill out the parameter as the text of the
 # When statement in the Scenario. It should be copied and pasted.
 @pytest_bdd.then('')
-def then():
+def then_statement():
     # This function represents what will happen during the Then step of the scenario.
     pass
 
 # Additional then decorators and functions should be added for any
 # And and But statements in the feature file, but they should still
 # use the @pytest_bdd.then('') format
+
+@pytest.fixture(scope="function")
+def cleanup_statement():
+    yield
+    
+    # Any cleanup steps should occur after the yield
+    # This should be used to reset the test to that state it was at before this scenario was run
+    # Remove this if there is no cleanup needed, and remove it from the scenario parameter

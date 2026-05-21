@@ -1,13 +1,8 @@
 import pytest
 import pytest_bdd
 
-from playwright.sync_api import sync_playwright
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL, O3_LOGIN_URL
-
-import os
-from dotenv import load_dotenv
-
-DEFAULT_LOAD_TIME = 1000
+from playwright.sync_api import Page
+from tests.utils import O3_BASE_URL, O3_LOGIN_URL, DEFAULT_WAIT_TIME
 
 @pytest.fixture
 def context_data():
@@ -19,7 +14,7 @@ def context_data():
 # Given statement in Background or the Scenario. For each given in the
 # Background and Scenario, a new decorator should be made.
 @pytest_bdd.given('the OpenMRS 3 home page is show after login')
-def given_openMRS_page_logged_in(new_page):
+def given_openMRS_page_logged_in(page:Page):
     # This function represents what will be run before the When and Then
     # steps. It is to put the system into a known state.
     #
@@ -27,31 +22,33 @@ def given_openMRS_page_logged_in(new_page):
     # differently. This function should be renamed to reflect what the
     # Given's functionality is.
 
-    new_page.goto(O3_BASE_URL + '/login')
-    new_page.wait_for_selector("#username")
-    new_page.fill("#username", "admin")
-    new_page.keyboard.press("Enter")
-    new_page.wait_for_selector("#password")
-    new_page.fill("#password", "Admin123")
-    new_page.keyboard.press("Enter")
+    page.goto(O3_BASE_URL + '/login')
+    page.wait_for_selector("#username")
+    page.fill("#username", "admin")
+    page.keyboard.press("Enter")
+    page.wait_for_selector("#password")
+    page.fill("#password", "Admin123")
+    page.keyboard.press("Enter")
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
     
     # when it asks for the site
-    new_page.wait_for_timeout(DEFAULT_LOAD_TIME)
-    new_page.click("text=Outpatient Clinic")
-    new_page.keyboard.press("Enter")
-    new_page.wait_for_timeout(DEFAULT_LOAD_TIME)
+    if page.url == O3_BASE_URL + "/login/location":
+        page.click("text=Outpatient Clinic")
+        page.keyboard.press("Enter")
+    
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.when('Cookies are accessed from the browser')
-def when_cookies_are_accessed_from_the_browser(new_page, context_data):
+def when_cookies_are_accessed_from_the_browser(page:Page, context_data):
     # This function represents what will happen during the When step of the scenario.
     
     # get the cookies
-    cookies = new_page.context.cookies()
+    cookies = page.context.cookies()
     
     context_data["cookies"] = cookies
 
 @pytest_bdd.given('cookie information is saved')
-def given_cookie_information_is_saved(new_page, context_data):
+def given_cookie_information_is_saved(page:Page, context_data):
     # This function represents what will be run before the When and Then
     # steps. It is to put the system into a known state.
     #
@@ -59,25 +56,25 @@ def given_cookie_information_is_saved(new_page, context_data):
     # differently. This function should be renamed to reflect what the
     # Given's functionality is.
     
-    cookies = new_page.context.cookies()
+    cookies = page.context.cookies()
     context_data["cookies"] = cookies
 
 @pytest_bdd.given('the user logs out of their account')
-def given_user_logs_out(new_page):
+def given_user_logs_out(page:Page):
     # This function represents what will happen during the When step of the scenario.
-    new_page.wait_for_timeout(1000)
-    new_page.get_by_role("button", name="My Account").click()
-    new_page.wait_for_timeout(1000)
-    new_page.get_by_role("button", name="Logout").click()
+    page.wait_for_timeout(1000)
+    page.get_by_role("button", name="My Account").click()
+    page.wait_for_timeout(1000)
+    page.get_by_role("button", name="Logout").click()
 
 @pytest_bdd.then('the login page should be shown')
-def then(new_page):
+def then(page:Page):
     # This function represents what will happen during the Then step of the scenario.
-    new_page.wait_for_url(O3_LOGIN_URL)
-    assert new_page.url == O3_LOGIN_URL
+    page.wait_for_url(O3_LOGIN_URL)
+    assert page.url == O3_LOGIN_URL
 
 @pytest_bdd.when('the url is directed at /spa')
-def when_url_is_directed_at_spa(new_page):
+def when_url_is_directed_at_spa(page:Page):
     # This function represents what will happen during the When step of the scenario.
-    new_page.wait_for_url(O3_LOGIN_URL)
-    new_page.goto(O3_BASE_URL)
+    page.wait_for_url(O3_LOGIN_URL)
+    page.goto(O3_BASE_URL)
