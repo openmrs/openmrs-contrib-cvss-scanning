@@ -8,8 +8,6 @@ import mysql.connector
 from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from typing import Generator
-from playwright.sync_api import Page
-from pytest import FixtureRequest
 
 # Load environment variables
 load_dotenv()
@@ -37,26 +35,6 @@ def cursor(connection:MySQLConnection) -> Generator[MySQLCursor, None, None]:
     yield cursor
     connection.rollback()
     cursor.close()
-
-@pytest.fixture(scope="function")
-def new_page():
-    """Setup Playwright browser for testing"""
-    with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless= True,
-            args=[
-                '--no-sandbox',
-                '--disable-dev-shm-usage',
-            ] if os.getenv('CI') else []
-        )
-        context = browser.new_context()
-        page = context.new_page()
-        page.set_default_timeout(30000)
-        
-        yield page
-        
-        context.close()
-        browser.close()
 
 def save_cvss_result(request, cvss_score, severity):
     _cvss_results[request.node.name] = {
