@@ -1,6 +1,5 @@
 
 import pytest_bdd
-import os
 from tests.utils import O3_LOGIN_URL,O3_HOME_URL, DEFAULT_WAIT_TIME
 from playwright.sync_api import Page
 import pytest
