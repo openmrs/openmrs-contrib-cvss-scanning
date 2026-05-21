@@ -4,12 +4,59 @@ import os
 
 from dotenv import load_dotenv
 
+import mysql.connector
+from mysql.connector import MySQLConnection
+from mysql.connector.cursor import MySQLCursor
+from typing import Generator
+from playwright.sync_api import Page
+from pytest import FixtureRequest
+
 # Load environment variables
 load_dotenv()
 
 # Store CVSS results during test runs
 _cvss_results = {}
 _scenario_names = {}
+
+@pytest.fixture(scope="session")
+def connection():
+    connection : MySQLConnection = mysql.connector.connect(
+        host="localhost",
+        port=3306,
+        user="root",
+        password="openmrs",
+        database="openmrs"
+    )
+    
+    yield connection
+    connection.close()
+
+@pytest.fixture
+def cursor(connection:MySQLConnection) -> Generator[MySQLCursor, None, None]:
+    cursor : MySQLCursor = connection.cursor(dictionary=True)
+    yield cursor
+    connection.rollback()
+    cursor.close()
+
+@pytest.fixture(scope="function")
+def new_page():
+    """Setup Playwright browser for testing"""
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless= True,
+            args=[
+                '--no-sandbox',
+                '--disable-dev-shm-usage',
+            ] if os.getenv('CI') else []
+        )
+        context = browser.new_context()
+        page = context.new_page()
+        page.set_default_timeout(30000)
+        
+        yield page
+        
+        context.close()
+        browser.close()
 
 def save_cvss_result(request, cvss_score, severity):
     _cvss_results[request.node.name] = {
