@@ -47,3 +47,26 @@ Feature: Security Misconfiguration
       | frame-ancestors | False    |
       | form-action     | False    |
       | base-uri        | False    |
+
+  Scenario Outline: Security header directive <directive> should not be set to * or http: on login page
+      Directives should not be set to * or http: on login page if it exists and falls back to default-src
+
+      Then the content-security-policy should be present
+      And <directive> should not be set to * or http: if it exists and <fallback> to default-src
+    
+        Examples:
+          | directive       | fallback |
+          | default-src     | True     |
+          | script-src      | True     |
+          | style-src       | True     |
+          | connect-src     | True     |
+          | media-src       | True     |
+          | object-src      | True     |
+          | frame-src       | True     |
+          | worker-src      | True     |
+          | manifest-src    | True     |
+          | child-src       | True     |
+          | font-src        | True     |
+          | frame-ancestors | False    |
+          | form-action     | False    |
+          | base-uri        | False    |
