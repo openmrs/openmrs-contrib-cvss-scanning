@@ -34,16 +34,30 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
-@pytest_bdd.scenario('security_misconfiguration.feature', 'Security header attribute <attribute> should not be used for default-src directive on login page')
-def test_security_header_attribute_should_not_be_used_for_default_src_directive_on_login_page():
+@pytest_bdd.scenario('security_misconfiguration.feature', "Security header directive <directive> should be set to 'none' or 'self' on login page")
+def test_security_header_directive_should_be_set_to_none_or_self_on_login_page():
     pass
 
-@pytest_bdd.then(parsers.parse('{attribute} should not be present in default-src'))
-def then_attribute_should_not_be_present_in_default_src(response_data:dict, attribute):
+@pytest_bdd.then(parsers.parse("{directive} should be set to 'none' or 'self' if it exists or {fallback} to default-src"))
+def then_directive_should_be_set_to_none_or_self_if_it_exists_or_fallback_to_default_src(response_data:dict, directive, fallback):
+    
+    fallback = True if fallback.lower() == "true" else False
     
     # get the content-security-policy
     headers : dict = response_data["headers"]
     security_policy_dict = format_content_security_policy_directives_as_dict(headers)
     
-    # check if attribute is in the line
-    assert attribute not in security_policy_dict["default-src"]
+    # default is false
+    is_directive_secure = False
+    
+    if directive in security_policy_dict.keys():
+        # check is self or none
+        if "'none'" in security_policy_dict[directive] or "'self'" in security_policy_dict[directive]:
+            is_directive_secure = True
+    else:
+        if fallback == True:
+            # check default-src
+            if "'none'" in security_policy_dict['default-src'] or "'self'" in security_policy_dict['default-src']:
+                is_directive_secure = True
+    
+    assert is_directive_secure == True
