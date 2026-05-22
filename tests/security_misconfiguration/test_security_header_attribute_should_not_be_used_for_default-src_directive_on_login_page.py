@@ -9,14 +9,14 @@ from pytest_bdd import parsers
 def given_cvss_score_is_calculted_and_printed(request):
 
     AV = BaseMetrics.AttackVector.NETWORK
-    AC = BaseMetrics.AttackComplexity.HIGH
-    AT = BaseMetrics.AttackRequirements.PRESENT
+    AC = BaseMetrics.AttackComplexity.LOW
+    AT = BaseMetrics.AttackRequirements.NONE
     PR = BaseMetrics.PriviledgesRequired.NONE
     UI = BaseMetrics.UserInteraction.PASSIVE
-    VC = BaseMetrics.Confidentiality.VulnerableSystem.LOW
-    SC = BaseMetrics.Confidentiality.SubsequentSystem.NONE
-    VI = BaseMetrics.Integrity.VulnerableSystem.LOW
-    SI = BaseMetrics.Integrity.SubsequentSystem.NONE
+    VC = BaseMetrics.Confidentiality.VulnerableSystem.HIGH
+    SC = BaseMetrics.Confidentiality.SubsequentSystem.LOW
+    VI = BaseMetrics.Integrity.VulnerableSystem.HIGH
+    SI = BaseMetrics.Integrity.SubsequentSystem.LOW
     VA = BaseMetrics.Availability.VulnerableSystem.NONE
     SA = BaseMetrics.Availability.SubsequentSystem.NONE
 
