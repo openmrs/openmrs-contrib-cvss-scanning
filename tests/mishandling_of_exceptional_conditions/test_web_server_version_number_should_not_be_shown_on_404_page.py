@@ -35,7 +35,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
-@pytest_bdd.scenario('mishandling_of_exceptional_conditions.feature','Web server version number should not be shown on 404 page')
+@pytest_bdd.scenario('mishandling_of_exceptional_conditions.feature','Web server version name and number should not be shown on 404 page')
 def test_web_server_version_number_should_not_be_shown_on_404_page():
     pass
 
