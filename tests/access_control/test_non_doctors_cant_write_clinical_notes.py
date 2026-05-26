@@ -9,6 +9,7 @@ import base64
 
 
 def login_api_return_response(username, password):
+    #Retuns the login information of an account - UUID of user, person, permissions, more
     credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
     headers = {
         'Authorization': f'Basic {credentials}',
@@ -248,20 +249,24 @@ def given_cvss_score_is_calculted_and_printed(request):
 @pytest_bdd.given("the UUID of an admin user is known")
 def a_nondoctor_is_authenticated_over_the_api(response_data,request):
     username = request.getfixturevalue('_pytest_bdd_example')['nonAdminType']
-    response_data["admin_login_data"]=login_api_return_response(username,username.title()+"123")
+    #login to the admin
+    response=login_api_return_response("admin","Admin123")
+
+    #parse the response as json and extract the uuid
+    admin_login_data = json.loads(response.content)
+    response_data["admin_uuid"]=admin_login_data["user"]["uuid"]
     
 
 @pytest_bdd.when(pytest_bdd.parsers.parse("a {nonAdminType} user attempts to change the password of the admin"))
 def user_attempts_to_post_a_clinical_note_over_the_api(response_data,request):
     #print(response_data["login_data"].content)
     username = request.getfixturevalue('_pytest_bdd_example')['nonAdminType']
-    admin_login_data = json.loads(response_data["admin_login_data"].content)
     credentials = base64.b64encode(f'{username}:{username.title()+"123"}'.encode())
     headers={
         "Authorization":credentials,
         "newPassword":"newPassword"
     }
-    response = requests.post("http://localhost/openmrs/ws/rest/v1/password/:"+admin_login_data["user"]["uuid"],headers)
+    response = requests.post("http://localhost/openmrs/ws/rest/v1/password/:"+response_data["admin_uuid"],headers)
     response_data["status_code"]=response.status_code
 
 
