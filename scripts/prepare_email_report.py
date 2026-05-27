@@ -134,9 +134,14 @@ Please see the <a href = 'https://github.com/openmrs/openmrs-contrib-cvss-scanni
                 #get cvss history for category
                 category_history = get_category_history(category,sys.argv[2],1)
                 #see if the test historic score is < than the max
+                max_increase = 0
                 for point in category_history:
                     if(failing_categories_max_cvss[category]>point):
-                        categories_with_score_increase[category] = failing_categories_max_cvss[category]-category_history
+                        increase = failing_categories_max_cvss[category]-category_history
+                        if(increase>max_increase):
+                            max_increase=increase
+                if(max_increase!=0):
+                    categories_with_score_increase[category] = failing_categories_max_cvss[category]-category_history
         except:
             "ignore category"
 
