@@ -1,12 +1,9 @@
 import pytest_bdd
 import pytest
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL, DEFAULT_WAIT_TIME
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
 from tests.conftest import save_cvss_result
 from tests.authentication.conftest import login
-
-from mysql.connector import MySQLConnection
-from mysql.connector.cursor import MySQLCursor
 from playwright.sync_api import Page
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
