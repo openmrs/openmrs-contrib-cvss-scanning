@@ -62,9 +62,9 @@ def given_cookie_information_is_saved(page:Page, context_data):
 @pytest_bdd.given('the user logs out of their account')
 def given_user_logs_out(page:Page):
     # This function represents what will happen during the When step of the scenario.
-    page.wait_for_timeout(1000)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_role("button", name="My Account").click()
-    page.wait_for_timeout(1000)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_role("button", name="Logout").click()
 
 @pytest_bdd.then('the login page should be shown')
