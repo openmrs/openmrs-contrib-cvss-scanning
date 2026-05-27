@@ -6,6 +6,7 @@ import os
 from enum import Enum
 
 # URLS
+O3_ROOT_URL = 'http://localhost/openmrs/'
 O3_BASE_URL = os.getenv('O3_BASE_URL', 'http://localhost/openmrs/spa')
 O3_LOGIN_URL = f'{O3_BASE_URL}/login'
 #O3_WELCOME_URL is the page for selecting which location you're at, which "welcomes" you when it isn't already saved
