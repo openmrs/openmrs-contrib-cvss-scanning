@@ -27,13 +27,6 @@ def parse_test_results(file_name):
         print("Error: report.json not found")
         sys.exit(1)
     
-    try:
-        with open('test_output.log', 'r') as f:
-            log_content = f.read()
-    except FileNotFoundError:
-        print("Warning: test_output.log not found")
-        log_content = ""
-    
     results = []
     
     for test in json_report.get('tests', []):
@@ -152,11 +145,11 @@ Please see the <a href = 'https://github.com/openmrs/openmrs-contrib-cvss-scanni
     new_categories=[]
     for category in data[0]:
         category_history = get_category_history(category,sys.argv[2],7)
-        if(len(category_history<7)):
+        if(len(category_history)<7):
             new_categories.append(category)
         
-    if(len(new_categories>0)):
-        email_text+=f"<br>There were {len(new_categories)} new testing categories created in the last week. They will need new tests written for them. The new categories are:<br>"
+    if(len(new_categories)>0):
+        email_text+=f"\nThere were {len(new_categories)} new testing categories created in the last week, that will need new tests written for them. The new categories are:<br>\n"
         email_text+="<b>"
         for category in new_categories:
             email_text+=f"{category}, "
