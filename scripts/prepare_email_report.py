@@ -132,10 +132,11 @@ Please see the <a href = 'https://github.com/openmrs/openmrs-contrib-cvss-scanni
         try:
             for category in failing_categories_max_cvss:
                 #get cvss history for category
-                category_history = get_category_history(category,sys.argv[2],1)[0]
+                category_history = get_category_history(category,sys.argv[2],1)
                 #see if the test historic score is < than the max
-                if(failing_categories_max_cvss[category]>category_history):
-                    categories_with_score_increase[category] = failing_categories_max_cvss[category]-category_history
+                for point in category_history:
+                    if(failing_categories_max_cvss[category]>point):
+                        categories_with_score_increase[category] = failing_categories_max_cvss[category]-category_history
         except:
             "ignore category"
 
@@ -143,6 +144,21 @@ Please see the <a href = 'https://github.com/openmrs/openmrs-contrib-cvss-scanni
         email_text += "\n<br>These testing categories saw their highest testing CVSS score increase: <br>\n"
         for category in categories_with_score_increase:
             email_text += f"<b>{category}</b>: +{categories_with_score_increase[category]}<br>\n"
+
+    #new category test
+    new_categories=[]
+    for category in data[0]:
+        category_history = get_category_history(category,sys.argv[2],7)
+        if(len(category_history<7)):
+            new_categories.append(category)
+        
+    if(len(new_categories>0)):
+        email_text+=f"<br>There were {len(new_categories)} new testing categories created in the last week. They will need new tests written for them. The new categories are:<br>"
+        email_text+="<b>"
+        for category in new_categories:
+            email_text+=f"{category}, "
+        email_text+="</b><br>"
+        
 
     #save email to file
     file = open("email_body.html","w+")
