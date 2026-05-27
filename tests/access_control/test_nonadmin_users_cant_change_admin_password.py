@@ -24,7 +24,7 @@ def login_api_return_response(username, password):
         print(f"  Result: Request failed - {e}")
 
 @pytest_bdd.scenario("access_control.feature", "Users cannot edit the admin account password")
-def test_non_doctors_cant_write_clinical_notes():
+def test_users_cannot_edit_the_admin_account_password():
     pass
 
 # This given is the implementation of the first Given in the background
@@ -247,7 +247,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     save_cvss_result(request, cvss_score, severity)
 
 @pytest_bdd.given("the UUID of an admin user is known")
-def a_nondoctor_is_authenticated_over_the_api(response_data,request):
+def admin_account_logged_in_uuid_saved(response_data,request):
     username = request.getfixturevalue('_pytest_bdd_example')['nonAdminType']
     #login to the admin
     response=login_api_return_response("admin","Admin123")
@@ -258,7 +258,7 @@ def a_nondoctor_is_authenticated_over_the_api(response_data,request):
     
 
 @pytest_bdd.when(pytest_bdd.parsers.parse("a {nonAdminType} user attempts to change the password of the admin"))
-def user_attempts_to_post_a_clinical_note_over_the_api(response_data,request):
+def user_attempts_to_change_admin_password(response_data,request):
     #print(response_data["login_data"].content)
     username = request.getfixturevalue('_pytest_bdd_example')['nonAdminType']
     credentials = base64.b64encode(f'{username}:{username.title()+"123"}'.encode())
@@ -274,8 +274,7 @@ def user_attempts_to_post_a_clinical_note_over_the_api(response_data,request):
 @pytest_bdd.then("the system should respond with a http 500 error")
 def the_system_should_respond_with_a_rejection_of_the_attempt(response_data):
     #A 500 means the request was denied, see https://rest.openmrs.org/#changing-password , expected behavior
-    if(response_data["status_code"]!=500):
-        return False
+    assert response_data["status_code"]==500
 
 @pytest.fixture(scope="function")
 def response_data():
