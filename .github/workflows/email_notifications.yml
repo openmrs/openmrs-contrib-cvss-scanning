@@ -15,7 +15,15 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
+          
+      - name: Download previous test results DB
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: security-tests.yml
+          name: test-results-db
+          path: .
+        continue-on-error: true  # First run won't have a DB artifact yet
+        
       - name: Download previous test report.json file
         uses: dawidd6/action-download-artifact@v6
         with:
@@ -26,7 +34,7 @@ jobs:
           
       - name: Prepare email body
         run: |
-          python scripts/prepare_email_report.py report.json 
+          python scripts/prepare_email_report.py report.json test_results.db
 
       #In the case of NO critical vulnerabilites, the email shouldn't be sent. 
       #The email body will contain the text "NO FAILING TESTS" Which is a flag to not send the emails
