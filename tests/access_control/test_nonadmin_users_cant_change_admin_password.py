@@ -259,7 +259,6 @@ def admin_account_logged_in_uuid_saved(response_data,request):
 
 @pytest_bdd.when(pytest_bdd.parsers.parse("a {nonAdminType} user attempts to change the password of the admin"))
 def user_attempts_to_change_admin_password(response_data,request):
-    #print(response_data["login_data"].content)
     username = request.getfixturevalue('_pytest_bdd_example')['nonAdminType']
     credentials = base64.b64encode(f'{username}:{username.title()+"123"}'.encode())
     headers={
