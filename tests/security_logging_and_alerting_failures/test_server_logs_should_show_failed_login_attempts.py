@@ -15,7 +15,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     AT = BaseMetrics.AttackRequirements.NONE
     PR = BaseMetrics.PriviledgesRequired.NONE
     UI = BaseMetrics.UserInteraction.NONE
-    VC = BaseMetrics.Confidentiality.VulnerableSystem.NONE
+    VC = BaseMetrics.Confidentiality.VulnerableSystem.LOW
     SC = BaseMetrics.Confidentiality.SubsequentSystem.NONE
     VI = BaseMetrics.Integrity.VulnerableSystem.NONE
     SI = BaseMetrics.Integrity.SubsequentSystem.NONE
