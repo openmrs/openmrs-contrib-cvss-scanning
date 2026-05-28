@@ -161,6 +161,7 @@ Please see the <a href = 'https://github.com/openmrs/openmrs-contrib-cvss-scanni
     #new categories, 
     new_categories=[]
     for category in data[0]:
+        print(category)
         category_history = get_category_history_date(category,sys.argv[2],1)
         #since we are ordering by ascending, the oldest run_at is selected, and we can compare that to today's date to see if the tests are first ran within a day
         time = datetime.fromisoformat(category_history[0])
