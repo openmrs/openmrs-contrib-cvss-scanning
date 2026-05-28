@@ -1,8 +1,6 @@
 import json
-import os
 import sys
 import sqlite3
-from datetime import datetime, timezone, timedelta
 
 def get_category_history(category,db_path, limit=20 ):
     try:

@@ -5,11 +5,9 @@
 
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL, O3_LOGIN_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
 from tests.conftest import save_cvss_result
 from playwright.sync_api import Page
-
-# O3_BASE_URL represents the URL to access OpenMRS 3
 
 # This given is the implementation of the first Given in the background
 # It should not be removed. It may be modified to pick the correct CVSS

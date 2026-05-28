@@ -132,11 +132,11 @@ def login(page:Page, username, password):
     page.wait_for_selector("#username")
     page.fill("#username", username)
     page.keyboard.press("Enter")
-    page.wait_for_timeout(500)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.wait_for_selector("#password")
     page.fill("#password", password)
     page.keyboard.press("Enter")
-    page.wait_for_timeout(500)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 def login_api(username, password):
     
