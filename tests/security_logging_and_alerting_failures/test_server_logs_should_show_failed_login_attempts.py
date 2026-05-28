@@ -1,9 +1,11 @@
+import re
 import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, login, O3_ROOT_URL, O3_BASE_URL, DEFAULT_WAIT_TIME
 from tests.conftest import save_cvss_result
-from datetime import datetime
+from datetime import datetime, timezone
+from playwright.sync_api import Page
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -50,25 +52,51 @@ def test_server_logs_should_show_failed_login_attempts(cleanup_clear_user_lockou
 @pytest_bdd.given('the current time is saved')
 def given_the_current_time_is_saved(date_time_data):
     
-    date_time_data["saved_timestamp"] = datetime.now()
+    date_time_data["saved_timestamp"] = datetime.now(timezone.utc)
 
 @pytest_bdd.when('a user attempts to login with the wrong username or password')
-def when_a_user_attempts_to_login_with_the_wrong_username_or_password(username):
+def when_a_user_attempts_to_login_with_the_wrong_username_or_password(page:Page, username):
     
-    print("USER:", username)
+    page.goto(O3_BASE_URL)
+    
+    login(page, username, "BADPASS1")
 
 @pytest_bdd.when('an admin logs in on the login page')
-def when_an_admin_logs_in_on_the_login_page():
-    pass
+def when_an_admin_logs_in_on_the_login_page(page:Page):
+    
+    login(page, "admin", "Admin123")
 
 @pytest_bdd.when('visits the server logs page')
-def when_visits_the_server_logs_page():
-    pass
+def when_visits_the_server_logs_page(page:Page):
+    
+    page.goto(O3_ROOT_URL + "admin/maintenance/serverLog.form")
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.then('a failed login attempt log should exist after the saved timestamp')
-def then_a_failed_login_attempt_log_should_exist_after_the_saved_timestamp():
+def then_a_failed_login_attempt_log_should_exist_after_the_saved_timestamp(page:Page, date_time_data, username):
     
-    assert True
+    server_log_table = page.get_by_role("table")
+    server_log_rows = server_log_table.get_by_role("row")
+    last_row_text = server_log_rows.all()[-1].text_content()
+    
+    # verify time
+    
+    datetime_pattern : re.Pattern = re.compile(r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d")
+    datetime_match : re.Match = datetime_pattern.search(last_row_text)
+    
+    # format timestamp
+    current_datetime_str : str = datetime_match.group(0)
+    
+    current_datetime : datetime = datetime.fromisoformat(current_datetime_str)
+    current_datetime = current_datetime.replace(tzinfo=timezone.utc)
+    
+    assert current_datetime > date_time_data["saved_timestamp"]
+    
+    # verify lockout on specific account
+    lockout_text_pattern : re.Pattern = re.compile(r"Failed login attempt \(login=.+\) - Invalid username and\/or password: .+")
+    
+    assert lockout_text_pattern.search(last_row_text) != None
+    assert username in last_row_text
 
 @pytest.fixture(scope="function")
 def date_time_data():
