@@ -8,7 +8,7 @@ import base64
 from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from playwright.sync_api import Page
-from tests.utils import O3_BASE_URL, O3_API_URL, DEFAULT_WAIT_TIME
+from tests.utils import O3_BASE_URL, O3_API_URL, DEFAULT_WAIT_TIME, login
 
 ### SHARED STEPS ###
 
@@ -126,16 +126,6 @@ def then_the_login_page_should_block_the_correct_credentials(page:Page):
 def random_password(length=8):
     letters = string.ascii_letters + string.digits
     return ''.join(random.choice(letters) for _ in range(length))
-
-def login(page:Page, username, password):
-    page.wait_for_selector("#username")
-    page.fill("#username", username)
-    page.keyboard.press("Enter")
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.wait_for_selector("#password")
-    page.fill("#password", password)
-    page.keyboard.press("Enter")
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 def login_api(username, password):
     
