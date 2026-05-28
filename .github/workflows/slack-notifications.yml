@@ -16,6 +16,14 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Download previous test results DB
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: security-tests.yml
+          name: test-results-db
+          path: .
+        continue-on-error: true  # First run won't have a DB artifact yet
+        
       - name: Download previous test output file
         uses: dawidd6/action-download-artifact@v6
         with:
@@ -23,6 +31,14 @@ jobs:
           name: security-test-output
           path: .
         continue-on-error: false       
+
+      - name: Download previous test report.json file
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: security-tests.yml
+          name: security-test-report.json
+          path: .
+        continue-on-error: false   
         
       - name: Parse test results for slack notification
         id: parse-results-for-slack
@@ -30,7 +46,12 @@ jobs:
         run: |
           FAILURE_COUNT=$(grep -oP '\d+(?= failed)' test_output.log | head -1)
           echo "failure_count=${FAILURE_COUNT:-0}" >> $GITHUB_ENV
-        
+          
+      - name: Prepare new test categories text
+        run: |
+          NEW_CATEGORIES= $(python scripts/prepare_email_report.py report.json test_results.db)
+          echo "new_categories=$(NEW_CATEGORIES)">> $GITHUB_ENV
+          
       - name: Share recent changes with a channel
         if: always() && (steps.parse-results-for-slack.outcome == 'success') #&& github.ref == 'refs/heads/main'
         uses: slackapi/slack-github-action@v3.0.1
@@ -38,4 +59,7 @@ jobs:
           webhook: ${{ secrets.SLACK_NOTIFICATION_WEBHOOK_URL }}
           webhook-type: webhook-trigger
           payload: |
-            {"failure_count": "${{ env.failure_count }}"}
+            {
+            "failure_count": "${{ env.failure_count }}",
+            "new_categories": "${{ env.new_categories }}"
+            }
