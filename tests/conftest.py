@@ -8,6 +8,7 @@ import mysql.connector
 from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from typing import Generator
+from pytest import FixtureRequest
 
 # Load environment variables
 load_dotenv()
@@ -99,3 +100,55 @@ def pytest_html_results_table_row(report, cells):
     
     # Add td tags back
     cells[1] = tags[0] + cellTestName + tags[1]
+
+@pytest.fixture(scope="function")
+def cleanup_clear_user_lockout(request:FixtureRequest, cursor:MySQLCursor, connection:MySQLConnection):
+    
+    # get account to clear lockout
+    # expects a string
+    if hasattr(request, 'param'):
+        lockoutAccount:str = request.param
+    else:
+        # if parametrizing, use username as parameter name
+        lockoutAccount:str = request.getfixturevalue('username')
+        
+    # if the username is admin, the database treats this as an empty string
+    lockoutAccount = "" if lockoutAccount == "admin" else lockoutAccount
+    
+    yield
+        
+    # https://openmrs.atlassian.net/wiki/spaces/docs/pages/25477734/Administering+Users#Managing-User-Lockout
+    
+    # clear number of attempts
+    # clear last attempted time
+    
+    delete_login_attempts = """
+    DELETE user_property
+    FROM user_property
+    JOIN users ON users.user_id = user_property.user_id
+    WHERE user_property.property = 'loginAttempts'
+    AND users.username = %s;
+    """
+    
+    delete_lockout_timestamp = """
+    DELETE user_property
+    FROM user_property
+    JOIN users ON users.user_id = user_property.user_id
+    WHERE user_property.property = 'lockoutTimestamp'
+    AND users.username = %s;
+    """
+    
+    delete_last_login_timestamp = """
+    DELETE user_property
+    FROM user_property
+    JOIN users ON users.user_id = user_property.user_id
+    WHERE user_property.property = 'lastLoginTimestamp'
+    AND users.username = %s;
+    """
+        
+    cursor.execute(delete_login_attempts, [lockoutAccount])
+    cursor.execute(delete_lockout_timestamp, [lockoutAccount])
+    cursor.execute(delete_last_login_timestamp, [lockoutAccount])
+    
+    # commit to db
+    connection.commit()
