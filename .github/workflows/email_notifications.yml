@@ -34,7 +34,7 @@ jobs:
           
       - name: Prepare email body
         run: |
-          python scripts/prepare_email_report.py security-test-report.json test_results.db
+          python scripts/prepare_email_report.py report.json test_results.db
 
       #In the case of NO critical vulnerabilites, the email shouldn't be sent. 
       #The email body will contain the text "NO FAILING TESTS" Which is a flag to not send the emails
