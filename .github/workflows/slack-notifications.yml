@@ -49,7 +49,7 @@ jobs:
           
       - name: Prepare new test categories text
         run: |
-          NEW_CATEGORIES= $(python scripts/prepare_email_report.py report.json test_results.db)
+          NEW_CATEGORIES= $(python scripts/slack_report_generator.py report.json test_results.db)
           echo "new_categories=$(NEW_CATEGORIES)">> $GITHUB_ENV
       - name: echo variable
         run: |
