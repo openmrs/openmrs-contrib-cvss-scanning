@@ -756,8 +756,9 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
             r['cvss_score'] for r in results
             if r['status'] == 'FAIL' and r['cvss_score'] is not None
         ]
-        max_cvss = max(failed_cvss_scores) if failed_cvss_scores else None
+        max_cvss = max(failed_cvss_scores) if failed_cvss_scores else 0.0
 
+        print(category)
         save_category_max_cvss(category, max_cvss)
         cat_history = get_category_history(category)
 
