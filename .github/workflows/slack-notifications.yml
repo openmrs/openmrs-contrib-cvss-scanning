@@ -53,17 +53,15 @@ jobs:
           echo "new_categories<<EOF" >> $GITHUB_ENV
           echo "${NEW_CATEGORIES}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-      - name: echo variable
-        run: |
-          echo "${{ env.new_categories }}"
-     # - name: Share recent changes with a channel
-    #    if: always() && (steps.parse-results-for-slack.outcome == 'success') #&& github.ref == 'refs/heads/main'
-   #     uses: slackapi/slack-github-action@v3.0.1
-   #     with:
-  #        webhook: ${{ secrets.SLACK_NOTIFICATION_WEBHOOK_URL }}
-   #       webhook-type: webhook-trigger
-   #       payload: |
-   #         {
-   #         "failure_count": "${{ env.failure_count }}",
-   #         "new_categories": "${{ env.new_categories }}"
-   #         }
+
+      - name: Share recent changes with a channel
+        if: always() && (steps.parse-results-for-slack.outcome == 'success') #&& github.ref == 'refs/heads/main'
+        uses: slackapi/slack-github-action@v3.0.1
+        with:
+          webhook: ${{ secrets.SLACK_NOTIFICATION_WEBHOOK_URL }}
+          webhook-type: webhook-trigger
+          payload: |
+            {
+            "failure_count": "${{ env.failure_count }}",
+            "new_categories": "${{ env.new_categories }}"
+            }
