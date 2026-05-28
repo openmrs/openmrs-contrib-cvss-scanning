@@ -36,7 +36,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v6
         with:
           workflow: security-tests.yml
-          name: security-test-report.json
+          name: security-test-report-json
           path: .
         continue-on-error: false   
         
