@@ -2,14 +2,10 @@
 # This file represents one scenario in the feature file
 # For this test category
 
-import pytest
 import pytest_bdd
-import playwright
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
 from tests.conftest import save_cvss_result
-
-# O3_BASE_URL represents the URL to access OpenMRS 3
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):

@@ -1,12 +1,10 @@
-import re
 import pytest
 import pytest_bdd
-from pytest_bdd import parsers, scenarios, scenario
-from playwright.sync_api import Page, expect
-from tests.utils import display_results,get_cvss_severity,calculate_cvss_v4_score,O3_BASE_URL, O3_HOME_URL, O3_LOGIN_URL,O3_WELCOME_URL,DEFAULT_WAIT_TIME
+from pytest_bdd import parsers, scenario
+from playwright.sync_api import Page
+from tests.utils import get_cvss_severity, calculate_cvss_v4_score, O3_HOME_URL, O3_LOGIN_URL, DEFAULT_WAIT_TIME
 from tests.conftest import save_cvss_result
 
-DEFAULT_WAIT_TIME = 1000
 alertPresent=False
 loggedIn = False
 editUrl = None
