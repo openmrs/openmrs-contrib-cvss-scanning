@@ -1,4 +1,4 @@
-name: Test email sending
+name: Security Test Email Alerts
 on:
   schedule:
     - cron: '30 2 * * MON'
