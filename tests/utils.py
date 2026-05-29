@@ -258,3 +258,20 @@ def login(page:Page, username, password):
     page.fill("#password", password)
     page.keyboard.press("Enter")
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    
+def createTestPatient(page:Page, first_name="Test", family_name="Ing", years_estimated="26", sex="Other", months_estimated="0"):
+    page.goto(O3_HOME_URL)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    page.get_by_label('Add patient').click()
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    page.locator('#givenName').fill(first_name)
+    page.locator('#familyName').fill(family_name)
+    page.get_by_text(sex).click()
+
+    #date of birth -> no, estimated age
+    page.locator("button").get_by_text('No').last.click()
+    page.locator('#yearsEstimated').fill(years_estimated)
+    page.locator('#monthsEstimated').fill(months_estimated)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    page.get_by_text("Register patient").click()
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
