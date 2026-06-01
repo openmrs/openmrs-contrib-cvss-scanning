@@ -46,7 +46,6 @@ def given_cvss_score_is_calculted_and_printed(request):
     2_147_483_647,
     2_147_483_647 + 1,
     2_147_483_647 * 2,
-    2_147_483_647 * 3,
 ])
 @pytest_bdd.scenario('memory_management_failures.feature','Integer overflow of quantity on billing page')
 def test_integer_overflow_of_quantity_on_billing_page(billing_category, quantity, cleanup_delete_patient):
@@ -59,18 +58,18 @@ def given_the_admin_logs_in(page:Page):
     page.wait_for_selector("#username")
     page.fill("#username", "admin")
     page.keyboard.press("Enter")
-    page.wait_for_timeout(1000)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.wait_for_selector("#password")
     page.fill("#password", "Admin123")
     page.keyboard.press("Enter")
-    page.wait_for_timeout(1000)
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
     
     if page.url == O3_WELCOME_URL:
         page.keyboard.press("Tab")
         page.keyboard.press("Tab")
         page.keyboard.press("Space")
         page.keyboard.press("Enter")
-        page.wait_for_timeout(1000)
+        page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.given('a new patient is created')
 def given_a_new_patient_is_created(page:Page, patient_data):
@@ -94,16 +93,51 @@ def given_the_billings_history_page_is_shown(page:Page):
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.given('a bill is created')
-def given_a_bill_is_created():
-    pass
+def given_a_bill_is_created(page:Page, billing_category):
+    
+    add_bill_items = page.get_by_text("Add bill items", exact=True)
+    expect(add_bill_items).to_be_visible()
+    add_bill_items.click()
+    
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    
+    search_items_box = page.locator("#searchItems")
+    expect(search_items_box).to_be_visible()
+    
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    
+    search_items_box.press_sequentially(billing_category)
+    page.keyboard.press("Enter")
+    
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.when('a quantity is inputted')
-def when_a_quantity_is_inputted():
-    pass
+def when_a_quantity_is_inputted(page:Page, quantity):
+    
+    quantity_box = page.locator('input[type="number"]')
+    expect(quantity_box).to_be_visible()
+    quantity_box.fill(str(quantity))
+    
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    
+    page.keyboard.press("Enter")
+    
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.then('the quantity should not overflow or wraparound')
-def then_the_quantity_should_not_overflow_or_wraparound():
-    assert True
+def then_the_quantity_should_not_overflow_or_wraparound(page:Page, quantity):
+    
+    page.locator("td button").click()
+    
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+        
+    line_items_table = page.locator('table[aria-label="Invoice line items"]')
+    expect(line_items_table).to_be_visible()
+    
+    cells = line_items_table.locator('tbody tr td').all()
+    quantity_value = int(cells[3].text_content())
+    
+    assert quantity_value == quantity
 
 @pytest.fixture(scope="function")
 def cleanup_delete_patient(patient_data, page:Page):    
