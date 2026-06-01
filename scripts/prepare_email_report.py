@@ -1,8 +1,9 @@
 import json
 import sys
 import sqlite3
+from datetime import datetime
 
-def get_category_history(category,db_path, limit=20 ):
+def get_category_history_score(category,db_path, limit=20 ):
     try:
         conn = sqlite3.connect(db_path)
         c = conn.cursor()
@@ -18,6 +19,21 @@ def get_category_history(category,db_path, limit=20 ):
         #return a greater cvss score than is possible so the email doesn't print the category as failing - we can't necessicarily know
         return [11]
 
+def get_category_history_date(category,db_path, limit=20 ):
+    try:
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+        c.execute(
+            'SELECT run_at FROM category_history WHERE category = ? ORDER BY run_at ASC LIMIT ?',
+            (category, limit)
+        )
+        rows = c.fetchall()
+        conn.close()
+        return [row[0] for row in rows]
+    except Exception as e:
+        print(f'Warning: Could not get category history for {category}: {e}')
+        #return a greater cvss score than is possible so the email doesn't print the category as failing - we can't necessicarily know
+        return [11]
     
 def parse_test_results(file_name):
     try:
@@ -26,13 +42,6 @@ def parse_test_results(file_name):
     except FileNotFoundError:
         print("Error: report.json not found")
         sys.exit(1)
-    
-    try:
-        with open('test_output.log', 'r') as f:
-            log_content = f.read()
-    except FileNotFoundError:
-        print("Warning: test_output.log not found")
-        log_content = ""
     
     results = []
     
@@ -82,6 +91,7 @@ def parse_test_results(file_name):
     return grouped, json_report.get('summary', {})
 
 def main():
+    #REQUIRED CLI ARGS: argv[1] is the test report json file name, argv[2] is the test results db file name.
     #read cli arg for report url
     file_name = sys.argv[1]
     #use function to extract json
@@ -130,9 +140,15 @@ Please see the <a href = 'https://github.com/openmrs/openmrs-contrib-cvss-scanni
         try:
             for category in failing_categories_max_cvss:
                 #get cvss history for category
-                category_history = get_category_history(category,sys.argv[2],1)[0]
+                category_history = get_category_history_score(category,sys.argv[2],1)
                 #see if the test historic score is < than the max
-                if(failing_categories_max_cvss[category]>category_history):
+                max_increase = 0
+                for point in category_history:
+                    if(failing_categories_max_cvss[category]>point):
+                        increase = failing_categories_max_cvss[category]-category_history
+                        if(increase>max_increase):
+                            max_increase=increase
+                if(max_increase!=0):
                     categories_with_score_increase[category] = failing_categories_max_cvss[category]-category_history
         except:
             "ignore category"
@@ -141,6 +157,27 @@ Please see the <a href = 'https://github.com/openmrs/openmrs-contrib-cvss-scanni
         email_text += "\n<br>These testing categories saw their highest testing CVSS score increase: <br>\n"
         for category in categories_with_score_increase:
             email_text += f"<b>{category}</b>: +{categories_with_score_increase[category]}<br>\n"
+
+    #new categories, 
+    new_categories=[]
+    for category in data[0]:
+        category_history = get_category_history_date(category,sys.argv[2],1)
+        #since we are ordering by ascending, the oldest run_at is selected, and we can compare that to today's date to see if the tests are first ran within a day
+        time = datetime.fromisoformat(category_history[0])
+        today = datetime.today()
+        difference = today-time
+        duration_seconds = difference.total_seconds()
+        #86400 is seconds in a day
+        if(duration_seconds < 86400):
+            new_categories.append(category)
+        
+    if(len(new_categories)>0):
+        email_text+=f"\nThere were {len(new_categories)} new testing categories created in the last week, that will need new tests written for them. The new categories are:<br>\n"
+        email_text+="<b>"
+        for category in new_categories:
+            email_text+=f"{category}, "
+        email_text+="</b><br>"
+        
 
     #save email to file
     file = open("email_body.html","w+")
