@@ -202,6 +202,10 @@
             background: #f7fafc;
         }
         
+        .parameters {
+            width: 200px;
+        }
+        
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -372,7 +376,7 @@
           <div class="header">
             <h1>🔒 OpenMRS O3 Security Dashboard</h1>
             <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
-            <p style="margin-top: 5px; font-size: 12px;">Last Updated: 2026-06-01 22:44:50 EST</p>
+            <p style="margin-top: 5px; font-size: 12px;">Last Updated: 2026-06-02 12:20:52 EST</p>
         </div>
 
       <div class = "tabs_buttons">
@@ -398,7 +402,7 @@
             </div>
             <div class="stat-card">
                 <h3>Duration</h3>
-                <p>11.0m</p>
+                <p>10.5m</p>
             </div>
         </div>
         <div class="test-results">
@@ -415,9 +419,9 @@
     new Chart(document.getElementById("cat_trend_Access_Control"), {
         type: "line",
         data: {
-            labels: ["Run 1", "Run 2", "Run 3"],
+            labels: ["Run 1", "Run 2", "Run 3", "Run 4"],
             datasets: [{
-                data: [0.0, 0.0, 0.0],
+                data: [0.0, 0.0, 0.0, 0.0],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -460,6 +464,7 @@
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Parameters</th>
                             <th>Description</th>
                             <th>Status</th>
                             <th>CVSS Score (Baseline)</th>
@@ -472,38 +477,42 @@
                     
                         <tr>
                             <td><strong>Users Cannot Edit The Admin Account Password</strong></td>
+                            <td>clerk</td>
                             <td>Non Admin users should not be able to edit the password of the admin account by posting to the API.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.6</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.25s</td>
+                            <td>0.20s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Users Cannot Edit The Admin Account Password</strong></td>
+                            <td>technician</td>
                             <td>Non Admin users should not be able to edit the password of the admin account by posting to the API.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.6</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.05s</td>
+                            <td>0.04s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Users Cannot Edit The Admin Account Password</strong></td>
+                            <td>nurse</td>
                             <td>Non Admin users should not be able to edit the password of the admin account by posting to the API.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.6</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.05s</td>
+                            <td>0.04s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Users Cannot Edit The Admin Account Password</strong></td>
+                            <td>doctor</td>
                             <td>Non Admin users should not be able to edit the password of the admin account by posting to the API.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.6</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.06s</td>
+                            <td>0.03s</td>
                         </tr>
 
                     </tbody>
@@ -529,7 +538,7 @@
         data: {
             labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14", "Run 15", "Run 16", "Run 17", "Run 18", "Run 19", "Run 20"],
             datasets: [{
-                data: [9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 0.0, 0.0, 0.0],
+                data: [9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 9.2, 0.0, 0.0, 0.0, 0.0],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -572,6 +581,7 @@
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Parameters</th>
                             <th>Description</th>
                             <th>Status</th>
                             <th>CVSS Score (Baseline)</th>
@@ -584,74 +594,82 @@
                     
                         <tr>
                             <td><strong>Brute Force Attack On Login Page Causes Lockout</strong></td>
+                            <td>doctor</td>
                             <td>Tests whether the system will lockout an attacker from a brute force attack.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>20.66s</td>
+                            <td>20.54s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Brute Force Attack On Rest Api Causes Lockout</strong></td>
+                            <td>doctor</td>
                             <td>Tests whether the system will lockout an attacker from a brute force attack.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>0.14s</td>
+                            <td>0.13s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Brute Force Password Attack Via Rest Api With Known Admin Username</strong></td>
+                            <td>admin</td>
                             <td>Tests whether an attacker can login accross the API using a known username and random passwords.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">10.0</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>0.10s</td>
+                            <td>0.15s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Brute Force Password Attack With Known Admin Username</strong></td>
+                            <td>admin</td>
                             <td>Tests whether an attacker can login to the login page using a known username and random passwords.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">10.0</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>22.16s</td>
+                            <td>22.01s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Lockout On Login Page Is Accessible After 5 Minutes</strong></td>
+                            <td>doctor</td>
                             <td>Tests whether an account is accessible after a 5 minute waiting period</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.0</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>21.41s</td>
+                            <td>21.19s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Lockout On Login Page Is Not Accessible At 4 Minutes And 50 Seconds</strong></td>
+                            <td>doctor</td>
                             <td>Tests whether an account is accessible after a 4 minute and 50 second waiting period</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>24.32s</td>
+                            <td>24.15s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Lockout On Rest Api Is Accessible After 5 Minutes</strong></td>
+                            <td>doctor</td>
                             <td>Tests whether an account is accessible after a 5 minute waiting period</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.0</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>0.15s</td>
+                            <td>0.13s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Lockout On Rest Api Is Not Accessible At 4 Minutes And 50 Seconds</strong></td>
+                            <td>doctor</td>
                             <td>Tests whether an account is accessible after a 4 minute and 50 second waiting period</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>0.15s</td>
+                            <td>0.12s</td>
                         </tr>
 
                     </tbody>
@@ -675,9 +693,9 @@
     new Chart(document.getElementById("cat_trend_Cryptographic_Failures"), {
         type: "line",
         data: {
-            labels: ["Run 1", "Run 2", "Run 3"],
+            labels: ["Run 1", "Run 2", "Run 3", "Run 4"],
             datasets: [{
-                data: [0.0, 0.0, 0.0],
+                data: [0.0, 0.0, 0.0, 0.0],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -720,6 +738,7 @@
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Parameters</th>
                             <th>Description</th>
                             <th>Status</th>
                             <th>CVSS Score (Baseline)</th>
@@ -732,6 +751,7 @@
                     
                         <tr>
                             <td><strong>The Openmrs Application Should Not Use The Default Encryption Key</strong></td>
+                            <td>N/A</td>
                             <td>The current encrpytion key should not match the default key for the system.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">10.0</span></td>
@@ -741,6 +761,7 @@
 
                         <tr>
                             <td><strong>The Openmrs Application Should Not Use The Default Encryption Vector</strong></td>
+                            <td>N/A</td>
                             <td>The current encrpytion vector should not match the default vector for the system.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">10.0</span></td>
@@ -769,9 +790,9 @@
     new Chart(document.getElementById("cat_trend_Mishandling_of_Exceptional_Conditions"), {
         type: "line",
         data: {
-            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11"],
+            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12"],
             datasets: [{
-                data: [6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4],
+                data: [6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4, 6.4],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -814,6 +835,7 @@
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Parameters</th>
                             <th>Description</th>
                             <th>Status</th>
                             <th>CVSS Score (Baseline)</th>
@@ -826,11 +848,12 @@
                     
                         <tr>
                             <td><strong>Web Server Version Name And Number Should Not Be Shown On 404 Page</strong></td>
+                            <td><span class="parameters">N/A</span></td>
                             <td>Apache Tomcat version number should not be shown when the default HTTP 404 Error page is shown</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
                             <td><span class="cvss-score-fail">6.4</span></td>
                             <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>1.09s</td>
+                            <td>1.07s</td>
                         </tr>
 
                     </tbody>
@@ -854,9 +877,9 @@
     new Chart(document.getElementById("cat_trend_Security_Misconfiguration"), {
         type: "line",
         data: {
-            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11"],
+            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12"],
             datasets: [{
-                data: [8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2],
+                data: [8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2, 8.2],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -899,6 +922,7 @@
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Parameters</th>
                             <th>Description</th>
                             <th>Status</th>
                             <th>CVSS Score (Baseline)</th>
@@ -911,38 +935,42 @@
                     
                         <tr>
                             <td><strong>Security Header Attribute 'Unsafe-Eval' Should Not Be Used For Default-Src Directive On Login Page</strong></td>
+                            <td><span class="parameters">&#x27;unsafe-eval&#x27;</span></td>
                             <td>The content-security-policy header should not have unsafe- attributes for the default-src directive</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
                             <td><span class="cvss-score-fail">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #fd7e14;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Attribute 'Unsafe-Inline' Should Not Be Used For Default-Src Directive On Login Page</strong></td>
+                            <td><span class="parameters">&#x27;unsafe-inline&#x27;</span></td>
                             <td>The content-security-policy header should not have unsafe- attributes for the default-src directive</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
                             <td><span class="cvss-score-fail">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #fd7e14;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.31s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Form-Action Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td><span class="parameters">form-action-False</span></td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
                             <td><span class="cvss-score-fail">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #fd7e14;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Form-Action Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td><span class="parameters">form-action-False</span></td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
                             <td><span class="cvss-score-fail">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #fd7e14;">HIGH</span></td>
-                            <td>0.38s</td>
+                            <td>0.30s</td>
                         </tr>
 
                     </tbody>
@@ -959,6 +987,7 @@
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Parameters</th>
                             <th>Description</th>
                             <th>Status</th>
                             <th>CVSS Score (Baseline)</th>
@@ -971,255 +1000,283 @@
                     
                         <tr>
                             <td><strong>Security Header Attribute 'Unsafe-Hash' Should Not Be Used For Default-Src Directive On Login Page</strong></td>
+                            <td>&#x27;unsafe-hash&#x27;</td>
                             <td>The content-security-policy header should not have unsafe- attributes for the default-src directive</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Default-Src Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>default-src-True</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Script-Src Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>script-src-True</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.29s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Style-Src Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>style-src-True</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.29s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Connect-Src Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>connect-src-True</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.40s</td>
+                            <td>0.32s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Media-Src Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>media-src-True</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.29s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Object-Src Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>object-src-True</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.29s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Frame-Src Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>frame-src-True</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.31s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Worker-Src Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>worker-src-True</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.36s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Manifest-Src Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>manifest-src-True</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.38s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Child-Src Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>child-src-True</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.38s</td>
+                            <td>0.31s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Font-Src Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>font-src-True</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Frame-Ancestors Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>frame-ancestors-False</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Base-Uri Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
+                            <td>base-uri-False</td>
                             <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Default-Src Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>default-src-True</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Script-Src Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>script-src-True</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.38s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Style-Src Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>style-src-True</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Connect-Src Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>connect-src-True</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.29s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Media-Src Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>media-src-True</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Object-Src Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>object-src-True</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Frame-Src Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>frame-src-True</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Worker-Src Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>worker-src-True</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Manifest-Src Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>manifest-src-True</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.31s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Child-Src Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>child-src-True</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Font-Src Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>font-src-True</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.36s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Frame-Ancestors Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>frame-ancestors-False</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.38s</td>
+                            <td>0.31s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header Directive Base-Uri Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>base-uri-False</td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.30s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Security Header X-Content-Type-Options Is Set To Nosniff On Login Page</strong></td>
+                            <td>N/A</td>
                             <td>Files are run using the content type because nosniff is set for the header x-content-type-options
 </td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.8</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>0.39s</td>
+                            <td>0.30s</td>
                         </tr>
 
                     </tbody>
@@ -1288,6 +1345,7 @@
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Parameters</th>
                             <th>Description</th>
                             <th>Status</th>
                             <th>CVSS Score (Baseline)</th>
@@ -1300,11 +1358,12 @@
                     
                         <tr>
                             <td><strong>Cookies Have Secure Attribute</strong></td>
+                            <td><span class="parameters">N/A</span></td>
                             <td>Test whether cookies have the secure attribute enabled.</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
                             <td><span class="cvss-score-fail">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>2.90s</td>
+                            <td>2.70s</td>
                         </tr>
 
                     </tbody>
@@ -1321,6 +1380,7 @@
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Parameters</th>
                             <th>Description</th>
                             <th>Status</th>
                             <th>CVSS Score (Baseline)</th>
@@ -1333,40 +1393,44 @@
                     
                         <tr>
                             <td><strong>Session Cookie Should Change When Logging Out</strong></td>
+                            <td>N/A</td>
                             <td>After a user logs out of a system, the cookie holding information
 about the login should expire and a new one should be created</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>5.49s</td>
+                            <td>5.16s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Cookies Have Httponly Attribute</strong></td>
+                            <td>N/A</td>
                             <td>Test whether cookies have the HTTPOnly attribute enabled.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>2.97s</td>
+                            <td>2.69s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Session Cookie Hijacked</strong></td>
+                            <td>N/A</td>
                             <td>After a user logs out of a system, the cookie holding information
 about the login is used to try and regain access</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>5.59s</td>
+                            <td>5.12s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Cookies Have Samesite Attribute</strong></td>
+                            <td>N/A</td>
                             <td>Test whether cookies have the SameSite attribute to Strict or Lax.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">5.1</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>2.86s</td>
+                            <td>2.78s</td>
                         </tr>
 
                     </tbody>
@@ -1390,9 +1454,9 @@ about the login is used to try and regain access</td>
     new Chart(document.getElementById("cat_trend_SQL_Injection"), {
         type: "line",
         data: {
-            labels: ["Run 1", "Run 2", "Run 3", "Run 4"],
+            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5"],
             datasets: [{
-                data: [4.4, 0.0, 0.0, 0.0],
+                data: [4.4, 0.0, 0.0, 0.0, 0.0],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -1435,6 +1499,7 @@ about the login is used to try and regain access</td>
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Parameters</th>
                             <th>Description</th>
                             <th>Status</th>
                             <th>CVSS Score (Baseline)</th>
@@ -1447,29 +1512,32 @@ about the login is used to try and regain access</td>
                     
                         <tr>
                             <td><strong>Sql Injection On First Name Field Of Edit Patient Page</strong></td>
+                            <td>chromium-first name-hello;CREATE TABLE testingTable (testfield datetime PRIMARY KEY);</td>
                             <td>A parameterized test to try several potential SQL injection strings that target the person_name table of the OpenMRS O3 data model.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>20.59s</td>
+                            <td>19.66s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Sql Injection On Middle Name Field Of Edit Patient Page</strong></td>
+                            <td>chromium-middle name-hello;CREATE TABLE testingTable (testfield datetime PRIMARY KEY);</td>
                             <td>A parameterized test to try several potential SQL injection strings that target the person_name table of the OpenMRS O3 data model.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>13.48s</td>
+                            <td>12.92s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Sql Injection On Family Name Field Of Edit Patient Page</strong></td>
+                            <td>chromium-family name-hello;CREATE TABLE testingTable (testfield datetime PRIMARY KEY);</td>
                             <td>A parameterized test to try several potential SQL injection strings that target the person_name table of the OpenMRS O3 data model.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>13.29s</td>
+                            <td>12.90s</td>
                         </tr>
 
                     </tbody>
@@ -1493,9 +1561,9 @@ about the login is used to try and regain access</td>
     new Chart(document.getElementById("cat_trend_XSS"), {
         type: "line",
         data: {
-            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9"],
+            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10"],
             datasets: [{
-                data: [4.4, 4.4, 4.4, 4.4, 4.4, 4.4, 0.0, 0.0, 0.0],
+                data: [4.4, 4.4, 4.4, 4.4, 4.4, 4.4, 0.0, 0.0, 0.0, 0.0],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -1538,6 +1606,7 @@ about the login is used to try and regain access</td>
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Parameters</th>
                             <th>Description</th>
                             <th>Status</th>
                             <th>CVSS Score (Baseline)</th>
@@ -1550,272 +1619,302 @@ about the login is used to try and regain access</td>
                     
                         <tr>
                             <td><strong>Xss Injection On First Name Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-first name-&lt;img src/onerror=prompt(&#x27;XSS&#x27;)</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.78s</td>
+                            <td>15.64s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On First Name Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-first name-&lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.26s</td>
+                            <td>15.52s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On First Name Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-first name-&lt;svg onload=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.55s</td>
+                            <td>15.53s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Middle Name Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-middle name-&lt;img src/onerror=prompt(&#x27;XSS&#x27;)</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.39s</td>
+                            <td>15.48s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Middle Name Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-middle name-&lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.37s</td>
+                            <td>15.59s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Middle Name Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-middle name-&lt;svg onload=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.22s</td>
+                            <td>15.51s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Family Name Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-family name-&lt;img src/onerror=prompt(&#x27;XSS&#x27;)</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.24s</td>
+                            <td>15.58s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Family Name Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-family name-&lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.11s</td>
+                            <td>15.64s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Family Name Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-family name-&lt;svg onload=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.39s</td>
+                            <td>15.52s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Address 1 Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-address 1-&lt;img src/onerror=prompt(&#x27;XSS&#x27;)</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.68s</td>
+                            <td>15.51s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Address 1 Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-address 1-&lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.24s</td>
+                            <td>15.50s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Address 1 Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-address 1-&lt;svg onload=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.37s</td>
+                            <td>15.48s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Address 2 Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-address 2-&lt;img src/onerror=prompt(&#x27;XSS&#x27;)</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.23s</td>
+                            <td>15.51s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Address 2 Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-address 2-&lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.32s</td>
+                            <td>15.31s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Address 2 Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-address 2-&lt;svg onload=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.57s</td>
+                            <td>15.49s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On City Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-city-&lt;img src/onerror=prompt(&#x27;XSS&#x27;)</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.23s</td>
+                            <td>15.46s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On City Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-city-&lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.36s</td>
+                            <td>15.50s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On City Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-city-&lt;svg onload=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.20s</td>
+                            <td>15.50s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On State Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-state-&lt;img src/onerror=prompt(&#x27;XSS&#x27;)</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.24s</td>
+                            <td>15.55s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On State Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-state-&lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.34s</td>
+                            <td>15.39s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On State Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-state-&lt;svg onload=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.33s</td>
+                            <td>15.64s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Country Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-country-&lt;img src/onerror=prompt(&#x27;XSS&#x27;)</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.22s</td>
+                            <td>15.51s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Country Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-country-&lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.15s</td>
+                            <td>15.55s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Country Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-country-&lt;svg onload=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.40s</td>
+                            <td>15.63s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Postal Code Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-postal code-&lt;img src/onerror=prompt(&#x27;XSS&#x27;)</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.23s</td>
+                            <td>15.52s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Postal Code Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-postal code-&lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.34s</td>
+                            <td>15.59s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Postal Code Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-postal code-&lt;svg onload=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.06s</td>
+                            <td>15.73s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Phone Number Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-phone number-&lt;img src/onerror=prompt(&#x27;XSS&#x27;)</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.53s</td>
+                            <td>15.64s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Phone Number Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-phone number-&lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.17s</td>
+                            <td>15.61s</td>
                         </tr>
 
                         <tr>
                             <td><strong>Xss Injection On Phone Number Field Of Edit Patient Page, Parameterized</strong></td>
+                            <td>chromium-phone number-&lt;svg onload=prompt(&quot;XSS&quot;)&gt;</td>
                             <td>A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.28s</td>
+                            <td>15.66s</td>
                         </tr>
 
                     </tbody>
