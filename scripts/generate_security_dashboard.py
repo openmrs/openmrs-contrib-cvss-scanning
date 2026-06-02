@@ -7,6 +7,7 @@ CVSS 4.0 Migration: Automatically extracts test descriptions from docstrings
 """
 
 import json
+import html
 import re
 import sys
 import sqlite3
@@ -317,6 +318,12 @@ def parse_test_results():
         category = test.get("feature", "No feature found")
         scenario = test.get("scenario", "No scenario found")
         
+        params_match = re.search(re.compile(r"\[.+\]"), test_name)
+        params = "N/A"
+        if params_match:
+            params = params_match.group(0)[1:-1]
+            params = html.escape(params, quote=True)
+        
         results.append({
             'full_name': test_name,
             'name': test_name,
@@ -327,6 +334,7 @@ def parse_test_results():
             'cvss_score': cvss_score,
             'severity': severity,
             'duration': duration,
+            'params': params,
         })
     grouped = {}
     for r in results:
@@ -538,6 +546,10 @@ def generate_dashboard_html_header():
         
         tr:hover {{
             background: #f7fafc;
+        }}
+        
+        .parameters {{
+            width: 200px;
         }}
         
         .status-badge {{
@@ -805,6 +817,7 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                     <thead>
                         <tr>
                             <th>Test Name</th>
+                            <th>Parameters</th>
                             <th>Description</th>
                             <th>Status</th>
                             <th>CVSS Score (Baseline)</th>
@@ -843,6 +856,7 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                     out += f"""
                         <tr>
                             <td><strong>{r['scenario'].title()}</strong>{param_display}</td>
+                            <td>{r['params']}</td>
                             <td>{r['description']}</td>
                             <td><span class="status-badge {status_class}">{r['status']}</span></td>
                             <td><span class="cvss-score-pass">{cvss_display}</span></td>
@@ -853,6 +867,7 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                     out += f"""
                         <tr>
                             <td><strong>{r['scenario'].title()}</strong>{param_display}</td>
+                            <td><span class="parameters">{r['params']}</span></td>
                             <td>{r['description']}</td>
                             <td><span class="status-badge {status_class}">{r['status']}</span></td>
                             <td><span class="cvss-score-fail">{cvss_display}</span></td>
