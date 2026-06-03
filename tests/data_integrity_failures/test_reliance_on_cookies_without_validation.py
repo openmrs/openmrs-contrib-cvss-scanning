@@ -94,7 +94,7 @@ def a_clerk_account_has_been_logged_into(page:Page,playwright:Playwright,login_d
     clerk_cookies = second_page.context.cookies()
     login_data["clerk_cookies"]=clerk_cookies
 
-@pytest_bdd.scenario("data_integrity_failures.feature", "Replace session cookies with another")
+@pytest_bdd.scenario("data_integrity_failures.feature", "Replace session cookies with another's session")
 @pytest_bdd.when("another account's login token is replaced with the clerk's")
 def test_another_accounts_login_token_is_replaced(page:Page,login_data):
     #login to the platform with an admin account
