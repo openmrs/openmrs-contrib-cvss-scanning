@@ -6,7 +6,7 @@ Feature: Memory Management Failures
   Scenario: Integer overflow of quantity on billing page
     On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound
 
-    Given the login page is shown
+    Given the OpenMRS 3 login page is displayed
     And the admin logs in
     And a new patient is created
     And the billings history page is shown

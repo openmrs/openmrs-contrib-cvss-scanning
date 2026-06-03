@@ -51,10 +51,6 @@ def given_cvss_score_is_calculted_and_printed(request):
 def test_integer_overflow_of_quantity_on_billing_page(billing_category, quantity):
     pass
 
-@pytest_bdd.given('the login page is shown')
-def given_the_login_page_is_shown():
-    pass
-
 @pytest_bdd.given('the admin logs in')
 def given_the_admin_logs_in():
     pass
