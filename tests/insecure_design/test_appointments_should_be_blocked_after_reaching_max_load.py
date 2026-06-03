@@ -17,6 +17,8 @@ def scenario_data():
 
 # ── Fixture to reset max appointments limit after test ─────────────────────────
 
+#### ALSO DELETE PATIENTS
+
 @pytest.fixture(scope="function")
 def reset_max_appointments_limit(cursor, connection):
     yield
@@ -53,6 +55,8 @@ def given_cvss_score_is_calculted_and_printed(request):
 
 
 # ── Scenario ───────────────────────────────────────────────────────────────────
+
+### PARAMETRIZE with 3 services!!!
 
 @pytest_bdd.scenario('insecure_design.feature', 'Appointments should be blocked after reaching max load')
 def test_appointments_should_be_blocked_after_reaching_max_load(reset_max_appointments_limit):
