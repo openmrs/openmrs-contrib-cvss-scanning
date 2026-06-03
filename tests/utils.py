@@ -4,6 +4,7 @@
 
 import os
 from enum import Enum
+from playwright.sync_api import Page
 
 # URLS
 O3_ROOT_URL = 'http://localhost/openmrs/'
@@ -247,3 +248,13 @@ def display_results(cvss_score, severity):
     # This is required at the end of your test for the workflow to pick up the CVSS score
     print(f"CVSS Base Score: {cvss_score}")
     print(f"Severity Rating: {severity}")
+
+def login(page:Page, username, password):
+    page.wait_for_selector("#username")
+    page.fill("#username", username)
+    page.keyboard.press("Enter")
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    page.wait_for_selector("#password")
+    page.fill("#password", password)
+    page.keyboard.press("Enter")
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)

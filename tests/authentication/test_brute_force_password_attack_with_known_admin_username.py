@@ -3,7 +3,8 @@ import pytest_bdd
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL, DEFAULT_WAIT_TIME
 from tests.conftest import save_cvss_result
-from tests.authentication.conftest import random_password, login
+from tests.authentication.conftest import random_password
+from tests.utils import login
 
 from playwright.sync_api import Page
 
