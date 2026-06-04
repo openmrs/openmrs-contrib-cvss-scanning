@@ -258,6 +258,18 @@ def login(page:Page, username, password):
     page.fill("#password", password)
     page.keyboard.press("Enter")
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
+
+def login_and_select_default_location(page:Page, username, password):
+    
+    login(page, username, password)
+    
+    # go around the location page
+    if page.url == O3_WELCOME_URL:
+        page.keyboard.press("Tab")
+        page.keyboard.press("Tab")
+        page.keyboard.press("Space")
+        page.keyboard.press("Enter")
+        page.wait_for_timeout(DEFAULT_WAIT_TIME)
     
 def createTestPatient(page:Page, first_name="Test", family_name="Ing", years_estimated="26", sex="Other", months_estimated="0"):
     page.goto(O3_HOME_URL)

@@ -1,7 +1,7 @@
 import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, createTestPatient, BaseMetrics, O3_WELCOME_URL, DEFAULT_WAIT_TIME, O3_ROOT_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, createTestPatient, login_and_select_default_location, BaseMetrics, DEFAULT_WAIT_TIME, O3_ROOT_URL
 from tests.conftest import save_cvss_result
 from playwright.sync_api import Page, expect
 
@@ -53,23 +53,7 @@ def test_integer_overflow_of_quantity_on_billing_page(billing_category, quantity
 
 @pytest_bdd.given('the admin logs in')
 def given_the_admin_logs_in(page:Page):
-    
-    # replace with login function after login is moved to root utils
-    page.wait_for_selector("#username")
-    page.fill("#username", "admin")
-    page.keyboard.press("Enter")
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.wait_for_selector("#password")
-    page.fill("#password", "Admin123")
-    page.keyboard.press("Enter")
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    
-    if page.url == O3_WELCOME_URL:
-        page.keyboard.press("Tab")
-        page.keyboard.press("Tab")
-        page.keyboard.press("Space")
-        page.keyboard.press("Enter")
-        page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    login_and_select_default_location(page, "admin", "Admin123")
 
 @pytest_bdd.given('a new patient is created')
 def given_a_new_patient_is_created(page:Page, patient_data):
