@@ -3,32 +3,8 @@ import pytest_bdd
 import requests
 from playwright.sync_api import Page
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login_api, LoginApiResponse, BaseMetrics, LoginApiResponse, O3_ROOT_URL, O3_HOME_URL, DEFAULT_WAIT_TIME, O3_WELCOME_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login, login_api, LoginApiResponse, BaseMetrics, LoginApiResponse, O3_ROOT_URL, O3_HOME_URL, DEFAULT_WAIT_TIME, O3_WELCOME_URL, O3_BASE_URL
 from tests.conftest import save_cvss_result
-
-
-# ── Fixture to share data across steps ────────────────────────────────────────
-
-@pytest.fixture
-def scenario_data():
-    return {}
-
-
-# ── Fixture to reset max appointments limit after test ─────────────────────────
-
-#### ALSO DELETE PATIENTS
-
-@pytest.fixture(scope="function")
-def reset_max_appointments_limit(cursor, connection):
-    yield
-    cursor.execute(
-        "UPDATE appointment_service SET max_appointments_limit = NULL WHERE name = 'General Medicine service'"
-    )
-    
-    connection.commit()
-
-
-# ── CVSS ───────────────────────────────────────────────────────────────────────
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -52,24 +28,31 @@ def given_cvss_score_is_calculted_and_printed(request):
     display_results(cvss_score=cvss_score, severity=severity)
     save_cvss_result(request, cvss_score, severity)
 
-
-# ── Scenario ───────────────────────────────────────────────────────────────────
-
-### PARAMETRIZE with 3 services!!!
-
+@pytest.mark.parametrize("service_name", [
+    "General Medicine service",
+    "Outpatient Department",
+    "Rehabilitation service",
+])
 @pytest_bdd.scenario('insecure_design.feature', 'Appointments should be blocked after reaching max load')
-def test_appointments_should_be_blocked_after_reaching_max_load(reset_max_appointments_limit):
+def test_appointments_should_be_blocked_after_reaching_max_load(reset_max_appointments_limit, service_name):
     pass
-
-
-# ── Given ──────────────────────────────────────────────────────────────────────
 
 @pytest_bdd.given('3 test patients are created', target_fixture='scenario_data')
 def given_3_test_patients_are_created(page: Page):
     data = {}
     data['patient_uuids'] = []
 
+    page.goto(O3_BASE_URL)
+
+    ### REPLACE WITH LOGIN + WELCOME PAGE
     login(page, "admin", "Admin123")
+    
+    if page.url == O3_WELCOME_URL:
+        page.keyboard.press("Tab")
+        page.keyboard.press("Tab")
+        page.keyboard.press("Space")
+        page.keyboard.press("Enter")
+        page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
     for _ in range(3):
         uuid = create_test_patient_and_get_uuid(page)
@@ -79,11 +62,8 @@ def given_3_test_patients_are_created(page: Page):
     assert len(data['patient_uuids']) == 3, "Failed to create 3 test patients"
     return data
 
-
-# ── And ────────────────────────────────────────────────────────────────────────
-
-@pytest_bdd.given('the max appoitment limit for General Medicine services is set to 2', target_fixture='scenario_data')
-def and_max_appointment_limit_is_set(scenario_data, cursor, connection):
+@pytest_bdd.given('the max appoitment limit for services is set to 2', target_fixture='scenario_data')
+def and_max_appointment_limit_is_set(scenario_data, cursor, connection, service_name):
 
     # Fetch the service UUID from the API
     loginApiResponse : LoginApiResponse = login_api("admin", "Admin123")
@@ -92,28 +72,27 @@ def and_max_appointment_limit_is_set(scenario_data, cursor, connection):
     
     jsessionid = loginApiResponse.jsessionid
     
-    service_uuid = get_general_medicine_service_uuid(jsessionid)
+    service_uuid = get_service_uuid(jsessionid, service_name)
     scenario_data['service_uuid'] = service_uuid
 
     # Set the max limit to 2 via the database
     cursor.execute(
-        "UPDATE appointment_service SET max_appointments_limit = 2 WHERE name = 'General Medicine service'"
+        "UPDATE appointment_service SET max_appointments_limit = 2 WHERE name = %s",
+        [service_name]
     )
     
     connection.commit()
 
     # Verify it was set
     cursor.execute(
-        "SELECT max_appointments_limit FROM appointment_service WHERE name = 'General Medicine service'"
+        "SELECT max_appointments_limit FROM appointment_service WHERE name = %s",
+        [service_name]
     )
     result = cursor.fetchone()
         
     assert result["max_appointments_limit"] == 2, f"Expected max limit to be 2 but got {result[0]}"
 
     return scenario_data
-
-
-# ── When ───────────────────────────────────────────────────────────────────────
 
 @pytest_bdd.when('3 appointment requests are made over the api', target_fixture='scenario_data')
 def when_3_appointments_are_made(scenario_data):
@@ -133,42 +112,15 @@ def when_3_appointments_are_made(scenario_data):
     scenario_data['successful_bookings'] = successful_bookings
     return scenario_data
 
-
-# ── Then ───────────────────────────────────────────────────────────────────────
-
 @pytest_bdd.then('2 out of 3 appointments should be successful')
 def then_2_out_of_3_appointments_should_be_successful(scenario_data):
     successful = scenario_data['successful_bookings']
 
     # If the system were secure, only 2 should succeed.
     # All 3 succeeding proves the vulnerability — the limit is not enforced.
-    assert successful == 2, (
-        f"Vulnerability confirmed: all 3 appointments succeeded despite a max limit of 2. "
-        f"The system does not enforce maxAppointmentsLimit."
-    )
+    assert successful == 2, ("The system does not enforce maxAppointmentsLimit.")
 
-
-# ── Helpers ────────────────────────────────────────────────────────────────────
-
-def login(page: Page, username, password):
-    page.goto(O3_HOME_URL)
-    page.wait_for_selector("#username")
-    page.fill("#username", username)
-    page.keyboard.press("Enter")
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.wait_for_selector("#password")
-    page.fill("#password", password)
-    page.keyboard.press("Enter")
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    
-    if page.url == O3_WELCOME_URL:
-        page.keyboard.press("Tab")
-        page.keyboard.press("Tab")
-        page.keyboard.press("Space")
-        page.keyboard.press("Enter")
-        page.wait_for_timeout(DEFAULT_WAIT_TIME)
-
-
+### REPLACE PART OF THIS WITH CREATE TEST PATIENT
 def create_test_patient_and_get_uuid(page: Page):
     page.goto(O3_HOME_URL)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
@@ -185,13 +137,15 @@ def create_test_patient_and_get_uuid(page: Page):
     page.get_by_text("Register patient").click()
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
+    ### REPLACE WITH CREATETESTPATIENT ^^^
+
     # Extract UUID from the URL after redirect e.g. /patient/<uuid>/chart
     url = page.url
     uuid = url.split("/patient/")[1].split("/")[0]
     return uuid
 
 
-def get_general_medicine_service_uuid(jsessionid):
+def get_service_uuid(jsessionid, service_name):
     url = f"{O3_ROOT_URL}ws/rest/v1/appointments"
     cookies = {"JSESSIONID": jsessionid}
 
@@ -201,7 +155,7 @@ def get_general_medicine_service_uuid(jsessionid):
             appointments = response.json()
             for appt in appointments:
                 service = appt.get("service", {})
-                if service.get("name") == "General Medicine service":
+                if service.get("name") == service_name:
                     return service.get("uuid")
     except requests.exceptions.RequestException as e:
         print(f"GET SERVICE exception: {e}")
@@ -215,8 +169,8 @@ def book_appointment(jsessionid, patient_uuid, service_uuid):
     payload = {
         "patientUuid": patient_uuid,
         "serviceUuid": service_uuid,
-        "startDateTime": "2026-06-10T09:00:00.000Z",
-        "endDateTime": "2026-06-10T09:30:00.000Z",
+        "startDateTime": "2026-01-01T09:00:00.000Z",
+        "endDateTime": "2026-01-01T09:30:00.000Z",
         "appointmentKind": "Scheduled",
         "comments": "Security test appointment"
     }
@@ -228,3 +182,18 @@ def book_appointment(jsessionid, patient_uuid, service_uuid):
     except requests.exceptions.RequestException as e:
         print(f"BOOK exception: {e}")
         return False
+
+@pytest.fixture(scope="function")
+def scenario_data():
+    return {}
+
+#### ADD DELETE PATIENTS
+@pytest.fixture(scope="function")
+def reset_max_appointments_limit(cursor, connection, service_name):
+    yield
+    cursor.execute(
+        "UPDATE appointment_service SET max_appointments_limit = NULL WHERE name = %s",
+        [service_name]
+    )
+    
+    connection.commit()
