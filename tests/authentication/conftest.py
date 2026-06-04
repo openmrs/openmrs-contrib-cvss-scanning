@@ -2,13 +2,11 @@ import pytest
 import pytest_bdd
 import string
 import random
-import requests
-import base64
 
 from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from playwright.sync_api import Page
-from tests.utils import O3_BASE_URL, O3_API_URL, DEFAULT_WAIT_TIME, login
+from tests.utils import O3_BASE_URL, DEFAULT_WAIT_TIME, login, login_api
 
 ### SHARED STEPS ###
 
@@ -121,41 +119,6 @@ def then_the_login_page_should_block_the_correct_credentials(page:Page):
 def random_password(length=8):
     letters = string.ascii_letters + string.digits
     return ''.join(random.choice(letters) for _ in range(length))
-
-def login_api(username, password):
-    
-    isAuthenticated = False
-    
-    credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
-    headers = {
-        'Authorization': f'Basic {credentials}',
-        'Content-Type': 'application/json'
-    }
-
-    try:
-        response = requests.get(O3_API_URL, headers=headers, timeout=10)
-        status_code = response.status_code
-
-        if status_code == 200:
-            try:
-                print(response.text[:200])
-                data = response.json()
-                authenticated = data.get('authenticated', False)
-                if authenticated:
-                    print(f"  Result: Login SUCCEEDED (unexpected!) HTTP {status_code}")
-                    
-                    isAuthenticated = True
-                else:
-                    print(f"  Result: Login FAILED (expected) HTTP {status_code}")
-            except:
-                print(f"  Result: HTTP {status_code} (could not parse response)")
-        else:
-            print(f"  Result: HTTP {status_code}")
-
-    except requests.exceptions.RequestException as e:
-        print(f"  Result: Request failed - {e}")
-    
-    return isAuthenticated
 
 ### PYTEST FIXTURES ###
 

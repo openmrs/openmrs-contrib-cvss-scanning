@@ -3,6 +3,8 @@
 # This can be referenced as: from tests.utils import func
 
 import os
+import requests
+import base64
 from enum import Enum
 from playwright.sync_api import Page
 
@@ -287,3 +289,38 @@ def createTestPatient(page:Page, first_name="Test", family_name="Ing", years_est
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Register patient").click()
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
+
+def login_api(username, password):
+    
+    isAuthenticated = False
+    
+    credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
+    headers = {
+        'Authorization': f'Basic {credentials}',
+        'Content-Type': 'application/json'
+    }
+
+    try:
+        response = requests.get(O3_API_URL, headers=headers, timeout=10)
+        status_code = response.status_code
+
+        if status_code == 200:
+            try:
+                print(response.text[:200])
+                data = response.json()
+                authenticated = data.get('authenticated', False)
+                if authenticated:
+                    print(f"  Result: Login SUCCEEDED (unexpected!) HTTP {status_code}")
+                    
+                    isAuthenticated = True
+                else:
+                    print(f"  Result: Login FAILED (expected) HTTP {status_code}")
+            except:
+                print(f"  Result: HTTP {status_code} (could not parse response)")
+        else:
+            print(f"  Result: HTTP {status_code}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"  Result: Request failed - {e}")
+    
+    return isAuthenticated

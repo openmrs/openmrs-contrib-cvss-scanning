@@ -1,9 +1,9 @@
 import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login_api, BaseMetrics
 from tests.conftest import save_cvss_result
-from tests.authentication.conftest import random_password, login_api
+from tests.authentication.conftest import random_password
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
