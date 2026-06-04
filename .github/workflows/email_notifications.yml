@@ -47,6 +47,10 @@ jobs:
             echo "should_send=true" >> $GITHUB_OUTPUT
           fi
       
+      - name: Collect current timestamp
+        id: timestamp
+        run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+      
       - name: Send mail
         if: steps.check_email.outputs.should_send == 'true' && github.ref == 'refs/heads/main'
         uses: dawidd6/action-send-mail@v6
@@ -63,7 +67,7 @@ jobs:
           # Optional (recommended) mail server password:
           password: ${{secrets.MAIL_PASSWORD}}
           # Required mail subject:
-          subject: Automated Security Test Results
+          subject: Automated Security Test Results ${{ steps.timestamp.outputs.NOW }}
           # Optional recipients. Separate multiple addresses by a comma (possibly surrounded by whitespace):
           to: security@openmrs.org
           # Required sender (supported formats: see "Supported address formats" below)
