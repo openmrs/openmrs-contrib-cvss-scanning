@@ -1,7 +1,7 @@
 import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login_api, BaseMetrics
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login_api, BaseMetrics, LoginApiResponse
 from tests.conftest import save_cvss_result
 from tests.authentication.conftest import random_password
 
@@ -265,9 +265,9 @@ def when_the_attacker_sends_7_api_login_requests_with_known_username_admin_and_r
         print("Trying...",password)
                 
         # try passwords
-        isAuthenticated = login_api("admin", password)
+        loginApiResponse:LoginApiResponse = login_api("admin", password)
         
-        if (isAuthenticated):
+        if (loginApiResponse.is_authenticated):
             # password worked
             login_data["logged_in"] = True
             break

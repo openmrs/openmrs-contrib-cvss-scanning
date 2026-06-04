@@ -1,10 +1,9 @@
 import pytest
 import pytest_bdd
 import requests
-import base64
 from playwright.sync_api import Page
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_API_URL, O3_ROOT_URL, O3_HOME_URL, DEFAULT_WAIT_TIME, O3_WELCOME_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login_api, LoginApiResponse, BaseMetrics, LoginApiResponse, O3_ROOT_URL, O3_HOME_URL, DEFAULT_WAIT_TIME, O3_WELCOME_URL
 from tests.conftest import save_cvss_result
 
 
@@ -87,8 +86,13 @@ def given_3_test_patients_are_created(page: Page):
 def and_max_appointment_limit_is_set(scenario_data, cursor, connection):
 
     # Fetch the service UUID from the API
-    jsesh = login_api("admin", "Admin123")
-    service_uuid = get_general_medicine_service_uuid(jsesh)
+    loginApiResponse : LoginApiResponse = login_api("admin", "Admin123")
+    
+    assert loginApiResponse.is_authenticated
+    
+    jsessionid = loginApiResponse.jsessionid
+    
+    service_uuid = get_general_medicine_service_uuid(jsessionid)
     scenario_data['service_uuid'] = service_uuid
 
     # Set the max limit to 2 via the database
@@ -113,11 +117,16 @@ def and_max_appointment_limit_is_set(scenario_data, cursor, connection):
 
 @pytest_bdd.when('3 appointment requests are made over the api', target_fixture='scenario_data')
 def when_3_appointments_are_made(scenario_data):
-    jsesh = login_api("admin", "Admin123")
+    
+    loginApiResponse : LoginApiResponse = login_api("admin", "Admin123")
+    
+    assert loginApiResponse.is_authenticated
+    
+    jsessionid = loginApiResponse.jsessionid
 
     successful_bookings = 0
     for patient_uuid in scenario_data['patient_uuids']:
-        success = book_appointment(jsesh, patient_uuid, scenario_data['service_uuid'])
+        success = book_appointment(jsessionid, patient_uuid, scenario_data['service_uuid'])
         if success:
             successful_bookings += 1
 
@@ -158,41 +167,6 @@ def login(page: Page, username, password):
         page.keyboard.press("Space")
         page.keyboard.press("Enter")
         page.wait_for_timeout(DEFAULT_WAIT_TIME)
-
-
-def login_api(username, password):
-
-    jsessionid = None
-
-    credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
-    headers = {
-        'Authorization': f'Basic {credentials}',
-        'Content-Type': 'application/json'
-    }
-
-    try:
-        response = requests.get(O3_API_URL, headers=headers, timeout=10)
-        status_code = response.status_code
-
-        if status_code == 200:
-            try:
-                print(response.text[:200])
-                data = response.json()
-                authenticated = data.get('authenticated', False)
-                if authenticated:
-                    print(f"  Result: Login SUCCEEDED HTTP {status_code}")
-                    jsessionid = response.cookies.get("JSESSIONID")
-                else:
-                    print(f"  Result: Login FAILED HTTP {status_code}")
-            except:
-                print(f"  Result: HTTP {status_code} (could not parse response)")
-        else:
-            print(f"  Result: HTTP {status_code}")
-
-    except requests.exceptions.RequestException as e:
-        print(f"  Result: Request failed - {e}")
-
-    return jsessionid
 
 
 def create_test_patient_and_get_uuid(page: Page):

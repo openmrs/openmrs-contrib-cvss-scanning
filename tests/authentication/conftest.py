@@ -6,7 +6,7 @@ import random
 from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from playwright.sync_api import Page
-from tests.utils import O3_BASE_URL, DEFAULT_WAIT_TIME, login, login_api
+from tests.utils import O3_BASE_URL, DEFAULT_WAIT_TIME, login, login_api, LoginApiResponse
 
 ### SHARED STEPS ###
 
@@ -17,7 +17,8 @@ def given_the_rest_api_is_locked_out_from_7_failed_login_attempts():
         login_api("doctor", f"BADPASS{i}")
     
     # checks the lockout
-    assert login_api("doctor", "Doctor123") == False
+    loginApiResponse : LoginApiResponse = login_api("doctor", "Doctor123")
+    assert loginApiResponse.is_authenticated == False
 
 @pytest_bdd.given('the login page is locked out from 7 failed login attempts')
 def given_the_login_page_is_locked_out_from_7_failed_login_attempts(page:Page):
@@ -31,7 +32,9 @@ def given_the_login_page_is_locked_out_from_7_failed_login_attempts(page:Page):
 @pytest_bdd.when('a user logs in to the REST API with the correct credentials')
 def when_a_user_logs_in_to_the_rest_api_with_the_correct_credentials(login_data):
     
-    login_data["is_authenticated"] = login_api("doctor", "Doctor123")
+    loginApiResponse : LoginApiResponse = login_api("doctor", "Doctor123")
+    
+    login_data["is_authenticated"] = loginApiResponse.is_authenticated
 
 @pytest_bdd.when('a user simulates waiting 4 minutes and 50 seconds for a lockout')
 def when_a_user_simulates_waiting_4_minutes_and_50_seconds_for_a_lockout(cursor:MySQLCursor, connection:MySQLConnection):

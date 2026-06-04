@@ -1,7 +1,7 @@
 import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login_api, BaseMetrics
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login_api, LoginApiResponse, BaseMetrics
 from tests.conftest import save_cvss_result
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
@@ -261,6 +261,6 @@ def when_an_attacker_fails_7_login_attempts_through_the_rest_api():
 @pytest_bdd.then('the REST API should block the correct credentials')
 def then_the_rest_api_should_block_the_correct_credentials():
     
-    isAuthenticated = login_api("doctor", "Doctor123")
+    loginApiResponse : LoginApiResponse = login_api("doctor", "Doctor123")
     
-    assert isAuthenticated == False
+    assert loginApiResponse.is_authenticated == False

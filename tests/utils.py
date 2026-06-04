@@ -7,6 +7,7 @@ import requests
 import base64
 from enum import Enum
 from playwright.sync_api import Page
+from requests import Response
 
 # URLS
 O3_ROOT_URL = 'http://localhost/openmrs/'
@@ -290,10 +291,30 @@ def createTestPatient(page:Page, first_name="Test", family_name="Ing", years_est
     page.get_by_text("Register patient").click()
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
-def login_api(username, password):
+class LoginApiResponse:
+    response : Response
+    response_dict : dict = {}
+    is_authenticated : bool = False
+    jsessionid = None
     
-    isAuthenticated = False
-    
+    def __init__(self, response:Response):
+        
+        if response.status_code == 200:
+            
+            # raw response
+            self.response : Response = response
+            
+            # response as a dict
+            self.response_dict : dict = response.json()
+            
+            # successfully logged in
+            self.is_authenticated : bool = self.response_dict.get('authenticated', False)
+            
+            # store jsessionid for easy access
+            self.jsessionid = self.response.cookies.get("JSESSIONID", None)
+
+def login_api(username, password) -> LoginApiResponse:
+        
     credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
     headers = {
         'Authorization': f'Basic {credentials}',
@@ -304,23 +325,11 @@ def login_api(username, password):
         response = requests.get(O3_API_URL, headers=headers, timeout=10)
         status_code = response.status_code
 
-        if status_code == 200:
-            try:
-                print(response.text[:200])
-                data = response.json()
-                authenticated = data.get('authenticated', False)
-                if authenticated:
-                    print(f"  Result: Login SUCCEEDED (unexpected!) HTTP {status_code}")
-                    
-                    isAuthenticated = True
-                else:
-                    print(f"  Result: Login FAILED (expected) HTTP {status_code}")
-            except:
-                print(f"  Result: HTTP {status_code} (could not parse response)")
-        else:
-            print(f"  Result: HTTP {status_code}")
+        print(f"REST API Login Attempt Status Code: {status_code}")
+
+        loginApiResponse = LoginApiResponse(response)
 
     except requests.exceptions.RequestException as e:
         print(f"  Result: Request failed - {e}")
     
-    return isAuthenticated
+    return loginApiResponse
