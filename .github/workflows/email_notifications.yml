@@ -49,7 +49,7 @@ jobs:
       
       - name: Collect current timestamp
         id: timestamp
-        run: echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_OUTPUT
+        run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
       
       - name: Send mail
         if: steps.check_email.outputs.should_send == 'true' && github.ref == 'refs/heads/main'
