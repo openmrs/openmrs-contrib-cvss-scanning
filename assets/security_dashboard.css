@@ -3,9 +3,6 @@
     padding: 0;
     box-sizing: border-box;
 }
-html {
-    height:100%
-}
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -265,7 +262,6 @@ tr:hover {
     max-height: 28px;
 }
 #tabs_div{
-    height:100%;
     display:block;
 }
 #tabs_div>div{
@@ -275,7 +271,6 @@ tr:hover {
 #tabs_div>div.visible{
     visibility: visible;
     display:block;
-    height:100%;
 }
 .tabs_buttons{
     width:100%;
