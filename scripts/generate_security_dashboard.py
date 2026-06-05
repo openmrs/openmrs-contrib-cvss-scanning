@@ -14,7 +14,7 @@ import sqlite3
 import os
 import html as html_lib
 from datetime import datetime
-from datetime import timezone, timedelta
+from datetime import timezone
 from pathlib import Path
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test_results.db')
@@ -324,6 +324,20 @@ def parse_test_results():
             params = params_match.group(0)[1:-1]
             params = html.escape(params, quote=True)
         
+        error_text = test.get('call', {}).get('longrepr', None)
+        error_lines = []
+        
+        if error_text:
+            error_text = error_text.split('\n')
+            
+            for i in range(0, len(error_text)):
+                if len(error_text[i]) >= 2:
+                    if error_text[i][:2] == "E ":
+                        line:str = error_text[i][1:]
+                        line = line.strip()
+                        line = html.escape(line, quote=True)
+                        error_lines.append(line)
+        
         results.append({
             'full_name': test_name,
             'name': test_name,
@@ -335,6 +349,7 @@ def parse_test_results():
             'severity': severity,
             'duration': duration,
             'params': params,
+            'errors':error_lines,
         })
     grouped = {}
     for r in results:
@@ -350,357 +365,7 @@ def generate_dashboard_html_header():
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenMRS O3 Security Dashboard - CVSS 4.0 Migration</title>
-    <style>
-        * {{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }}
-        html {{
-            height:100%
-        }}
-        body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            width:100%
-            height:100%;
-        }}
-        
-        .container {{
-            max-width: 1200px;
-            margin: 0 auto;
-        }}
-        
-        .header {{
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }}
-        
-        .header h1 {{
-            color: #2d3748;
-            margin-bottom: 10px;
-            font-size: 32px;
-        }}
-        
-        .header p {{
-            color: #718096;
-            font-size: 14px;
-        }}
-        
-        .stats {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }}
-        
-        .stat-card {{
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }}
-        
-        .stat-card h3 {{
-            color: #718096;
-            font-size: 14px;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }}
-        
-        .stat-card p {{
-            color: #2d3748;
-            font-size: 32px;
-            font-weight: bold;
-        }}
-        
-        .test-results {{
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            margin-bottom: 20px;
-        }}
-
-        .category-header {{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            background: #f7fafc;
-            border-bottom: 2px solid #e2e8f0;
-            cursor: pointer;
-            user-select: none;
-        }}
-
-        .category-header:hover {{
-            background: #edf2f7;
-        }}
-
-        .category-title {{
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #2d3748;
-            font-size: 18px;
-            font-weight: 600;
-        }}
-
-        .category-meta {{
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            color: #718096;
-        }}
-
-        .chevron {{
-            transition: transform 0.25s ease;
-            font-size: 14px;
-            color: #718096;
-        }}
-
-        .chevron.open {{
-            transform: rotate(180deg);
-        }}
-
-        .category-body {{
-            display: none;
-        }}
-
-        .category-body.open {{
-            display: block;
-        }}
-
-        details {{
-            border-top: 1px solid #e2e8f0;
-        }}
-
-        details:first-of-type {{
-            border-top: none;
-        }}
-
-        .subcategory-summary {{
-            display: list-item;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            user-select: none;
-        }}
-
-        .subcategory-summary:hover {{
-            filter: brightness(0.96);
-        }}
-
-        .subcategory-fail {{
-            background: #fff5f5;
-            color: #c53030;
-            border-left: 4px solid #fc8181;
-        }}
-
-        .subcategory-pass {{
-            background: #f0fff4;
-            color: #276749;
-            border-left: 4px solid #68d391;
-        }}
-
-        .subcategory-count {{
-            font-size: 12px;
-            font-weight: 500;
-            color: #718096;
-        }}
-        
-        table {{
-            width: 100%;
-            border-collapse: collapse;
-        }}
-        
-        thead {{
-            background: #f7fafc;
-        }}
-        
-        th {{
-            padding: 15px;
-            text-align: left;
-            color: #4a5568;
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            border-bottom: 2px solid #e2e8f0;
-        }}
-        
-        td {{
-            padding: 15px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #2d3748;
-        }}
-        
-        tr:hover {{
-            background: #f7fafc;
-        }}
-        
-        .parameters {{
-            width: 200px;
-        }}
-        
-        .status-badge {{
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }}
-        
-        .status-pass {{
-            background: #c6f6d5;
-            color: #22543d;
-        }}
-        
-        .status-fail {{
-            background: #fed7d7;
-            color: #742a2a;
-        }}
-        
-        .severity-badge {{
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            color: white;
-        }}
-        
-        .cvss-score-fail {{
-            font-weight: bold;
-            font-size: 18px;
-        }}
-        .cvss-score-pass {{
-            font-size: 18px;
-            color:#696969;
-        }}
-        
-        .footer {{
-            text-align: center;
-            color: white;
-            margin-top: 30px;
-            font-size: 14px;
-        }}
-        
-        .footer a {{
-            color: white;
-            text-decoration: underline;
-        }}
-        .tooltip-wrapper {{
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-        }}
-        .tooltip-wrapper .tooltip-content {{
-            visibility: hidden;
-            opacity: 0;
-            background-color: #2d3748;
-            color: white;
-            border-radius: 8px;
-            padding: 10px 14px;
-            position: absolute;
-            z-index: 100;
-            bottom: 130%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 280px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            transition: opacity 0.2s;
-            font-size: 12px;
-        }}
-        .tooltip-wrapper:hover .tooltip-content {{
-            visibility: visible;
-            opacity: 1;
-        }}
-        .tooltip-table {{
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 6px;
-        }}
-        .tooltip-table th {{
-            color: #a0aec0;
-            font-size: 11px;
-            text-align: left;
-            padding: 3px 4px;
-            border-bottom: 1px solid #4a5568;
-        }}
-        .tooltip-table td {{
-            padding: 3px 4px;
-            font-size: 11px;
-            color: white;
-            border-bottom: 1px solid #3a4a5a;
-        }}
-
-        .cat-trend-label {{
-            font-size: 11px;
-            color: #718096;
-            margin-right: 2px;
-            white-space: nowrap;
-        }}
-
-        .cat-trend-wrapper {{
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: #f7fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 2px 6px;
-            max-height: 28px;
-        }}
-        #tabs_div{{
-            height:100%;
-            display:block;
-        }}
-        #tabs_div>div{{
-            visibility: hidden;
-            display:none;
-        }}
-        #tabs_div>div.visible{{
-            visibility: visible;
-            display:block;
-            height:100%;
-        }}
-        .tabs_buttons{{
-            width:100%;
-            display:flex;
-            justify-content: center;
-            padding-bottom:20px;
-        }}
-        .tabs_buttons button{{
-            border-radius: 20px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background-color:white;
-            color:black;
-            width:50%;
-            height:50px;
-        }}
-        .tabs_buttons button:hover{{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background-color:#edf2f7;
-            color:black;
-            width:50%;
-            height:50px;
-        }}
-        iframe{{
-            width:100%;
-            height:95dvh;
-        }}
-
-    </style>
+    <link rel="stylesheet" href="assets/security_dashboard.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script>
         function toggleCategory(id) {{
@@ -720,13 +385,17 @@ def generate_dashboard_html_header():
 </head>"""
 
 def generate_dashboard_page_header():
-    est = timezone(timedelta(hours=-5))
-    now = datetime.now(est).strftime('%Y-%m-%d %H:%M:%S EST')
+    utc = timezone.utc
+    now = datetime.now(utc).strftime('%Y-%m-%d %H:%M:%S UTC')
     
     return f"""      <div class="header">
             <h1>🔒 OpenMRS O3 Security Dashboard</h1>
             <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
-            <p style="margin-top: 5px; font-size: 12px;">Last Updated: {now}</p>
+            <p class="timestamp-line">Last Updated: 
+            <span class="timestamp">
+                {now}
+            </span>
+            </p>
         </div>\n"""
 
 def generate_dashboard_vulnerability_testing(grouped_results, summary):
@@ -800,9 +469,9 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                 <span class="category-meta">
                     {cvss_badge_html}
                     {cat_trend_block}
-                    <span style="color:#38a169; font-weight:600;">{cat_passed} passed</span>
+                    <span class="category-header passed">{cat_passed} passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">{cat_failed} failed</span>
+                    <span class="category-header failed">{cat_failed} failed</span>
                     &nbsp;·&nbsp;{cat_total} test{'s' if cat_total != 1 else ''}
                     <span class="chevron" id="chevron_{cat_id}">▼</span>
                 </span>
@@ -864,13 +533,27 @@ def generate_dashboard_vulnerability_testing(grouped_results, summary):
                             <td>{duration_display}</td>
                         </tr>\n"""
                 else:
+                    error_text = ""
+                    for i in range(0, len(r["errors"])):
+                        error_text += "<p>" + r["errors"][i] + "</p>"
+                    
                     out += f"""
                         <tr>
-                            <td><strong>{r['scenario'].title()}</strong>{param_display}</td>
+                            <td>
+                            <strong>{r['scenario'].title()}</strong>{param_display}
+                            </td>
                             <td><span class="parameters">{r['params']}</span></td>
                             <td>{r['description']}</td>
                             <td><span class="status-badge {status_class}">{r['status']}</span></td>
-                            <td><span class="cvss-score-fail">{cvss_display}</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">{cvss_display}</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        {error_text}
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: {severity_color};">{r['severity']}</span></td>
                             <td>{duration_display}</td>
                         </tr>\n"""

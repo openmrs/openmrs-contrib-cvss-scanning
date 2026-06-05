@@ -1,0 +1,355 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html {
+    height:100%
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    width:100%;
+    height:100%;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    color: #2d3748;
+    margin-bottom: 10px;
+    font-size: 32px;
+}
+
+.header p {
+    color: #718096;
+    font-size: 15px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h3 {
+    color: #718096;
+    font-size: 14px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.stat-card p {
+    color: #2d3748;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.test-results {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: #f7fafc;
+    border-bottom: 2px solid #e2e8f0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.category-header:hover {
+    background: #edf2f7;
+}
+
+.category-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #2d3748;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.category-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #718096;
+}
+
+.chevron {
+    transition: transform 0.25s ease;
+    font-size: 14px;
+    color: #718096;
+}
+
+.chevron.open {
+    transform: rotate(180deg);
+}
+
+.category-body {
+    display: none;
+}
+
+.category-body.open {
+    display: block;
+}
+
+details {
+    border-top: 1px solid #e2e8f0;
+}
+
+details:first-of-type {
+    border-top: none;
+}
+
+.subcategory-summary {
+    display: list-item;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    user-select: none;
+}
+
+.subcategory-summary:hover {
+    filter: brightness(0.96);
+}
+
+.subcategory-fail {
+    background: #fff5f5;
+    color: #c53030;
+    border-left: 4px solid #fc8181;
+}
+
+.subcategory-pass {
+    background: #f0fff4;
+    color: #276749;
+    border-left: 4px solid #68d391;
+}
+
+.subcategory-count {
+    font-size: 12px;
+    font-weight: 500;
+    color: #718096;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f7fafc;
+}
+
+th {
+    padding: 15px;
+    text-align: left;
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #2d3748;
+}
+
+tr:hover {
+    background: #f7fafc;
+}
+
+.parameters {
+    width: 200px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-pass {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.status-fail {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+.severity-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+}
+
+.cvss-score-fail {
+    font-weight: bold;
+    font-size: 18px;
+}
+.cvss-score-pass {
+    font-size: 18px;
+    color:#696969;
+}
+
+.footer {
+    text-align: center;
+    color: white;
+    margin-top: 30px;
+    font-size: 14px;
+}
+
+.footer a {
+    color: white;
+    text-decoration: underline;
+}
+
+.cat-trend-label {
+    font-size: 11px;
+    color: #718096;
+    margin-right: 2px;
+    white-space: nowrap;
+}
+
+.cat-trend-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 2px 6px;
+    max-height: 28px;
+}
+#tabs_div{
+    height:100%;
+    display:block;
+}
+#tabs_div>div{
+    visibility: hidden;
+    display:none;
+}
+#tabs_div>div.visible{
+    visibility: visible;
+    display:block;
+    height:100%;
+}
+.tabs_buttons{
+    width:100%;
+    display:flex;
+    justify-content: center;
+    padding-bottom:20px;
+}
+.tabs_buttons button{
+    border-radius: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background-color:white;
+    color:black;
+    width:50%;
+    height:50px;
+}
+.tabs_buttons button:hover{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background-color:#edf2f7;
+    color:black;
+    width:50%;
+    height:50px;
+}
+iframe{
+    width:100%;
+    height:95dvh;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tooltiptext {
+    visibility: hidden;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #e6e6e6;
+    color: black;
+    text-align: left;
+    white-space: nowrap;
+    padding: 10px;
+    overflow-x: hidden;
+    border-radius: 0px;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    right: -30px;
+    margin-left: 0px;
+    font-size: 14px;
+    border: 1px solid gray;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.category-header {
+    font-weight:600;
+    font-size: 12pt;
+}
+
+.category-header .passed {
+    color:#38a169;
+}
+
+.category-header .failed {
+    color:#e53e3e;
+}
+
+.timestamp-line {
+    margin-top: 5px;
+}
+
+.timestamp {
+    color: black;
+    font-weight: bold;
+}
