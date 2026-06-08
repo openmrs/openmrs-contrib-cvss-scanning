@@ -3,7 +3,7 @@ import pytest_bdd
 import requests
 from playwright.sync_api import Page
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login, login_api, LoginApiResponse, BaseMetrics, LoginApiResponse, O3_ROOT_URL, O3_HOME_URL, DEFAULT_WAIT_TIME, O3_WELCOME_URL, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login, login_api, createTestPatient, BaseMetrics, LoginApiResponse, O3_ROOT_URL, DEFAULT_WAIT_TIME, O3_WELCOME_URL, O3_BASE_URL
 from tests.conftest import save_cvss_result
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
@@ -34,11 +34,11 @@ def given_cvss_score_is_calculted_and_printed(request):
     "Rehabilitation service",
 ])
 @pytest_bdd.scenario('insecure_design.feature', 'Appointments should be blocked after reaching max load')
-def test_appointments_should_be_blocked_after_reaching_max_load(reset_max_appointments_limit, service_name):
+def test_appointments_should_be_blocked_after_reaching_max_load(reset_max_appointments_limit, service_name, cleanup_delete_patient):
     pass
 
 @pytest_bdd.given('3 test patients are created', target_fixture='scenario_data')
-def given_3_test_patients_are_created(page: Page):
+def given_3_test_patients_are_created(page: Page, patient_data):
     data = {}
     data['patient_uuids'] = []
 
@@ -55,7 +55,7 @@ def given_3_test_patients_are_created(page: Page):
         page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
     for _ in range(3):
-        uuid = create_test_patient_and_get_uuid(page)
+        uuid = create_test_patient_and_get_uuid(page, patient_data)
         data['patient_uuids'].append(uuid)
         print(f"Created patient: {uuid}")
 
@@ -68,7 +68,7 @@ def and_max_appointment_limit_is_set(scenario_data, cursor, connection, service_
     # Fetch the service UUID from the API
     loginApiResponse : LoginApiResponse = login_api("admin", "Admin123")
     
-    assert loginApiResponse.is_authenticated
+    assert loginApiResponse.is_authenticated, "Admin failed to login through API"
     
     jsessionid = loginApiResponse.jsessionid
     
@@ -99,7 +99,7 @@ def when_3_appointments_are_made(scenario_data):
     
     loginApiResponse : LoginApiResponse = login_api("admin", "Admin123")
     
-    assert loginApiResponse.is_authenticated
+    assert loginApiResponse.is_authenticated, "Admin failed to login through API"
     
     jsessionid = loginApiResponse.jsessionid
 
@@ -120,24 +120,15 @@ def then_2_out_of_3_appointments_should_be_successful(scenario_data):
     # All 3 succeeding proves the vulnerability — the limit is not enforced.
     assert successful == 2, ("The system does not enforce maxAppointmentsLimit.")
 
-### REPLACE PART OF THIS WITH CREATE TEST PATIENT
-def create_test_patient_and_get_uuid(page: Page):
-    page.goto(O3_HOME_URL)
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.get_by_label('Add patient').click()
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.locator('#givenName').fill("Test")
-    page.locator('#familyName').fill("Patient")
-    page.get_by_text("Other").click()
-
-    page.locator("button").get_by_text('No').last.click()
-    page.locator('#yearsEstimated').fill("26")
-    page.locator('#monthsEstimated').fill("0")
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.get_by_text("Register patient").click()
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-
-    ### REPLACE WITH CREATETESTPATIENT ^^^
+def create_test_patient_and_get_uuid(page: Page, patient_data):
+    
+    createTestPatient(page)
+    
+    # get ID
+    page.wait_for_timeout(DEFAULT_WAIT_TIME * 3)
+    spans = page.locator("div.cds--tag span").all()
+    id_text = spans[-1].text_content()
+    patient_data["patient_id"].append(id_text)
 
     # Extract UUID from the URL after redirect e.g. /patient/<uuid>/chart
     url = page.url
@@ -187,7 +178,6 @@ def book_appointment(jsessionid, patient_uuid, service_uuid):
 def scenario_data():
     return {}
 
-#### ADD DELETE PATIENTS
 @pytest.fixture(scope="function")
 def reset_max_appointments_limit(cursor, connection, service_name):
     yield
