@@ -12,11 +12,6 @@ from tests.utils import O3_BASE_URL, O3_API_URL, DEFAULT_WAIT_TIME, login
 
 ### SHARED STEPS ###
 
-@pytest_bdd.given('the OpenMRS 3 login page is displayed')
-def given_login_page_shown(page:Page):
-    page.goto(O3_BASE_URL + '/login')
-    page.wait_for_url(O3_BASE_URL + '/login')
-
 @pytest_bdd.given('the REST API is locked out from 7 failed login attempts')
 def given_the_rest_api_is_locked_out_from_7_failed_login_attempts():
 

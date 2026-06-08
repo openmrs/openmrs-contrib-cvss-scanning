@@ -2,7 +2,7 @@ import pytest
 import pytest_bdd
 from pytest_bdd import parsers, scenario
 from playwright.sync_api import Page
-from tests.utils import get_cvss_severity, calculate_cvss_v4_score, O3_HOME_URL, O3_LOGIN_URL, DEFAULT_WAIT_TIME
+from tests.utils import get_cvss_severity, calculate_cvss_v4_score, createTestPatient, O3_HOME_URL, O3_LOGIN_URL, DEFAULT_WAIT_TIME
 from tests.conftest import save_cvss_result
 
 alertPresent=False
@@ -51,24 +51,6 @@ def login(page:Page):
         page.get_by_text("Remember my location").click()
         page.get_by_text("Confirm").click()
         page.wait_for_timeout(DEFAULT_WAIT_TIME)
-
-
-def createTestPatient(page:Page):
-    page.goto(O3_HOME_URL)
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.get_by_label('Add patient').click()
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.locator('#givenName').fill("Test")
-    page.locator('#familyName').fill("Patient")
-    page.get_by_text("Other").click()
-
-    #date of birth -> no, estimated age
-    page.locator("button").get_by_text('No').last.click()
-    page.locator('#yearsEstimated').fill("26")
-    page.locator('#monthsEstimated').fill("0")
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.get_by_text("Register patient").click()
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.given('a test patient has been created')
 def verifyTestPatientExists(page:Page):

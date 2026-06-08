@@ -1,4 +1,5 @@
 import pytest
+import pytest_bdd
 import html
 import os
 
@@ -9,6 +10,8 @@ from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from typing import Generator
 from pytest import FixtureRequest
+from tests.utils import O3_BASE_URL
+from playwright.sync_api import Page
 
 # Load environment variables
 load_dotenv()
@@ -152,3 +155,8 @@ def cleanup_clear_user_lockout(request:FixtureRequest, cursor:MySQLCursor, conne
     
     # commit to db
     connection.commit()
+
+@pytest_bdd.given('the OpenMRS 3 login page is displayed')
+def given_login_page_shown(page:Page):
+    page.goto(O3_BASE_URL + '/login')
+    page.wait_for_url(O3_BASE_URL + '/login')
