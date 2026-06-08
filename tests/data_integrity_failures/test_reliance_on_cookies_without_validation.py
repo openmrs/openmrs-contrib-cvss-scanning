@@ -3,18 +3,7 @@ import pytest
 from playwright.sync_api import Page, Playwright,expect
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
 from tests.conftest import save_cvss_result
-from tests.utils import O3_BASE_URL, DEFAULT_WAIT_TIME
-
-
-def login_account(page:Page,username,password):
-    page.goto(O3_BASE_URL + '/login')
-    page.wait_for_selector("#username")
-    page.fill("#username", username)
-    page.keyboard.press("Enter")
-    page.wait_for_selector("#password")
-    page.fill("#password", password)
-    page.keyboard.press("Enter")
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+from tests.utils import O3_BASE_URL,login
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -84,7 +73,8 @@ def a_clerk_account_has_been_logged_into(page:Page,playwright:Playwright,login_d
     second_page=browser.new_page()
 
     #login to clerk on second browser
-    login_account(second_page,"clerk","Clerk123")
+    second_page.goto(O3_BASE_URL + '/login')
+    login(second_page,"clerk","Clerk123")
     #when it asks for the site
     if second_page.url == O3_BASE_URL + "/login/location":
         second_page.click("text=Outpatient Clinic")
@@ -98,7 +88,8 @@ def a_clerk_account_has_been_logged_into(page:Page,playwright:Playwright,login_d
 @pytest_bdd.when("another account's login token is replaced with the clerk's")
 def test_another_accounts_login_token_is_replaced(page:Page,login_data):
     #login to the platform with an admin account
-    login_account(page,"admin","Admin123")
+    page.goto(O3_BASE_URL + '/login')
+    login(page,"admin","Admin123")
     # when it asks for the site
     if page.url == O3_BASE_URL + "/login/location":
         page.click("text=Outpatient Clinic")
