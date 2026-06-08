@@ -3,7 +3,7 @@ import pytest_bdd
 import requests
 from playwright.sync_api import Page
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login, login_api, createTestPatient, BaseMetrics, LoginApiResponse, O3_ROOT_URL, DEFAULT_WAIT_TIME, O3_WELCOME_URL, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login_and_select_default_location, login_api, createTestPatient, BaseMetrics, LoginApiResponse, O3_ROOT_URL, DEFAULT_WAIT_TIME, O3_WELCOME_URL, O3_BASE_URL
 from tests.conftest import save_cvss_result
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
@@ -44,15 +44,7 @@ def given_3_test_patients_are_created(page: Page, patient_data):
 
     page.goto(O3_BASE_URL)
 
-    ### REPLACE WITH LOGIN + WELCOME PAGE
-    login(page, "admin", "Admin123")
-    
-    if page.url == O3_WELCOME_URL:
-        page.keyboard.press("Tab")
-        page.keyboard.press("Tab")
-        page.keyboard.press("Space")
-        page.keyboard.press("Enter")
-        page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    login_and_select_default_location(page, "admin", "Admin123")
 
     for _ in range(3):
         uuid = create_test_patient_and_get_uuid(page, patient_data)
