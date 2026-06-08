@@ -3,7 +3,7 @@ import pytest_bdd
 import requests
 from playwright.sync_api import Page
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login_and_select_default_location, login_api, createTestPatient, BaseMetrics, LoginApiResponse, O3_ROOT_URL, DEFAULT_WAIT_TIME, O3_WELCOME_URL, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login_and_select_default_location, login_api, createTestPatient, BaseMetrics, LoginApiResponse, O3_ROOT_URL, DEFAULT_WAIT_TIME, O3_BASE_URL
 from tests.conftest import save_cvss_result
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
