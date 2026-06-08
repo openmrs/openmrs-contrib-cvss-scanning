@@ -325,6 +325,7 @@ def parse_test_results():
             params = html.escape(params, quote=True)
         
         error_text = test.get('call', {}).get('longrepr', None)
+        arrow_line = ""
         error_lines = []
         
         if error_text:
@@ -332,11 +333,20 @@ def parse_test_results():
             
             for i in range(0, len(error_text)):
                 if len(error_text[i]) >= 2:
+                    
+                    if error_text[i][:2] == "> ":
+                        line:str = error_text[i][1:]
+                        line = line.strip()
+                        line = html.escape(line, quote=True)
+                        arrow_line = line
+                    
                     if error_text[i][:2] == "E ":
                         line:str = error_text[i][1:]
                         line = line.strip()
                         line = html.escape(line, quote=True)
                         error_lines.append(line)
+                        
+        error_lines.insert(0, arrow_line)
         
         results.append({
             'full_name': test_name,
