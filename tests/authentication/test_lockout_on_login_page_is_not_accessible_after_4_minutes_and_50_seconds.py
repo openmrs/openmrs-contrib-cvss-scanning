@@ -247,6 +247,9 @@ def given_cvss_score_is_calculted_and_printed(request):
     save_cvss_result(request, cvss_score, severity)
 
 @pytest.mark.parametrize("cleanup_clear_user_lockout", ["doctor"], indirect=True)
+@pytest.mark.parametrize("username,password", [
+    ("doctor", "Doctor123")
+])
 @pytest_bdd.scenario('authentication.feature', 'Lockout on login page is not accessible at 4 minutes and 50 seconds')
-def test_lockout_on_login_page_not_is_accessible_after_4_minutes_and_50_seconds(cleanup_clear_user_lockout):
+def test_lockout_on_login_page_not_is_accessible_after_4_minutes_and_50_seconds(cleanup_clear_user_lockout, username, password):
  pass

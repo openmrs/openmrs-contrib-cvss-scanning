@@ -98,11 +98,6 @@ def when_a_user_simulates_waiting_5_minutes_for_a_lockout(cursor:MySQLCursor, co
     
     connection.commit()
 
-@pytest_bdd.when('a user logs in to the login page with the correct credentials')
-def when_a_user_logs_in_to_the_login_page_with_the_correct_credentials(page:Page):
-    
-    login(page, "doctor", "Doctor123")
-
 @pytest_bdd.then('the login page should block the correct credentials')
 def then_the_login_page_should_block_the_correct_credentials(page:Page):
     # use correct username and password

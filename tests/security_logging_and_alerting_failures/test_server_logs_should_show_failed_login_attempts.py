@@ -2,7 +2,7 @@ import re
 import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, login, O3_ROOT_URL, O3_BASE_URL, DEFAULT_WAIT_TIME
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, login, O3_BASE_URL
 from tests.conftest import save_cvss_result
 from datetime import datetime, timezone
 from playwright.sync_api import Page
@@ -60,17 +60,6 @@ def when_a_user_attempts_to_login_with_the_wrong_username_or_password(page:Page,
     page.goto(O3_BASE_URL)
     
     login(page, username, "BADPASS1")
-
-@pytest_bdd.when('an admin logs in on the login page')
-def when_an_admin_logs_in_on_the_login_page(page:Page):
-    
-    login(page, "admin", "Admin123")
-
-@pytest_bdd.when('visits the server logs page')
-def when_visits_the_server_logs_page(page:Page):
-    
-    page.goto(O3_ROOT_URL + "admin/maintenance/serverLog.form")
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.then('a failed login attempt log should exist after the saved timestamp')
 def then_a_failed_login_attempt_log_should_exist_after_the_saved_timestamp(page:Page, date_time_data, username):
