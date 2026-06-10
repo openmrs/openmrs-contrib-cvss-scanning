@@ -4,357 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenMRS O3 Security Dashboard - CVSS 4.0 Migration</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html {
-            height:100%
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            width:100%
-            height:100%;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .header {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .header h1 {
-            color: #2d3748;
-            margin-bottom: 10px;
-            font-size: 32px;
-        }
-        
-        .header p {
-            color: #718096;
-            font-size: 14px;
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .stat-card h3 {
-            color: #718096;
-            font-size: 14px;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-        
-        .stat-card p {
-            color: #2d3748;
-            font-size: 32px;
-            font-weight: bold;
-        }
-        
-        .test-results {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        .category-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            background: #f7fafc;
-            border-bottom: 2px solid #e2e8f0;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .category-header:hover {
-            background: #edf2f7;
-        }
-
-        .category-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #2d3748;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .category-meta {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            color: #718096;
-        }
-
-        .chevron {
-            transition: transform 0.25s ease;
-            font-size: 14px;
-            color: #718096;
-        }
-
-        .chevron.open {
-            transform: rotate(180deg);
-        }
-
-        .category-body {
-            display: none;
-        }
-
-        .category-body.open {
-            display: block;
-        }
-
-        details {
-            border-top: 1px solid #e2e8f0;
-        }
-
-        details:first-of-type {
-            border-top: none;
-        }
-
-        .subcategory-summary {
-            display: list-item;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            user-select: none;
-        }
-
-        .subcategory-summary:hover {
-            filter: brightness(0.96);
-        }
-
-        .subcategory-fail {
-            background: #fff5f5;
-            color: #c53030;
-            border-left: 4px solid #fc8181;
-        }
-
-        .subcategory-pass {
-            background: #f0fff4;
-            color: #276749;
-            border-left: 4px solid #68d391;
-        }
-
-        .subcategory-count {
-            font-size: 12px;
-            font-weight: 500;
-            color: #718096;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        thead {
-            background: #f7fafc;
-        }
-        
-        th {
-            padding: 15px;
-            text-align: left;
-            color: #4a5568;
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #2d3748;
-        }
-        
-        tr:hover {
-            background: #f7fafc;
-        }
-        
-        .parameters {
-            width: 200px;
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .status-pass {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-        
-        .status-fail {
-            background: #fed7d7;
-            color: #742a2a;
-        }
-        
-        .severity-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            color: white;
-        }
-        
-        .cvss-score-fail {
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .cvss-score-pass {
-            font-size: 18px;
-            color:#696969;
-        }
-        
-        .footer {
-            text-align: center;
-            color: white;
-            margin-top: 30px;
-            font-size: 14px;
-        }
-        
-        .footer a {
-            color: white;
-            text-decoration: underline;
-        }
-        .tooltip-wrapper {
-            position: relative;
-            display: inline-block;
-            cursor: pointer;
-        }
-        .tooltip-wrapper .tooltip-content {
-            visibility: hidden;
-            opacity: 0;
-            background-color: #2d3748;
-            color: white;
-            border-radius: 8px;
-            padding: 10px 14px;
-            position: absolute;
-            z-index: 100;
-            bottom: 130%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 280px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            transition: opacity 0.2s;
-            font-size: 12px;
-        }
-        .tooltip-wrapper:hover .tooltip-content {
-            visibility: visible;
-            opacity: 1;
-        }
-        .tooltip-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 6px;
-        }
-        .tooltip-table th {
-            color: #a0aec0;
-            font-size: 11px;
-            text-align: left;
-            padding: 3px 4px;
-            border-bottom: 1px solid #4a5568;
-        }
-        .tooltip-table td {
-            padding: 3px 4px;
-            font-size: 11px;
-            color: white;
-            border-bottom: 1px solid #3a4a5a;
-        }
-
-        .cat-trend-label {
-            font-size: 11px;
-            color: #718096;
-            margin-right: 2px;
-            white-space: nowrap;
-        }
-
-        .cat-trend-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: #f7fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 2px 6px;
-            max-height: 28px;
-        }
-        #tabs_div{
-            height:100%;
-            display:block;
-        }
-        #tabs_div>div{
-            visibility: hidden;
-            display:none;
-        }
-        #tabs_div>div.visible{
-            visibility: visible;
-            display:block;
-            height:100%;
-        }
-        .tabs_buttons{
-            width:100%;
-            display:flex;
-            justify-content: center;
-            padding-bottom:20px;
-        }
-        .tabs_buttons button{
-            border-radius: 20px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background-color:white;
-            color:black;
-            width:50%;
-            height:50px;
-        }
-        .tabs_buttons button:hover{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background-color:#edf2f7;
-            color:black;
-            width:50%;
-            height:50px;
-        }
-        iframe{
-            width:100%;
-            height:95dvh;
-        }
-
-    </style>
+    <link rel="stylesheet" href="assets/security_dashboard.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script>
         function toggleCategory(id) {
@@ -376,7 +26,11 @@
           <div class="header">
             <h1>🔒 OpenMRS O3 Security Dashboard</h1>
             <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
-            <p style="margin-top: 5px; font-size: 12px;">Last Updated: 2026-06-09 22:17:13 EST</p>
+            <p class="timestamp-line">Last Updated: 
+            <span class="timestamp">
+                2026-06-10 20:15:28 UTC
+            </span>
+            </p>
         </div>
 
       <div class = "tabs_buttons">
@@ -390,7 +44,7 @@
         <div class="stats">
             <div class="stat-card">
                 <h3>Total Tests</h3>
-                <p>113</p>
+                <p>116</p>
             </div>
             <div class="stat-card">
                 <h3>Passed</h3>
@@ -398,11 +52,11 @@
             </div>
             <div class="stat-card">
                 <h3>Failed</h3>
-                <p style="color: #e53e3e;">27</p>
+                <p style="color: #e53e3e;">30</p>
             </div>
             <div class="stat-card">
                 <h3>Duration</h3>
-                <p>18.2m</p>
+                <p>19.3m</p>
             </div>
         </div>
         <div class="test-results">
@@ -419,9 +73,9 @@
     new Chart(document.getElementById("cat_trend_Access_Control"), {
         type: "line",
         data: {
-            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14", "Run 15", "Run 16", "Run 17", "Run 18"],
+            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14", "Run 15", "Run 16", "Run 17", "Run 18", "Run 19"],
             datasets: [{
-                data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -445,9 +99,9 @@
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">4 passed</span>
+                    <span class="category-header passed">4 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">0 failed</span>
+                    <span class="category-header failed">0 failed</span>
                     &nbsp;·&nbsp;4 tests
                     <span class="chevron" id="chevron_cat_Access Control">▼</span>
                 </span>
@@ -512,7 +166,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.6</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.05s</td>
+                            <td>0.04s</td>
                         </tr>
 
                     </tbody>
@@ -538,7 +192,7 @@
         data: {
             labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14", "Run 15", "Run 16", "Run 17", "Run 18", "Run 19", "Run 20"],
             datasets: [{
-                data: [9.2, 9.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                data: [9.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -562,9 +216,9 @@
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">8 passed</span>
+                    <span class="category-header passed">8 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">0 failed</span>
+                    <span class="category-header failed">0 failed</span>
                     &nbsp;·&nbsp;8 tests
                     <span class="chevron" id="chevron_cat_Authentication">▼</span>
                 </span>
@@ -599,7 +253,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>20.81s</td>
+                            <td>20.69s</td>
                         </tr>
 
                         <tr>
@@ -609,7 +263,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>0.17s</td>
+                            <td>0.15s</td>
                         </tr>
 
                         <tr>
@@ -619,7 +273,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">10.0</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>0.12s</td>
+                            <td>0.10s</td>
                         </tr>
 
                         <tr>
@@ -629,7 +283,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">10.0</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>22.27s</td>
+                            <td>22.14s</td>
                         </tr>
 
                         <tr>
@@ -639,7 +293,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.0</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>21.53s</td>
+                            <td>21.47s</td>
                         </tr>
 
                         <tr>
@@ -649,7 +303,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>24.46s</td>
+                            <td>24.34s</td>
                         </tr>
 
                         <tr>
@@ -659,7 +313,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.0</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>0.17s</td>
+                            <td>0.16s</td>
                         </tr>
 
                         <tr>
@@ -669,7 +323,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>0.15s</td>
+                            <td>0.14s</td>
                         </tr>
 
                     </tbody>
@@ -693,9 +347,9 @@
     new Chart(document.getElementById("cat_trend_Cryptographic_Failures"), {
         type: "line",
         data: {
-            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14", "Run 15", "Run 16", "Run 17", "Run 18"],
+            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14", "Run 15", "Run 16", "Run 17", "Run 18", "Run 19"],
             datasets: [{
-                data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -719,9 +373,9 @@
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">2 passed</span>
+                    <span class="category-header passed">2 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">0 failed</span>
+                    <span class="category-header failed">0 failed</span>
                     &nbsp;·&nbsp;2 tests
                     <span class="chevron" id="chevron_cat_Cryptographic Failures">▼</span>
                 </span>
@@ -766,7 +420,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">10.0</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>0.02s</td>
+                            <td>0.01s</td>
                         </tr>
 
                     </tbody>
@@ -790,9 +444,9 @@
     new Chart(document.getElementById("cat_trend_Data_Integrity_Failures"), {
         type: "line",
         data: {
-            labels: ["Run 1", "Run 2", "Run 3", "Run 4"],
+            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5"],
             datasets: [{
-                data: [8.6, 8.6, 8.6, 8.6],
+                data: [8.6, 8.6, 8.6, 8.6, 8.6],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -816,9 +470,9 @@
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">0 passed</span>
+                    <span class="category-header passed">0 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">1 failed</span>
+                    <span class="category-header failed">1 failed</span>
                     &nbsp;·&nbsp;1 test
                     <span class="chevron" id="chevron_cat_Data Integrity Failures">▼</span>
                 </span>
@@ -847,13 +501,131 @@
 
                     
                         <tr>
-                            <td><strong>Replace Session Cookies With Another'S Session</strong></td>
+                            <td>
+                            <strong>Replace Session Cookies With Another'S Session</strong>
+                            </td>
                             <td><span class="parameters">chromium</span></td>
                             <td>If a session token can be replaced with another, a compromised session token at one location could give an attacker unrestricted access at another</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">8.6</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">8.6</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_label(&quot;My Account&quot;)</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #fd7e14;">HIGH</span></td>
-                            <td>36.61s</td>
+                            <td>36.27s</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                </details>
+
+            </div>
+        </div>
+
+        <div class="test-results">
+            <div class="category-header" onclick="toggleCategory('cat_Insecure Design')">
+                <span class="category-title">
+                    ❌&nbsp;Insecure Design
+                </span>
+                <span class="category-meta">
+                    <span style="background-color:#ffc107; color:white; font-weight:600; font-size:12px; padding:3px 10px; border-radius:10px; margin-right:8px;">Highest CVSS: 6.4 — MEDIUM</span>
+                    <span class="cat-trend-wrapper">
+                    <span class="cat-trend-label">Max CVSS trend:</span>
+                    <span style="color:#718096; font-size:11px;">0.0 —</span> <span style="color:#a0aec0; font-size:11px;">Not enough data</span>
+                </span>
+                    <span class="category-header passed">0 passed</span>
+                    &nbsp;/&nbsp;
+                    <span class="category-header failed">3 failed</span>
+                    &nbsp;·&nbsp;3 tests
+                    <span class="chevron" id="chevron_cat_Insecure Design">▼</span>
+                </span>
+            </div>
+            <div class="category-body" id="cat_Insecure Design">
+
+                <details open>
+                    <summary class="subcategory-summary subcategory-fail">
+                        <span>Failed Tests</span>
+                        <span class="subcategory-count">3 tests</span>
+                    </summary>
+                    
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Parameters</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>CVSS Score (Baseline)</th>
+                            <th>Severity</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    
+                        <tr>
+                            <td>
+                            <strong>Appointments Should Be Blocked After Reaching Max Load</strong>
+                            </td>
+                            <td><span class="parameters">chromium-General Medicine service</span></td>
+                            <td>An appointment service should not allow a new appointment after going past the max number</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">6.4</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>assert successful == 2, (&quot;The system does not enforce maxAppointmentsLimit.&quot;)</p><p>AssertionError: The system does not enforce maxAppointmentsLimit.</p><p>assert 3 == 2</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
+                            <td>29.18s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Appointments Should Be Blocked After Reaching Max Load</strong>
+                            </td>
+                            <td><span class="parameters">chromium-Outpatient Department</span></td>
+                            <td>An appointment service should not allow a new appointment after going past the max number</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">6.4</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>assert successful == 2, (&quot;The system does not enforce maxAppointmentsLimit.&quot;)</p><p>AssertionError: The system does not enforce maxAppointmentsLimit.</p><p>assert 3 == 2</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
+                            <td>27.33s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Appointments Should Be Blocked After Reaching Max Load</strong>
+                            </td>
+                            <td><span class="parameters">chromium-Rehabilitation service</span></td>
+                            <td>An appointment service should not allow a new appointment after going past the max number</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">6.4</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>assert successful == 2, (&quot;The system does not enforce maxAppointmentsLimit.&quot;)</p><p>AssertionError: The system does not enforce maxAppointmentsLimit.</p><p>assert 3 == 2</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
+                            <td>27.21s</td>
                         </tr>
 
                     </tbody>
@@ -877,9 +649,9 @@
     new Chart(document.getElementById("cat_trend_Memory_Management_Failures"), {
         type: "line",
         data: {
-            labels: ["Run 1", "Run 2", "Run 3", "Run 4"],
+            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5"],
             datasets: [{
-                data: [10.0, 10.0, 10.0, 10.0],
+                data: [10.0, 10.0, 10.0, 10.0, 10.0],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -903,9 +675,9 @@
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">0 passed</span>
+                    <span class="category-header passed">0 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">20 failed</span>
+                    <span class="category-header failed">20 failed</span>
                     &nbsp;·&nbsp;20 tests
                     <span class="chevron" id="chevron_cat_Memory Management Failures">▼</span>
                 </span>
@@ -934,203 +706,403 @@
 
                     
                         <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
                             <td><span class="parameters">chromium-1-Antenatal care</span></td>
                             <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>18.50s</td>
+                            <td>18.08s</td>
                         </tr>
 
                         <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
                             <td><span class="parameters">chromium-1-Orthopedic Service</span></td>
                             <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>17.09s</td>
+                            <td>16.87s</td>
                         </tr>
 
                         <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
                             <td><span class="parameters">chromium-1-Nutrition counseling</span></td>
                             <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>17.04s</td>
+                            <td>16.82s</td>
                         </tr>
 
                         <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
                             <td><span class="parameters">chromium-1-OPD consultation</span></td>
                             <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>16.92s</td>
+                            <td>16.86s</td>
                         </tr>
 
                         <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
                             <td><span class="parameters">chromium-1000000-Antenatal care</span></td>
                             <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>17.00s</td>
+                            <td>16.86s</td>
                         </tr>
 
                         <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
                             <td><span class="parameters">chromium-1000000-Orthopedic Service</span></td>
                             <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>17.03s</td>
+                            <td>16.91s</td>
                         </tr>
 
                         <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
                             <td><span class="parameters">chromium-1000000-Nutrition counseling</span></td>
                             <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>17.09s</td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
-                            <td><span class="parameters">chromium-1000000-OPD consultation</span></td>
-                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>16.99s</td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
-                            <td><span class="parameters">chromium-2147483647-Antenatal care</span></td>
-                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>17.03s</td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
-                            <td><span class="parameters">chromium-2147483647-Orthopedic Service</span></td>
-                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>17.04s</td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
-                            <td><span class="parameters">chromium-2147483647-Nutrition counseling</span></td>
-                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>17.05s</td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
-                            <td><span class="parameters">chromium-2147483647-OPD consultation</span></td>
-                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>16.94s</td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
-                            <td><span class="parameters">chromium-2147483648-Antenatal care</span></td>
-                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>16.94s</td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
-                            <td><span class="parameters">chromium-2147483648-Orthopedic Service</span></td>
-                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>17.05s</td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
-                            <td><span class="parameters">chromium-2147483648-Nutrition counseling</span></td>
-                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>16.88s</td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
-                            <td><span class="parameters">chromium-2147483648-OPD consultation</span></td>
-                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
                             <td>16.93s</td>
                         </tr>
 
                         <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
-                            <td><span class="parameters">chromium-4294967294-Antenatal care</span></td>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
+                            <td><span class="parameters">chromium-1000000-OPD consultation</span></td>
                             <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
-                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>17.05s</td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
-                            <td><span class="parameters">chromium-4294967294-Orthopedic Service</span></td>
-                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
                             <td>16.94s</td>
                         </tr>
 
                         <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
-                            <td><span class="parameters">chromium-4294967294-Nutrition counseling</span></td>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
+                            <td><span class="parameters">chromium-2147483647-Antenatal care</span></td>
                             <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>17.20s</td>
+                            <td>16.86s</td>
                         </tr>
 
                         <tr>
-                            <td><strong>Integer Overflow Of Quantity On Billing Page</strong></td>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
+                            <td><span class="parameters">chromium-2147483647-Orthopedic Service</span></td>
+                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
+                            <td>16.91s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
+                            <td><span class="parameters">chromium-2147483647-Nutrition counseling</span></td>
+                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
+                            <td>16.89s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
+                            <td><span class="parameters">chromium-2147483647-OPD consultation</span></td>
+                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
+                            <td>16.82s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
+                            <td><span class="parameters">chromium-2147483648-Antenatal care</span></td>
+                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
+                            <td>16.77s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
+                            <td><span class="parameters">chromium-2147483648-Orthopedic Service</span></td>
+                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
+                            <td>16.86s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
+                            <td><span class="parameters">chromium-2147483648-Nutrition counseling</span></td>
+                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
+                            <td>16.89s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
+                            <td><span class="parameters">chromium-2147483648-OPD consultation</span></td>
+                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
+                            <td>16.93s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
+                            <td><span class="parameters">chromium-4294967294-Antenatal care</span></td>
+                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
+                            <td>16.86s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
+                            <td><span class="parameters">chromium-4294967294-Orthopedic Service</span></td>
+                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
+                            <td>16.88s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
+                            <td><span class="parameters">chromium-4294967294-Nutrition counseling</span></td>
+                            <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
+                            <td>16.74s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Integer Overflow Of Quantity On Billing Page</strong>
+                            </td>
                             <td><span class="parameters">chromium-4294967294-OPD consultation</span></td>
                             <td>On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">10.0</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">10.0</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>expect(add_bill_items).to_be_visible()</p><p>AssertionError: Locator expected to be visible</p><p>Actual value: None</p><p>Error: element(s) not found</p><p>Call log:</p><p>- Expect &quot;to_be_visible&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Add bill items&quot;, exact=True)</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>17.16s</td>
+                            <td>16.89s</td>
                         </tr>
 
                     </tbody>
@@ -1154,9 +1126,9 @@
     new Chart(document.getElementById("cat_trend_SQL_Injection"), {
         type: "line",
         data: {
-            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14", "Run 15", "Run 16", "Run 17", "Run 18", "Run 19"],
+            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14", "Run 15", "Run 16", "Run 17", "Run 18", "Run 19", "Run 20"],
             datasets: [{
-                data: [4.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                data: [4.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -1180,9 +1152,9 @@
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">3 passed</span>
+                    <span class="category-header passed">3 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">0 failed</span>
+                    <span class="category-header failed">0 failed</span>
                     &nbsp;·&nbsp;3 tests
                     <span class="chevron" id="chevron_cat_SQL Injection">▼</span>
                 </span>
@@ -1217,7 +1189,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>21.37s</td>
+                            <td>20.40s</td>
                         </tr>
 
                         <tr>
@@ -1227,7 +1199,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>13.51s</td>
+                            <td>13.34s</td>
                         </tr>
 
                         <tr>
@@ -1237,7 +1209,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>14.07s</td>
+                            <td>13.16s</td>
                         </tr>
 
                     </tbody>
@@ -1263,7 +1235,7 @@
         data: {
             labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14", "Run 15", "Run 16", "Run 17", "Run 18", "Run 19", "Run 20"],
             datasets: [{
-                data: [4.4, 4.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                data: [4.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -1287,9 +1259,9 @@
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">30 passed</span>
+                    <span class="category-header passed">30 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">0 failed</span>
+                    <span class="category-header failed">0 failed</span>
                     &nbsp;·&nbsp;30 tests
                     <span class="chevron" id="chevron_cat_XSS">▼</span>
                 </span>
@@ -1324,7 +1296,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.78s</td>
+                            <td>16.28s</td>
                         </tr>
 
                         <tr>
@@ -1334,7 +1306,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.70s</td>
+                            <td>16.28s</td>
                         </tr>
 
                         <tr>
@@ -1344,7 +1316,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.38s</td>
+                            <td>16.17s</td>
                         </tr>
 
                         <tr>
@@ -1354,7 +1326,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.63s</td>
+                            <td>16.26s</td>
                         </tr>
 
                         <tr>
@@ -1364,7 +1336,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.45s</td>
+                            <td>16.29s</td>
                         </tr>
 
                         <tr>
@@ -1374,7 +1346,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.61s</td>
+                            <td>16.35s</td>
                         </tr>
 
                         <tr>
@@ -1384,7 +1356,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>17.03s</td>
+                            <td>16.48s</td>
                         </tr>
 
                         <tr>
@@ -1394,7 +1366,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.57s</td>
+                            <td>16.11s</td>
                         </tr>
 
                         <tr>
@@ -1404,7 +1376,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.61s</td>
+                            <td>16.18s</td>
                         </tr>
 
                         <tr>
@@ -1414,7 +1386,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.74s</td>
+                            <td>16.17s</td>
                         </tr>
 
                         <tr>
@@ -1424,7 +1396,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.81s</td>
+                            <td>16.08s</td>
                         </tr>
 
                         <tr>
@@ -1434,7 +1406,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.65s</td>
+                            <td>16.08s</td>
                         </tr>
 
                         <tr>
@@ -1444,7 +1416,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.91s</td>
+                            <td>16.04s</td>
                         </tr>
 
                         <tr>
@@ -1454,7 +1426,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.78s</td>
+                            <td>16.11s</td>
                         </tr>
 
                         <tr>
@@ -1464,7 +1436,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>17.06s</td>
+                            <td>16.22s</td>
                         </tr>
 
                         <tr>
@@ -1474,7 +1446,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.61s</td>
+                            <td>16.01s</td>
                         </tr>
 
                         <tr>
@@ -1484,7 +1456,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.57s</td>
+                            <td>16.25s</td>
                         </tr>
 
                         <tr>
@@ -1494,7 +1466,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.68s</td>
+                            <td>16.09s</td>
                         </tr>
 
                         <tr>
@@ -1504,7 +1476,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>17.00s</td>
+                            <td>16.48s</td>
                         </tr>
 
                         <tr>
@@ -1514,7 +1486,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.76s</td>
+                            <td>16.10s</td>
                         </tr>
 
                         <tr>
@@ -1524,7 +1496,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.52s</td>
+                            <td>15.94s</td>
                         </tr>
 
                         <tr>
@@ -1534,7 +1506,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.61s</td>
+                            <td>16.01s</td>
                         </tr>
 
                         <tr>
@@ -1544,7 +1516,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.46s</td>
+                            <td>16.37s</td>
                         </tr>
 
                         <tr>
@@ -1554,7 +1526,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.50s</td>
+                            <td>16.02s</td>
                         </tr>
 
                         <tr>
@@ -1564,7 +1536,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.38s</td>
+                            <td>15.93s</td>
                         </tr>
 
                         <tr>
@@ -1574,7 +1546,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.51s</td>
+                            <td>16.05s</td>
                         </tr>
 
                         <tr>
@@ -1584,7 +1556,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.30s</td>
+                            <td>15.99s</td>
                         </tr>
 
                         <tr>
@@ -1594,7 +1566,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.51s</td>
+                            <td>15.94s</td>
                         </tr>
 
                         <tr>
@@ -1604,7 +1576,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.60s</td>
+                            <td>15.96s</td>
                         </tr>
 
                         <tr>
@@ -1614,7 +1586,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>16.46s</td>
+                            <td>16.12s</td>
                         </tr>
 
                     </tbody>
@@ -1664,9 +1636,9 @@
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">0 passed</span>
+                    <span class="category-header passed">0 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">1 failed</span>
+                    <span class="category-header failed">1 failed</span>
                     &nbsp;·&nbsp;1 test
                     <span class="chevron" id="chevron_cat_Mishandling of Exceptional Conditions">▼</span>
                 </span>
@@ -1695,13 +1667,23 @@
 
                     
                         <tr>
-                            <td><strong>Web Server Version Name And Number Should Not Be Shown On 404 Page</strong></td>
+                            <td>
+                            <strong>Web Server Version Name And Number Should Not Be Shown On 404 Page</strong>
+                            </td>
                             <td><span class="parameters">N/A</span></td>
                             <td>Apache Tomcat version number should not be shown when the default HTTP 404 Error page is shown</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">6.4</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">6.4</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>assert page_data[&quot;is_text_on_page&quot;] == False</p><p>assert True == False</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #ffc107;">MEDIUM</span></td>
-                            <td>1.08s</td>
+                            <td>1.07s</td>
                         </tr>
 
                     </tbody>
@@ -1725,9 +1707,9 @@
     new Chart(document.getElementById("cat_trend_Security_Logging___Alerting_Failures"), {
         type: "line",
         data: {
-            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13"],
+            labels: ["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14"],
             datasets: [{
-                data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                 borderColor: "#e53e3e",
                 borderWidth: 1.5,
                 pointRadius: 1.5,
@@ -1751,9 +1733,9 @@
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">7 passed</span>
+                    <span class="category-header passed">7 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">0 failed</span>
+                    <span class="category-header failed">0 failed</span>
                     &nbsp;·&nbsp;7 tests
                     <span class="chevron" id="chevron_cat_Security Logging & Alerting Failures">▼</span>
                 </span>
@@ -1788,7 +1770,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">6.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>7.22s</td>
+                            <td>6.95s</td>
                         </tr>
 
                         <tr>
@@ -1798,7 +1780,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">6.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>6.62s</td>
+                            <td>6.53s</td>
                         </tr>
 
                         <tr>
@@ -1808,7 +1790,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">6.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>6.24s</td>
+                            <td>6.34s</td>
                         </tr>
 
                         <tr>
@@ -1818,7 +1800,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">6.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>6.39s</td>
+                            <td>6.31s</td>
                         </tr>
 
                         <tr>
@@ -1828,7 +1810,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">6.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>6.21s</td>
+                            <td>6.31s</td>
                         </tr>
 
                         <tr>
@@ -1838,7 +1820,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">6.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>6.21s</td>
+                            <td>6.24s</td>
                         </tr>
 
                         <tr>
@@ -1848,7 +1830,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">6.4</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>6.23s</td>
+                            <td>6.32s</td>
                         </tr>
 
                     </tbody>
@@ -1898,9 +1880,9 @@
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">28 passed</span>
+                    <span class="category-header passed">28 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">4 failed</span>
+                    <span class="category-header failed">4 failed</span>
                     &nbsp;·&nbsp;32 tests
                     <span class="chevron" id="chevron_cat_Security Misconfiguration">▼</span>
                 </span>
@@ -1929,43 +1911,83 @@
 
                     
                         <tr>
-                            <td><strong>Security Header Attribute 'Unsafe-Eval' Should Not Be Used For Default-Src Directive On Login Page</strong></td>
+                            <td>
+                            <strong>Security Header Attribute 'Unsafe-Eval' Should Not Be Used For Default-Src Directive On Login Page</strong>
+                            </td>
                             <td><span class="parameters">&#x27;unsafe-eval&#x27;</span></td>
                             <td>The content-security-policy header should not have unsafe- attributes for the default-src directive</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">8.2</span></td>
-                            <td><span class="severity-badge" style="background-color: #fd7e14;">HIGH</span></td>
-                            <td>0.39s</td>
-                        </tr>
-
-                        <tr>
-                            <td><strong>Security Header Attribute 'Unsafe-Inline' Should Not Be Used For Default-Src Directive On Login Page</strong></td>
-                            <td><span class="parameters">&#x27;unsafe-inline&#x27;</span></td>
-                            <td>The content-security-policy header should not have unsafe- attributes for the default-src directive</td>
-                            <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">8.2</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">8.2</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>assert attribute not in security_policy_dict[&quot;default-src&quot;]</p><p>assert &quot;&#x27;unsafe-eval&#x27;&quot; not in [&quot;&#x27;self&#x27;&quot;, &quot;&#x27;unsafe-inline&#x27;&quot;, &quot;&#x27;unsafe-eval&#x27;&quot;, &#x27;localhost&#x27;, &#x27;localhost:*&#x27;]</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #fd7e14;">HIGH</span></td>
                             <td>0.36s</td>
                         </tr>
 
                         <tr>
-                            <td><strong>Security Header Directive Form-Action Should Be Set To 'None' Or 'Self' On Login Page</strong></td>
-                            <td><span class="parameters">form-action-False</span></td>
-                            <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
+                            <td>
+                            <strong>Security Header Attribute 'Unsafe-Inline' Should Not Be Used For Default-Src Directive On Login Page</strong>
+                            </td>
+                            <td><span class="parameters">&#x27;unsafe-inline&#x27;</span></td>
+                            <td>The content-security-policy header should not have unsafe- attributes for the default-src directive</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">8.2</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">8.2</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>assert attribute not in security_policy_dict[&quot;default-src&quot;]</p><p>assert &quot;&#x27;unsafe-inline&#x27;&quot; not in [&quot;&#x27;self&#x27;&quot;, &quot;&#x27;unsafe-inline&#x27;&quot;, &quot;&#x27;unsafe-eval&#x27;&quot;, &#x27;localhost&#x27;, &#x27;localhost:*&#x27;]</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #fd7e14;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.35s</td>
                         </tr>
 
                         <tr>
-                            <td><strong>Security Header Directive Form-Action Should Not Be Set To * Or Http: On Login Page</strong></td>
+                            <td>
+                            <strong>Security Header Directive Form-Action Should Be Set To 'None' Or 'Self' On Login Page</strong>
+                            </td>
+                            <td><span class="parameters">form-action-False</span></td>
+                            <td>Directives should be set to 'none' or 'self' on login page if it exists and does not fall back to default-src</td>
+                            <td><span class="status-badge status-fail">FAIL</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">8.2</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>assert is_directive_secure == True</p><p>assert False == True</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td><span class="severity-badge" style="background-color: #fd7e14;">HIGH</span></td>
+                            <td>0.35s</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                            <strong>Security Header Directive Form-Action Should Not Be Set To * Or Http: On Login Page</strong>
+                            </td>
                             <td><span class="parameters">form-action-False</span></td>
                             <td>Directives should not be set to * or http: on login page if it exists and falls back to default-src</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">8.2</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">8.2</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>assert is_directive_secure == True</p><p>assert False == True</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #fd7e14;">HIGH</span></td>
-                            <td>0.38s</td>
+                            <td>0.35s</td>
                         </tr>
 
                     </tbody>
@@ -2000,7 +2022,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.34s</td>
                         </tr>
 
                         <tr>
@@ -2010,7 +2032,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.35s</td>
                         </tr>
 
                         <tr>
@@ -2020,7 +2042,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.34s</td>
                         </tr>
 
                         <tr>
@@ -2030,7 +2052,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.36s</td>
+                            <td>0.34s</td>
                         </tr>
 
                         <tr>
@@ -2040,7 +2062,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.35s</td>
                         </tr>
 
                         <tr>
@@ -2050,7 +2072,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.34s</td>
                         </tr>
 
                         <tr>
@@ -2060,7 +2082,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.38s</td>
+                            <td>0.34s</td>
                         </tr>
 
                         <tr>
@@ -2070,7 +2092,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.35s</td>
                         </tr>
 
                         <tr>
@@ -2080,7 +2102,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.35s</td>
                         </tr>
 
                         <tr>
@@ -2090,7 +2112,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.36s</td>
                         </tr>
 
                         <tr>
@@ -2100,7 +2122,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.36s</td>
                         </tr>
 
                         <tr>
@@ -2120,7 +2142,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.35s</td>
                         </tr>
 
                         <tr>
@@ -2130,7 +2152,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.36s</td>
+                            <td>0.34s</td>
                         </tr>
 
                         <tr>
@@ -2140,7 +2162,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.36s</td>
+                            <td>0.34s</td>
                         </tr>
 
                         <tr>
@@ -2150,7 +2172,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.35s</td>
                         </tr>
 
                         <tr>
@@ -2160,7 +2182,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.36s</td>
+                            <td>0.35s</td>
                         </tr>
 
                         <tr>
@@ -2170,7 +2192,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.36s</td>
                         </tr>
 
                         <tr>
@@ -2180,7 +2202,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.36s</td>
+                            <td>0.34s</td>
                         </tr>
 
                         <tr>
@@ -2190,7 +2212,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.38s</td>
+                            <td>0.34s</td>
                         </tr>
 
                         <tr>
@@ -2210,7 +2232,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.35s</td>
                         </tr>
 
                         <tr>
@@ -2220,7 +2242,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.39s</td>
+                            <td>0.35s</td>
                         </tr>
 
                         <tr>
@@ -2240,7 +2262,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.38s</td>
+                            <td>0.35s</td>
                         </tr>
 
                         <tr>
@@ -2250,7 +2272,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.35s</td>
                         </tr>
 
                         <tr>
@@ -2260,7 +2282,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">8.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">HIGH</span></td>
-                            <td>0.37s</td>
+                            <td>0.34s</td>
                         </tr>
 
                         <tr>
@@ -2271,7 +2293,7 @@
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">4.8</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>0.37s</td>
+                            <td>0.34s</td>
                         </tr>
 
                     </tbody>
@@ -2321,9 +2343,9 @@
     });
     </script>
                 </span>
-                    <span style="color:#38a169; font-weight:600;">4 passed</span>
+                    <span class="category-header passed">4 passed</span>
                     &nbsp;/&nbsp;
-                    <span style="color:#e53e3e; font-weight:600;">1 failed</span>
+                    <span class="category-header failed">1 failed</span>
                     &nbsp;·&nbsp;5 tests
                     <span class="chevron" id="chevron_cat_Session Management">▼</span>
                 </span>
@@ -2352,13 +2374,23 @@
 
                     
                         <tr>
-                            <td><strong>Cookies Have Secure Attribute</strong></td>
+                            <td>
+                            <strong>Cookies Have Secure Attribute</strong>
+                            </td>
                             <td><span class="parameters">N/A</span></td>
                             <td>Test whether cookies have the secure attribute enabled.</td>
                             <td><span class="status-badge status-fail">FAIL</span></td>
-                            <td><span class="cvss-score-fail">9.2</span></td>
+                            <td>
+                            <div class="tooltip">
+                                    <span class="cvss-score-fail">9.2</span>
+                                    <span class="tooltiptext">
+                                        <p><u>Recorded Errors</u></p>
+                                        <p>assert cookie[&quot;secure&quot;] == True</p><p>assert False == True</p>
+                                    </span>
+                                </div>
+                            </td>
                             <td><span class="severity-badge" style="background-color: #dc3545;">CRITICAL</span></td>
-                            <td>2.89s</td>
+                            <td>2.84s</td>
                         </tr>
 
                     </tbody>
@@ -2394,7 +2426,7 @@ about the login should expire and a new one should be created</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>5.41s</td>
+                            <td>5.27s</td>
                         </tr>
 
                         <tr>
@@ -2404,7 +2436,7 @@ about the login should expire and a new one should be created</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>2.95s</td>
+                            <td>2.86s</td>
                         </tr>
 
                         <tr>
@@ -2415,7 +2447,7 @@ about the login is used to try and regain access</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">9.2</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">CRITICAL</span></td>
-                            <td>5.43s</td>
+                            <td>5.33s</td>
                         </tr>
 
                         <tr>
@@ -2425,7 +2457,7 @@ about the login is used to try and regain access</td>
                             <td><span class="status-badge status-pass">PASS</span></td>
                             <td><span class="cvss-score-pass">5.1</span></td>
                             <td><span class="severity-badge" style="background-color: #6c757d;">MEDIUM</span></td>
-                            <td>2.90s</td>
+                            <td>2.78s</td>
                         </tr>
 
                     </tbody>
