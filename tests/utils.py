@@ -3,8 +3,11 @@
 # This can be referenced as: from tests.utils import func
 
 import os
+import requests
+import base64
 from enum import Enum
 from playwright.sync_api import Page
+from requests import Response
 
 # URLS
 O3_ROOT_URL = 'http://localhost/openmrs/'
@@ -287,3 +290,46 @@ def createTestPatient(page:Page, first_name="Test", family_name="Ing", years_est
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Register patient").click()
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
+
+class LoginApiResponse:
+    response : Response
+    response_dict : dict = {}
+    is_authenticated : bool = False
+    jsessionid = None
+    
+    def __init__(self, response:Response):
+        
+        if response.status_code == 200:
+            
+            # raw response
+            self.response : Response = response
+            
+            # response as a dict
+            self.response_dict : dict = response.json()
+            
+            # successfully logged in
+            self.is_authenticated : bool = self.response_dict.get('authenticated', False)
+            
+            # store jsessionid for easy access
+            self.jsessionid = self.response.cookies.get("JSESSIONID", None)
+
+def login_api(username, password) -> LoginApiResponse:
+        
+    credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
+    headers = {
+        'Authorization': f'Basic {credentials}',
+        'Content-Type': 'application/json'
+    }
+
+    try:
+        response = requests.get(O3_API_URL, headers=headers, timeout=10)
+        status_code = response.status_code
+
+        print(f"REST API Login Attempt Status Code: {status_code}")
+
+        loginApiResponse = LoginApiResponse(response)
+
+    except requests.exceptions.RequestException as e:
+        print(f"  Result: Request failed - {e}")
+    
+    return loginApiResponse

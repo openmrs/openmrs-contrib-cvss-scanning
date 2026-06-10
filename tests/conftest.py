@@ -10,7 +10,7 @@ from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from typing import Generator
 from pytest import FixtureRequest
-from tests.utils import O3_BASE_URL
+from tests.utils import O3_BASE_URL, O3_ROOT_URL, DEFAULT_WAIT_TIME
 from playwright.sync_api import Page
 
 # Load environment variables
@@ -160,3 +160,37 @@ def cleanup_clear_user_lockout(request:FixtureRequest, cursor:MySQLCursor, conne
 def given_login_page_shown(page:Page):
     page.goto(O3_BASE_URL + '/login')
     page.wait_for_url(O3_BASE_URL + '/login')
+
+@pytest.fixture(scope="function")
+def cleanup_delete_patient(patient_data, page:Page):    
+    yield
+    
+    patient_ids:list = patient_data["patient_id"]
+    
+    for i in range(0, len(patient_ids)):
+    
+        patient_id:str = patient_ids[i]
+        
+        # go to legacy admin
+        page.goto(f"{O3_ROOT_URL}admin/patients/index.htm")
+
+        # delete patient
+        page.locator("#inputNode").press_sequentially(patient_id)
+        
+        page.wait_for_timeout(DEFAULT_WAIT_TIME)
+        
+        page.get_by_text(patient_id).all()[1].click()
+        
+        page.wait_for_timeout(DEFAULT_WAIT_TIME)
+        
+        page.locator("[name='voidReason']").press_sequentially("Testing Purposes")
+        
+        page.get_by_role("button", name="Delete Patient", exact=True).click()
+        
+        page.wait_for_timeout(DEFAULT_WAIT_TIME)
+
+@pytest.fixture(scope="function")
+def patient_data():
+    return {
+        "patient_id":[]
+    }
