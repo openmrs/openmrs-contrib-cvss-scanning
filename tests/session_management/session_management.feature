@@ -49,7 +49,6 @@ Feature: Session Management
     
     Given cookie information is saved
     And the user navigates to a different page
-    # combined with the top one? rename them?
     When a valid cookie is injected
     And the url is directed at /spa
     Then the home page should be shown
