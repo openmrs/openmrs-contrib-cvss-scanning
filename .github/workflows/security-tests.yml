@@ -116,6 +116,7 @@ jobs:
       if: github.ref == 'refs/heads/main'
       run: |
         mkdir -p gh-pages
+        mkdir -p gh-pages/assets
         cp security_dashboard.html gh-pages/index.html
         cp detailed-report.html gh-pages/detailed-report.html
         cp assets/security_dashboard.css gh-pages/assets/security_dashboard.css
