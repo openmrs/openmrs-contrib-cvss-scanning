@@ -2,13 +2,11 @@ import pytest
 import pytest_bdd
 import string
 import random
-import requests
-import base64
 
 from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from playwright.sync_api import Page
-from tests.utils import O3_BASE_URL, O3_API_URL, DEFAULT_WAIT_TIME, login
+from tests.utils import O3_BASE_URL, DEFAULT_WAIT_TIME, login, login_api, LoginApiResponse
 
 ### SHARED STEPS ###
 
@@ -19,7 +17,8 @@ def given_the_rest_api_is_locked_out_from_7_failed_login_attempts():
         login_api("doctor", f"BADPASS{i}")
     
     # checks the lockout
-    assert login_api("doctor", "Doctor123") == False
+    loginApiResponse : LoginApiResponse = login_api("doctor", "Doctor123")
+    assert loginApiResponse.is_authenticated == False
 
 @pytest_bdd.given('the login page is locked out from 7 failed login attempts')
 def given_the_login_page_is_locked_out_from_7_failed_login_attempts(page:Page):
@@ -33,7 +32,9 @@ def given_the_login_page_is_locked_out_from_7_failed_login_attempts(page:Page):
 @pytest_bdd.when('a user logs in to the REST API with the correct credentials')
 def when_a_user_logs_in_to_the_rest_api_with_the_correct_credentials(login_data):
     
-    login_data["is_authenticated"] = login_api("doctor", "Doctor123")
+    loginApiResponse : LoginApiResponse = login_api("doctor", "Doctor123")
+    
+    login_data["is_authenticated"] = loginApiResponse.is_authenticated
 
 @pytest_bdd.when('a user simulates waiting 4 minutes and 50 seconds for a lockout')
 def when_a_user_simulates_waiting_4_minutes_and_50_seconds_for_a_lockout(cursor:MySQLCursor, connection:MySQLConnection):
@@ -116,41 +117,6 @@ def then_the_login_page_should_block_the_correct_credentials(page:Page):
 def random_password(length=8):
     letters = string.ascii_letters + string.digits
     return ''.join(random.choice(letters) for _ in range(length))
-
-def login_api(username, password):
-    
-    isAuthenticated = False
-    
-    credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
-    headers = {
-        'Authorization': f'Basic {credentials}',
-        'Content-Type': 'application/json'
-    }
-
-    try:
-        response = requests.get(O3_API_URL, headers=headers, timeout=10)
-        status_code = response.status_code
-
-        if status_code == 200:
-            try:
-                print(response.text[:200])
-                data = response.json()
-                authenticated = data.get('authenticated', False)
-                if authenticated:
-                    print(f"  Result: Login SUCCEEDED (unexpected!) HTTP {status_code}")
-                    
-                    isAuthenticated = True
-                else:
-                    print(f"  Result: Login FAILED (expected) HTTP {status_code}")
-            except:
-                print(f"  Result: HTTP {status_code} (could not parse response)")
-        else:
-            print(f"  Result: HTTP {status_code}")
-
-    except requests.exceptions.RequestException as e:
-        print(f"  Result: Request failed - {e}")
-    
-    return isAuthenticated
 
 ### PYTEST FIXTURES ###
 

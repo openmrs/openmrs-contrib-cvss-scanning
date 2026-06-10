@@ -1,7 +1,7 @@
 import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, createTestPatient, login_and_select_default_location, BaseMetrics, DEFAULT_WAIT_TIME, O3_ROOT_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, createTestPatient, login_and_select_default_location, BaseMetrics, DEFAULT_WAIT_TIME
 from tests.conftest import save_cvss_result
 from playwright.sync_api import Page, expect
 
@@ -64,7 +64,7 @@ def given_a_new_patient_is_created(page:Page, patient_data):
     
     id_text = spans[-1].text_content()
         
-    patient_data["patient_id"] = id_text
+    patient_data["patient_id"].append(id_text)
 
 @pytest_bdd.given('the billings history page is shown')
 def given_the_billings_history_page_is_shown(page:Page):
@@ -122,31 +122,3 @@ def then_the_quantity_should_not_overflow_or_wraparound(page:Page, quantity):
     quantity_value = int(cells[3].text_content())
     
     assert quantity_value == quantity
-
-@pytest.fixture(scope="function")
-def cleanup_delete_patient(patient_data, page:Page):    
-    yield
-    
-    patient_id:str = patient_data["patient_id"]
-    
-    # go to legacy admin
-    page.goto(f"{O3_ROOT_URL}admin/patients/index.htm")
-
-    # delete patient
-    page.locator("#inputNode").press_sequentially(patient_id)
-    
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    
-    page.get_by_text(patient_id).all()[1].click()
-    
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    
-    page.locator("[name='voidReason']").press_sequentially("Testing Purposes")
-    
-    page.get_by_role("button", name="Delete Patient", exact=True).click()
-    
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-
-@pytest.fixture(scope="function")
-def patient_data():
-    return {}

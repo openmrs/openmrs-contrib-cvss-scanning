@@ -83,7 +83,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: security-dashboard
-        path: security_dashboard.html
+        path: |
+          security_dashboard.html
+          assets/security_dashboard.css
         retention-days: 30
 
     - name: Upload HTML Report
@@ -116,6 +118,7 @@ jobs:
         mkdir -p gh-pages
         cp security_dashboard.html gh-pages/index.html
         cp detailed-report.html gh-pages/detailed-report.html
+        cp assets/security_dashboard.css gh-pages/assets/security_dashboard.css
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
