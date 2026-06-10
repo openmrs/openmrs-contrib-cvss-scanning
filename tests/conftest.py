@@ -10,7 +10,7 @@ from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from typing import Generator
 from pytest import FixtureRequest
-from tests.utils import O3_BASE_URL, O3_ROOT_URL, DEFAULT_WAIT_TIME
+from tests.utils import login_and_select_default_location, DEFAULT_WAIT_TIME, O3_BASE_URL, O3_ROOT_URL
 from playwright.sync_api import Page
 
 # Load environment variables
@@ -161,7 +161,19 @@ def given_login_page_shown(page:Page):
     page.goto(O3_BASE_URL + '/login')
     page.wait_for_url(O3_BASE_URL + '/login')
 
+@pytest_bdd.when('a user logs in to the login page with the correct credentials')
+def when_a_user_logs_in_to_the_login_page_with_the_correct_credentials(page:Page, username, password):
+    
+    login_and_select_default_location(page, username, password)
+
+@pytest_bdd.step('the user logs out of their account')
+def given_user_logs_out(page:Page):
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    page.get_by_role("button", name="My Account").click()
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    page.get_by_role("button", name="Logout").click()
 @pytest.fixture(scope="function")
+
 def cleanup_delete_patient(patient_data, page:Page):    
     yield
     

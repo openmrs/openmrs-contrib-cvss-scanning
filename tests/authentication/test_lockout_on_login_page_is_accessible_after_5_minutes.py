@@ -249,8 +249,11 @@ def given_cvss_score_is_calculted_and_printed(request):
     save_cvss_result(request, cvss_score, severity)
 
 @pytest.mark.parametrize("cleanup_clear_user_lockout", ["doctor"], indirect=True)
+@pytest.mark.parametrize("username,password", [
+    ("doctor", "Doctor123")
+])
 @pytest_bdd.scenario('authentication.feature', 'Lockout on login page is accessible after 5 minutes')
-def test_lockout_on_login_page_is_accessible_after_5_minutes(cleanup_clear_user_lockout):
+def test_lockout_on_login_page_is_accessible_after_5_minutes(cleanup_clear_user_lockout, username, password):
  pass
 
 @pytest_bdd.then('the location selection or home page should be shown')
