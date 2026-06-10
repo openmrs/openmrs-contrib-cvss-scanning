@@ -43,3 +43,13 @@ Feature: Session Management
     When an attacker injects an old cookie
     And the url is directed at /spa
     Then the login page should be shown
+  
+  Scenario: Session cookie can be used by a valid user
+    After leaving the page and coming back without logging out the cookie information grants access to the users account
+    
+    Given cookie information is saved
+    And the user navigates to a different page
+    # combined with the top one? rename them?
+    When a valid cookie is injected
+    And the url is directed at /spa
+    Then the home page should be shown
