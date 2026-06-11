@@ -19,6 +19,7 @@ load_dotenv()
 # Store CVSS results during test runs
 _cvss_results = {}
 _scenario_names = {}
+_test_params = {}
 
 @pytest.fixture(scope="session")
 def connection():
@@ -53,6 +54,11 @@ def pytest_bdd_after_scenario(request, feature, scenario):
         "scenario_description": scenario.description,
     }
 
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_setup(item):
+    if hasattr(item, "callspec"):
+        _test_params[item.name] = dict(item.callspec.params)
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield
@@ -78,6 +84,11 @@ def pytest_json_modifyreport(json_report):
             test["feature"] = _scenario_names[test_name]["feature"]
             test["scenario"] = _scenario_names[test_name]["scenario"]
             test["scenario_description"] = _scenario_names[test_name]["scenario_description"]
+        
+        if test_name in _test_params:
+            test["params"] = _test_params[test_name]
+        else:
+            test["params"] = {}
 
 # settings for page from pytest-playwright plugin
 @pytest.fixture(scope="session") 
