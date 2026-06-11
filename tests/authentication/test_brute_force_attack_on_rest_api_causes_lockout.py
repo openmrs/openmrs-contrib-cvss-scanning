@@ -246,8 +246,8 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
-@pytest.mark.parametrize("cleanup_clear_user_lockout", ["doctor"], indirect=True)
-@pytest.mark.parametrize("username,password", [USER_CREDENTIALS])
+
+@pytest.mark.parametrize("username,password", USER_CREDENTIALS)
 @pytest_bdd.scenario('authentication.feature', 'Brute force attack on REST API causes lockout')
 def test_brute_force_attack_on_rest_api_causes_lockout(cleanup_clear_user_lockout, username, password):
  pass

@@ -249,7 +249,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     save_cvss_result(request, cvss_score, severity)
 
 @pytest.mark.parametrize('cleanup_clear_user_lockout', ["doctor"], indirect=True)
-@pytest.mark.parametrize("username,password", [USER_CREDENTIALS])
+@pytest.mark.parametrize("username,password", USER_CREDENTIALS)
 @pytest_bdd.scenario('authentication.feature', 'Brute force attack on login page causes lockout')
 def test_brute_force_attack_on_login_page_causes_lockout(cleanup_clear_user_lockout, username, password):
  pass
