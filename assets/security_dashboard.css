@@ -312,7 +312,7 @@ iframe{
     text-align: left;
     white-space: nowrap;
     padding: 10px;
-    overflow-x: hidden;
+    overflow-x: scroll;
     border-radius: 0px;
     position: absolute;
     z-index: 1;
@@ -321,6 +321,7 @@ iframe{
     margin-left: 0px;
     font-size: 14px;
     border: 1px solid gray;
+    max-width: 500px;
 }
 
 .tooltip:hover .tooltiptext {

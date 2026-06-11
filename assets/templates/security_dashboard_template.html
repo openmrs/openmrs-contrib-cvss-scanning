@@ -61,7 +61,7 @@
             <!-- Test Results -->
             {% for category in categories %}
             <div class="test-results">
-                <div class="category-header" onclick="toggleCategory('{cat_id}')">
+                <div class="category-header" onclick="toggleCategory('{{ category.id }}')">
                     <span class="category-title">
                         {{ category["icon"] }}&nbsp;{{ category["name"] }}
                     </span>
@@ -70,16 +70,74 @@
                         Highest CVSS: {{ category["max_cvss"] }} — {{ category["max_severity"] }}</span>
                         <span class="cat-trend-wrapper">
                             <span class="cat-trend-label">Max CVSS trend:</span>
-                            {cat_trend_html}
+                            <!-- INVOLVES DB ACTIVITY!!!-->
+                            {cat_trend_html} -- TODO with DB
                         </span>
                         <span class="category-header passed">{{ category["passed"] }} passed</span>
                         &nbsp;/&nbsp;
                         <span class="category-header failed">{{ category["failed"] }} failed</span>
                         &nbsp;·&nbsp;{{ category["total"] }} test{{ 's' if cat_total != 1 else '' }}
-                        <span class="chevron" id="chevron_{cat_id}">▼</span>
+                        <span class="chevron" id="chevron_{{ category['id'] }}">▼</span>
                     </span>
                 </div>
-                <div class="category-body" id="{cat_id}">
+                <div class="category-body" id="{{ category.id }}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test Name</th>
+                                <th>Parameters</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>CVSS Score (Baseline)</th>
+                                <th>Severity</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- ADD CATEGORY HEADERS!!!! (FAILED/PASSED)-->
+                            {% for test in tests %}
+                                <!-- Passed Tests -->
+                                {% if test["category"] == category["name"] %}
+                                    {% if test["status"] == "passed" %}
+                                        <tr>
+                                            <td><strong>{{test.name}}</strong></td>
+                                            <td>{{ test.params }}</td>
+                                            <td>{{ test.description }}</td>
+                                            <td><span class="status-badge {status_class}">STATUS (FORMAT THIS)</span></td>
+                                            <td><span class="cvss-score-pass">{{ test.cvss_score }}</span></td>
+                                            <td><span class="severity-badge {{ test.severity_class }}">{{ test.severity }}</span></td>
+                                            <td>{{ test.duration }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endif %}
+
+                                <!-- Failed Tests-->
+                                {% if test["category"] == category["name"] %}
+                                    {% if test["status"] == "failed" %}
+                                        <tr>
+                                            <td><strong>{{test.name}}</strong></td>
+                                            <td>{{ test.params }}</td>
+                                            <td>{{ test.description }}</td>
+                                            <td><span class="status-badge {status_class}">STATUS (FORMAT THIS)</span></td>
+                                            <td>
+                                                <div class="tooltip">
+                                                    <span class="cvss-score-fail">{{ test.cvss_score }}</span>
+                                                    <span class="tooltiptext">
+                                                        <p><u>Recorded Errors</u></p>
+                                                        <p>
+                                                        {{ "</p><p>".join(test.errors) }}
+                                                        </p>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td><span class="severity-badge {{ test.severity_class }}">{{ test.severity }}</span></td>
+                                            <td>{{ test.duration }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
             {% endfor %}

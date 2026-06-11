@@ -23,6 +23,17 @@ tests = []
 current_time = None
 categories = []
 
+def get_severity_class(severity):
+    colors = {
+        'CRITICAL': 'severity-critical',
+        'HIGH': 'severity-high',
+        'MEDIUM': 'severity-medium',
+        'LOW': 'severity-low',
+        'NONE': 'severity-none',
+        'UNKNOWN': 'severity-unknown',
+    }
+    return colors.get(severity, '.severity-unknown')
+
 def extract_relevant_test_data():
 
     report = None
@@ -48,28 +59,31 @@ def extract_relevant_test_data():
     
     for test in report_tests:
         new_test = {
-            'full_name':    "",
-            'name':         "",
-            'category':     "",
-            'scenario':     "",
-            'description':  "",
-            'status':       "",
-            'cvss_score':   "",
-            'severity':     "",
-            'duration':     "",
-            'params':       "",
-            'errors':       "",
+            'full_name':        "",
+            'name':             "",
+            'category':         "",
+            'description':      "",
+            'status':           "",
+            'cvss_score':       "",
+            'severity':         "",
+            'severity_class':   "",
+            'duration':         "",
+            'params':           {},
+            'errors':           "",
         }
         
         new_test["full_name"] = test.get("nodeid", "Could not find in report.")
         new_test["name"] = test.get("scenario", "Could not find in report.")
         new_test["category"] = test.get("feature", "Could not find in report.")
-        new_test['scenario'] = test.get("scenario", "Could not find in report.")
         new_test['description'] = test.get("scenario_description", "Could not find in report.")
         new_test['status'] = test.get("outcome", "Could not find in report.")
         new_test['cvss_score'] = test.get("cvss_score", "Could not find in report.")
         new_test['severity'] = test.get("severity", "Could not find in report.")
+        new_test['severity_class'] = get_severity_class(new_test['severity'])
+        
+        # parameter list
         new_test['params'] = test.get("params", {})
+        new_test['params'] = ",<br> ".join(f"{key}: {value}" for key, value in new_test["params"].items())
     
         # duration
         setup_duration = test.get("setup", {}).get("duration", 0)
@@ -78,8 +92,14 @@ def extract_relevant_test_data():
         
         new_test['duration'] = setup_duration + call_duration + teardown_duration
         
-        # get minutes
-        new_test['duration'] = new_test['duration'] / 60
+        # round
+        if new_test['duration'] > 60:
+            new_test['duration'] = new_test['duration'] / 60
+            new_test['duration'] = round(new_test['duration'], 2)
+            new_test['duration'] = f"{new_test['duration']}m"
+        else:
+            new_test['duration'] = round(new_test['duration'], 2)
+            new_test['duration'] = f"{new_test['duration']}s"
         
         # errors
         error_text = test.get('call', {}).get('longrepr', None)
@@ -122,17 +142,6 @@ def get_cvss_severity(cvss_score):
         severity = "LOW"
     
     return severity
-
-def get_severity_class(severity):
-    colors = {
-        'CRITICAL': 'severity-critical',
-        'HIGH': 'severity-high',
-        'MEDIUM': 'severity-medium',
-        'LOW': 'severity-low',
-        'NONE': 'severity-none',
-        'UNKNOWN': 'severity-unknown',
-    }
-    return colors.get(severity, '.severity-unknown')
 
 def prepare_data():
     
