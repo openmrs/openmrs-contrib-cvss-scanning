@@ -15,6 +15,7 @@ Feature: Security Logging & Alerting Failures
   Scenario: Server logs should not show failed login attempts with correct credentials
     A login attempt with a correct username and password should be not shown as a failed login attempt in the server logs
 
+    Given the current time is saved
     Given the OpenMRS 3 login page is displayed
     When a user logs in to the login page with the correct credentials
     And the user logs out of their account

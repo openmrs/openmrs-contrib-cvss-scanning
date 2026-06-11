@@ -5,6 +5,7 @@ import pytest_bdd
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, USER_CREDENTIALS
 from tests.conftest import save_cvss_result
 from playwright.sync_api import Page
+from datetime import timezone, datetime
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -41,14 +42,21 @@ def test_server_logs_should_not_show_failed_login_attempts_with_correct_credenti
     pass
 
 @pytest_bdd.then('a failed login attempt log should not exist')
-def then_a_failed_login_attempt_log_should_not_exist(page:Page, username):
-    
+def then_a_failed_login_attempt_log_should_not_exist(page:Page, date_time_data):
+
     server_log_table = page.get_by_role("table")
     server_log_rows = server_log_table.get_by_role("row")
     last_row_text = server_log_rows.all()[-1].text_content()
     
-    # verify lockout on specific account
-    lockout_text_pattern : re.Pattern = re.compile(r"Failed login attempt \(login=.+\) - Invalid username and\/or password: .+")
+    # verify time
     
-    assert lockout_text_pattern.search(last_row_text) == None
-    assert username not in last_row_text
+    datetime_pattern : re.Pattern = re.compile(r"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d")
+    datetime_match : re.Match = datetime_pattern.search(last_row_text)
+    
+    # format timestamp
+    current_datetime_str : str = datetime_match.group(0)
+    
+    current_datetime : datetime = datetime.fromisoformat(current_datetime_str)
+    current_datetime = current_datetime.replace(tzinfo=timezone.utc)
+    
+    assert current_datetime < date_time_data["saved_timestamp"]
