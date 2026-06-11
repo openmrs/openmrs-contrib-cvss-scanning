@@ -39,6 +39,8 @@ def when_a_user_logs_in_to_the_rest_api_with_the_correct_credentials(login_data,
 @pytest_bdd.when('a user simulates waiting 4 minutes and 50 seconds for a lockout')
 def when_a_user_simulates_waiting_4_minutes_and_50_seconds_for_a_lockout(cursor:MySQLCursor, connection:MySQLConnection, username):
     
+    username = "" if username == "admin" else username
+    
     select_lockout_query = """
     SELECT user_property.property_value
     FROM user_property
@@ -48,7 +50,12 @@ def when_a_user_simulates_waiting_4_minutes_and_50_seconds_for_a_lockout(cursor:
     """
     
     cursor.execute(select_lockout_query, [username])
-    currentLockoutTimestamp = cursor.fetchone()['property_value']
+    currentLockoutTimestamp = cursor.fetchone()
+    
+    assert currentLockoutTimestamp != None, f"No lockout timestamp found for user {username}"
+    
+    currentLockoutTimestamp = currentLockoutTimestamp['property_value']
+    
     currentLockoutTimestamp = int(currentLockoutTimestamp)
         
     # subtract 5 minutes
@@ -72,6 +79,8 @@ def when_a_user_simulates_waiting_4_minutes_and_50_seconds_for_a_lockout(cursor:
 @pytest_bdd.when('a user simulates waiting 5 minutes for a lockout')
 def when_a_user_simulates_waiting_5_minutes_for_a_lockout(cursor:MySQLCursor, connection:MySQLConnection, username):
     
+    username = "" if username == "admin" else username
+    
     select_lockout_query = """
     SELECT user_property.property_value
     FROM user_property
@@ -81,7 +90,11 @@ def when_a_user_simulates_waiting_5_minutes_for_a_lockout(cursor:MySQLCursor, co
     """
     
     cursor.execute(select_lockout_query, [username])
-    currentLockoutTimestamp = cursor.fetchone()['property_value']
+    currentLockoutTimestamp = cursor.fetchone()
+    
+    assert currentLockoutTimestamp != None, f"No lockout timestamp found for user {username}"
+    
+    currentLockoutTimestamp = currentLockoutTimestamp['property_value']
     currentLockoutTimestamp = int(currentLockoutTimestamp)
         
     # subtract 5 minutes
