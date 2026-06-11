@@ -21,6 +21,7 @@ summary_data : dict = {
 }
 tests = []
 current_time = None
+categories = []
 
 def extract_relevant_test_data():
 
@@ -110,6 +111,29 @@ def extract_relevant_test_data():
         # append test
         tests.append(new_test)
 
+def get_cvss_severity(cvss_score):
+    if cvss_score >= 9.0:
+        severity = "CRITICAL"
+    elif cvss_score >= 7.0:
+        severity = "HIGH"
+    elif cvss_score >= 4.0:
+        severity = "MEDIUM"
+    else:
+        severity = "LOW"
+    
+    return severity
+
+def get_severity_class(severity):
+    colors = {
+        'CRITICAL': 'severity-critical',
+        'HIGH': 'severity-high',
+        'MEDIUM': 'severity-medium',
+        'LOW': 'severity-low',
+        'NONE': 'severity-none',
+        'UNKNOWN': 'severity-unknown',
+    }
+    return colors.get(severity, '.severity-unknown')
+
 def prepare_data():
     
     # get current time
@@ -119,6 +143,48 @@ def prepare_data():
     # convert and round duration
     summary_data["duration"] = summary_data["duration"] / 60
     summary_data["duration"] = round(summary_data["duration"], 1)
+    
+    # get categories
+    for test in tests:
+        category = test["category"]
+        if category not in (c["name"] for c in categories):
+            
+            new_category = {
+                "name" : category,
+                "total" : 0,
+                "passed" : 0,
+                "failed" : 0,
+                "label" : "",
+                "icon" : "",
+                "id" : f"cat_{category}",
+                "max_cvss" : 0,
+                "max_cvss_class" : "",
+                "max_severity" : "UNKNOWN",
+            }
+            
+            categories.append(new_category)
+
+    # get category stats
+    for category in categories:
+        for test in tests:
+            if test["category"] == category["name"]:
+                # collect stats
+                category["total"] += 1
+                
+                if test["status"] == "passed":
+                    category["passed"] += 1
+                elif test["status"] == "failed":
+                    category["failed"] += 1
+                
+                # cvss
+                if test["cvss_score"] > category["max_cvss"]:
+                    category["max_cvss"] = test["cvss_score"]
+        
+        category["max_severity"] = get_cvss_severity(category["max_cvss"])
+        
+        category["max_severity_class"] = get_severity_class(category["max_severity"])
+        
+        category["icon"] = '✅' if category["failed"] == 0 else ('❌' if category["passed"] == 0 else '⚠️')
 
 def display_test_data():
     # load template
@@ -129,8 +195,9 @@ def display_test_data():
         summary_data = summary_data,
         tests = tests,
         current_time = current_time,
+        categories = categories,
     )
-    
+        
     # save to file
     with open("assets/renders/security_dashboard.html", 'w', encoding="utf-8") as f:
         f.write(output)

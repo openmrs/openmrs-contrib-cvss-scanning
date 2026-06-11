@@ -348,3 +348,22 @@ iframe{
     color: black;
     font-weight: bold;
 }
+
+.severity-critical {
+  background-color: #dc3545;
+}
+.severity-high {
+  background-color: #fd7e14;
+}
+.severity-medium {
+  background-color: #ffc107;
+}
+.severity-low {
+  background-color: #28a745;
+}
+.severity-none {
+  background-color: #6c757d;
+}
+.severity-unknown {
+  background-color: #6c757d;
+}

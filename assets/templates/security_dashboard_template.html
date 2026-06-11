@@ -57,6 +57,32 @@
                     <p>{{ summary_data["duration"] }} min</p>
                 </div>
             </div>
+
+            <!-- Test Results -->
+            {% for category in categories %}
+            <div class="test-results">
+                <div class="category-header" onclick="toggleCategory('{cat_id}')">
+                    <span class="category-title">
+                        {{ category["icon"] }}&nbsp;{{ category["name"] }}
+                    </span>
+                    <span class="category-meta">
+                        <span class="{{ category['max_severity_class'] }}" style="color:white; font-weight:600; font-size:12px; padding:3px 10px; border-radius:10px; margin-right:8px;">
+                        Highest CVSS: {{ category["max_cvss"] }} — {{ category["max_severity"] }}</span>
+                        <span class="cat-trend-wrapper">
+                            <span class="cat-trend-label">Max CVSS trend:</span>
+                            {cat_trend_html}
+                        </span>
+                        <span class="category-header passed">{{ category["passed"] }} passed</span>
+                        &nbsp;/&nbsp;
+                        <span class="category-header failed">{{ category["failed"] }} failed</span>
+                        &nbsp;·&nbsp;{{ category["total"] }} test{{ 's' if cat_total != 1 else '' }}
+                        <span class="chevron" id="chevron_{cat_id}">▼</span>
+                    </span>
+                </div>
+                <div class="category-body" id="{cat_id}">
+                </div>
+            </div>
+            {% endfor %}
         </div>
         <div id="dependency_scanning">
             <iframe src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/"></iframe>
