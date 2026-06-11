@@ -76,6 +76,14 @@ class BaseMetrics:
     class Availability(_ImpactMetrics):
         pass
 
+USER_CREDENTIALS = [
+    ("admin", "Admin123"),
+    ("doctor", "Doctor123"),
+    ("nurse", "Nurse123"),
+    ("clerk", "Clerk123"),
+    ("technician", "Technician123"),
+]
+
 def calculate_cvss_v4_score(AV, AC, AT, PR, UI, VC, VI, VA, SC, SI, SA):
     """
     Calculate CVSS 4.0 Base Score using the official MacroVector lookup table

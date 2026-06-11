@@ -2,7 +2,7 @@ import re
 import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, USER_CREDENTIALS
 from tests.conftest import save_cvss_result
 from playwright.sync_api import Page
 
@@ -35,13 +35,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
-@pytest.mark.parametrize("username,password", [
-    ("admin", "Admin123"),
-    ("doctor", "Doctor123"),
-    ("nurse", "Nurse123"),
-    ("clerk", "Clerk123"),
-    ("technician", "Technician123"),
-])
+@pytest.mark.parametrize("username,password", USER_CREDENTIALS)
 @pytest_bdd.scenario('security_logging_and_alerting_failures.feature','Server logs should not show failed login attempts with correct credentials')
 def test_server_logs_should_not_show_failed_login_attempts_with_correct_credentials(username, password):
     pass

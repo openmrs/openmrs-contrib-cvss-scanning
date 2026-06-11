@@ -6,7 +6,7 @@ import random
 from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from playwright.sync_api import Page
-from tests.utils import O3_BASE_URL, DEFAULT_WAIT_TIME, login, login_api, LoginApiResponse
+from tests.utils import O3_BASE_URL, O3_HOME_URL, DEFAULT_WAIT_TIME, login, login_api, LoginApiResponse
 
 ### SHARED STEPS ###
 
@@ -110,6 +110,15 @@ def then_the_login_page_should_block_the_correct_credentials(page:Page):
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     
     assert page.url == O3_BASE_URL + '/login'
+
+@pytest_bdd.then('the location selection or home page should be shown')
+def then_the_location_selection_or_home_page_should_be_shown(page:Page):
+    
+    page.reload()
+    
+    isOnLoginPageOrHomePage = page.url == O3_BASE_URL + "/login/location" or O3_HOME_URL in page.url
+    
+    assert isOnLoginPageOrHomePage, f"URL not on homepage or location page but on {page.url}"
 
 ### SHARED FUNCATIONALITY ###
 

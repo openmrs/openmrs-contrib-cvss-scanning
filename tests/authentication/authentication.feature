@@ -19,6 +19,19 @@ Feature: Authentication
     When the attacker sends 7 API login requests with known username admin and random passwords
     Then the user should not be authenticated
   
+  Scenario: Correct credentials allows login on login page
+    Tests whether a regular user can log in to the webpage
+
+    Given the OpenMRS 3 login page is displayed
+    When a user logs in to the login page with the correct credentials
+    Then the location selection or home page should be shown
+
+  Scenario: Correct credentials allows login on REST API
+    Tests whether a regular user can log in to the api
+
+    When a user logs in to the REST API with the correct credentials
+    Then the user should be authenticated
+  
   Scenario: Brute force attack on login page causes lockout
     Tests whether the system will lockout an attacker from a brute force attack.
 
