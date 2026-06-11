@@ -8,6 +8,9 @@
 import json
 import html
 
+from datetime import datetime, timezone
+from jinja2 import Environment, FileSystemLoader
+
 JSON_REPORT_PATH = 'report.json'
 
 summary_data : dict = {
@@ -16,8 +19,8 @@ summary_data : dict = {
     "total" : 0,
     "duration" : 0,
 }
-
 tests = []
+current_time = None
 
 def extract_relevant_test_data():
 
@@ -74,6 +77,9 @@ def extract_relevant_test_data():
         
         new_test['duration'] = setup_duration + call_duration + teardown_duration
         
+        # get minutes
+        new_test['duration'] = new_test['duration'] / 60
+        
         # errors
         error_text = test.get('call', {}).get('longrepr', None)
         arrow_line = ""
@@ -104,11 +110,33 @@ def extract_relevant_test_data():
         # append test
         tests.append(new_test)
 
+def prepare_data():
+    
+    # get current time
+    global current_time
+    current_time = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+    
+    # convert and round duration
+    summary_data["duration"] = summary_data["duration"] / 60
+    summary_data["duration"] = round(summary_data["duration"], 1)
+
 def display_test_data():
-    for test in tests:
-        print(test)
-        print()
+    # load template
+    env = Environment(loader = FileSystemLoader('assets/templates'))
+    template = env.get_template('security_dashboard_template.html')
+    
+    output = template.render(
+        summary_data = summary_data,
+        tests = tests,
+        current_time = current_time,
+    )
+    
+    # save to file
+    with open("assets/renders/security_dashboard.html", 'w', encoding="utf-8") as f:
+        f.write(output)
+
 
 if __name__ == "__main__":
     extract_relevant_test_data()
+    prepare_data()
     display_test_data()
