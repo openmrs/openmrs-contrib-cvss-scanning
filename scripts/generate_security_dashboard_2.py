@@ -23,7 +23,7 @@ tests = []
 current_time = None
 categories = []
 
-def get_severity_class(severity):
+def get_severity_class(severity, status="failed"):
     colors = {
         'CRITICAL': 'severity-critical',
         'HIGH': 'severity-high',
@@ -32,7 +32,13 @@ def get_severity_class(severity):
         'NONE': 'severity-none',
         'UNKNOWN': 'severity-unknown',
     }
-    return colors.get(severity, '.severity-unknown')
+    
+    color = colors.get('NONE')
+    
+    if status != "passed":
+        color = colors.get(severity, '.severity-unknown')
+    
+    return color
 
 def extract_relevant_test_data():
 
@@ -79,7 +85,7 @@ def extract_relevant_test_data():
         new_test['status'] = test.get("outcome", "Could not find in report.")
         new_test['cvss_score'] = test.get("cvss_score", "Could not find in report.")
         new_test['severity'] = test.get("severity", "Could not find in report.")
-        new_test['severity_class'] = get_severity_class(new_test['severity'])
+        new_test['severity_class'] = get_severity_class(new_test['severity'], new_test['status'])
         
         # parameter list
         new_test['params'] = test.get("params", {})
@@ -187,7 +193,8 @@ def prepare_data():
                 
                 # cvss
                 if test["cvss_score"] > category["max_cvss"]:
-                    category["max_cvss"] = test["cvss_score"]
+                    if test["status"] == "failed":
+                        category["max_cvss"] = test["cvss_score"]
         
         category["max_severity"] = get_cvss_severity(category["max_cvss"])
         
