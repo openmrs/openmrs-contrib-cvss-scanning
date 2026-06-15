@@ -109,7 +109,7 @@
                                             <td>{{ test.params }}</td>
                                             <td>{{ test.description }}</td>
                                             <!-- status class is the same as-->
-                                            <td><span class="status-badge {{ 'a' }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
+                                            <td><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
                                             <td><span class="cvss-score-pass">{{ test.cvss_score }}</span></td>
                                             <td><span class="severity-badge {{ test.severity_class }}">{{ test.severity }}</span></td>
                                             <td>{{ test.duration }}</td>
@@ -148,7 +148,7 @@
                                             <td><strong>{{test.name}}</strong></td>
                                             <td>{{ test.params }}</td>
                                             <td>{{ test.description }}</td>
-                                            <td><span class="status-badge {{ 'a' }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
+                                            <td><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
                                             <td>
                                                 <div class="tooltip">
                                                     <span class="cvss-score-fail">{{ test.cvss_score }}</span>

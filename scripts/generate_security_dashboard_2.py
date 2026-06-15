@@ -70,6 +70,7 @@ def extract_relevant_test_data():
             'category':         "",
             'description':      "",
             'status':           "",
+            'status_class':     "",
             'cvss_score':       "",
             'severity':         "",
             'severity_class':   "",
@@ -83,6 +84,8 @@ def extract_relevant_test_data():
         new_test["category"] = test.get("feature", "Could not find in report.")
         new_test['description'] = test.get("scenario_description", "Could not find in report.")
         new_test['status'] = test.get("outcome", "Could not find in report.")
+        new_test['status_class'] = "status-pass" if new_test['status'] == "passed" else "status-fail"
+        
         new_test['cvss_score'] = test.get("cvss_score", "Could not find in report.")
         new_test['severity'] = test.get("severity", "Could not find in report.")
         new_test['severity_class'] = get_severity_class(new_test['severity'], new_test['status'])
