@@ -368,3 +368,40 @@ iframe{
 .severity-unknown {
   background-color: #6c757d;
 }
+
+/* Pie Chart */
+
+.chart-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+.chart-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 120px;
+    overflow-y: scroll;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}

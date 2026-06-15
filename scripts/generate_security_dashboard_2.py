@@ -164,7 +164,7 @@ def prepare_data():
     
     # get categories
     for test in tests:
-        category = test["category"]
+        category:str = test["category"]
         if category not in (c["name"] for c in categories):
             
             new_category = {
@@ -174,11 +174,13 @@ def prepare_data():
                 "failed" : 0,
                 "label" : "",
                 "icon" : "",
-                "id" : f"cat_{category}",
+                "id" : "",
                 "max_cvss" : 0,
                 "max_cvss_class" : "",
                 "max_severity" : "UNKNOWN",
             }
+            
+            new_category["id"] = "cat_" + category.replace(" ", "_")
             
             categories.append(new_category)
 
@@ -205,7 +207,82 @@ def prepare_data():
         
         category["icon"] = '✅' if category["failed"] == 0 else ('❌' if category["passed"] == 0 else '⚠️')
 
+def display_pie_chart_css():
+    # write custom css for pie chart
+    
+    html_colors = [
+        "crimson", "teal", "gold", "coral",
+        "darkorchid", "yellowgreen", "hotpink", "steelblue", "orange",
+        "seagreen", "mediumpurple", "tomato", "cornflowerblue", "peru",
+        "limegreen", "deeppink", "dodgerblue", "sienna", "darkturquoise",
+        "indigo", "darkorange", "cadetblue", "firebrick", "mediumseagreen",
+        "slateblue", "salmon", "olivedrab", "mediumvioletred", "yellow",
+    ]
+    
+    pie_chart_css = ":root {\n"
+    
+    # failed tests
+    current_percent = 0
+    for i in range(0, len(categories)):
+        current_percent += (categories[i]["failed"] / summary_data['failed']) * 100
+        pie_chart_css += f"  --cat_fail_{i}: {current_percent}%;\n"
+    
+    # test coverage
+    current_percent = 0
+    for i in range(0, len(categories)):
+        current_percent += round((categories[i]["total"] / summary_data['total']) * 100)
+        pie_chart_css += f"  --cat_total_{i}: {current_percent}%;\n"
+    
+    pie_chart_css += """}
+.chart-container-failed-tests {
+    background: conic-gradient("""
+    
+    for i in range(0, len(categories)):
+        
+        if i == 0:
+            pie_chart_css += f"{html_colors[i]} 0% var(--cat_fail_{i})"
+        else:
+            pie_chart_css += f"{html_colors[i]} var(--cat_fail_{i-1}) var(--cat_fail_{i})"
+        
+        if i != len(categories) - 1:
+            pie_chart_css += ","
+        
+        pie_chart_css += "\n"
+    
+    pie_chart_css += """
+    );
+}"""
+    
+    pie_chart_css += """
+.chart-container-total-tests {
+    background: conic-gradient("""
+    
+    for i in range(0, len(categories)):
+        
+        if i == 0:
+            pie_chart_css += f"{html_colors[i]} 0% var(--cat_total_{i})"
+        else:
+            pie_chart_css += f"{html_colors[i]} var(--cat_total_{i-1}) var(--cat_total_{i})"
+        
+        if i != len(categories) - 1:
+            pie_chart_css += ","
+        
+        pie_chart_css += "\n"
+    
+    pie_chart_css += """
+    );
+}"""
+
+    for i in range(0, len(categories)):
+        pie_chart_css += f"\n.category_color_{i} {{ background: {html_colors[i]}; }}"
+    
+    with open("assets/pie_chart.css", "w") as f:
+        f.write(pie_chart_css)
+
 def display_test_data():
+
+    display_pie_chart_css()
+
     # load template
     env = Environment(loader = FileSystemLoader('assets/templates'))
     template = env.get_template('security_dashboard_template.html')
