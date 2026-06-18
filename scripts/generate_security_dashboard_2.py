@@ -91,8 +91,11 @@ def extract_relevant_test_data():
         new_test['severity_class'] = get_severity_class(new_test['severity'], new_test['status'])
         
         # parameter list
+        # TODO: Fix 2D dicts
         new_test['params'] = test.get("params", {})
-        new_test['params'] = ",<br> ".join(f"{key}: {value}" for key, value in new_test["params"].items())
+        new_test['params'] = ", ".join(f"{key}: {value}" for key, value in new_test["params"].items())
+        
+        new_test['params'] = html.escape(new_test['params'], quote=True)
     
         # duration
         setup_duration = test.get("setup", {}).get("duration", 0)
