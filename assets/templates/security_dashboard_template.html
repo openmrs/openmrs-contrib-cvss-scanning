@@ -35,8 +35,8 @@
         </p>
     </div>
     <div class = "tabs_buttons">
-        <button style="margin-right:5px;" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
-        <button style="margin-left:5px;" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
+        <button class="tabs_buttons-left" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
+        <button class=".tabs_buttons-right" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
     </div>
     <div id="tabs_div">
         <div id ="vulnerability_testing">
@@ -47,11 +47,11 @@
                 </div>
                 <div class="stat-card">
                     <h3>Passed</h3>
-                    <p style="color: #38a169;">{{ summary_data.passed }}</p>
+                    <p class="passed">{{ summary_data.passed }}</p>
                 </div>
                 <div class="stat-card">
                     <h3>Failed</h3>
-                    <p style="color: #e53e3e;">{{ summary_data.failed }}</p>
+                    <p class="failed">{{ summary_data.failed }}</p>
                 </div>
                 <div class="stat-card">
                     <h3>Duration</h3>
@@ -98,12 +98,11 @@
                         {{ category.icon }}&nbsp;{{ category.name }}
                     </span>
                     <span class="category-meta">
-                        <span class="{{ category.max_severity_class }}" style="color:white; font-weight:600; font-size:12px; padding:3px 10px; border-radius:10px; margin-right:8px;">
+                        <span class="{{ category.max_severity_class }} max-cvss">
                         Highest CVSS: {{ category.max_cvss }} — {{ category.max_severity}}</span>
                         <span class="cat-trend-wrapper">
                             <span class="cat-trend-label">Max CVSS trend:</span>
                             
-                            <!-- TODO: improvement badge -->
                             <span class="improvement-badge {{ category.improvement_class }}">
                                 {{ category.improvement_symbol }}
                                 {{ category.improvement_number }}
@@ -113,7 +112,7 @@
                                 id="canvas_{{ category.id }}" 
                                 width="100" 
                                 height="28" 
-                                style="display:block;" 
+                                class="trendline-canvas"
                                 data-labels='{{ category.labels | tojson | e }}'
                                 data-history="{{ category.history | tojson }}"></canvas>
                         </span>

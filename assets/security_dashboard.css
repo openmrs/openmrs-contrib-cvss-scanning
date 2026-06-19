@@ -64,6 +64,14 @@ body {
     font-weight: bold;
 }
 
+.stat-card .passed {
+    color: #38a169;
+}
+
+.stat-card .failed {
+    color: #e53e3e;
+}
+
 .test-results {
     background: white;
     border-radius: 12px;
@@ -102,6 +110,15 @@ body {
     gap: 10px;
     font-size: 13px;
     color: #718096;
+}
+
+.category-meta .max-cvss {
+    color:white;
+    font-weight:600;
+    font-size:12px;
+    padding:3px 10px;
+    border-radius:10px;
+    margin-right:8px;
 }
 
 .chevron {
@@ -286,6 +303,12 @@ tr:hover {
     width:50%;
     height:50px;
 }
+.tabs_buttons-left {
+    margin-right:5px;
+}
+.tabs_buttons-right {
+    margin-left:5px;
+}
 .tabs_buttons button:hover{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
     background-color:#edf2f7;
@@ -406,6 +429,8 @@ iframe{
     border-radius: 4px;
 }
 
+/* Improvement badges */
+
 .improvement-badge {
     color:#28a745;
     font-weight:bold;
@@ -422,4 +447,8 @@ iframe{
 
 .improvement-neutral {
     color:#718096;
+}
+
+.trendline-canvas {
+    display:block;
 }
