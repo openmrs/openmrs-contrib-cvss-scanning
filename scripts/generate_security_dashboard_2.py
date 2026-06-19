@@ -9,6 +9,8 @@ import json
 import html
 import re
 
+from test_results_database_utils import *
+
 from datetime import datetime, timezone
 from jinja2 import Environment, FileSystemLoader
 
@@ -195,6 +197,12 @@ def prepare_data():
                 "max_cvss" : 0,
                 "max_cvss_class" : "",
                 "max_severity" : "UNKNOWN",
+                "history": [],
+                "labels": [],
+                "improvement_number": 0.0,
+                "improvement_sybmol": "",
+                "improvement_arrow": "-",
+                "improvement_class": "improvement-neutral",
             }
             
             new_category["id"] = "cat_" + re.sub(r'[^a-zA-Z_]', '_', category)
@@ -401,8 +409,47 @@ def display_test_data():
     with open("assets/renders/security_dashboard.html", 'w', encoding="utf-8") as f:
         f.write(output)
 
+def database_operations():
+    
+    init_db()
+    
+    for test in tests:
+        # save test results in database
+        save_test_result(test["name"], test["cvss_score"], test["status"])
+    
+    for category in categories:
+        # save max cvss of a category
+        save_category_max_cvss(category["name"], category["max_cvss"])
+    
+        # prepare history data and labels
+        category_history = get_category_history(category["name"])
+        category_history_labels = []
+        
+        for i in range(0, len(category_history)):
+            category_history_labels.append(f"Run {i+1}")
+        
+        category["history"] = category_history
+        category["labels"] = category_history_labels
+        
+        # improvement
+        baseline = get_category_baseline(category["name"])
+        
+        if baseline is not None and category["max_cvss"] is not None:
+            improvement = baseline - category["max_cvss"]
+            
+            category["improvement_number"] = round(improvement, 1)
+            
+            if improvement > 0:
+                category["improvement_class"] = "improvement-positive"
+                category["improvement_sybmol"] = "+"
+                category["improvement_arrow"] = "↑"
+            elif improvement < 0:
+                category["improvement_class"] = "improvement-negative"
+                category["improvement_sybmol"] = "-"
+                category["improvement_arrow"] = "↓"
 
 if __name__ == "__main__":
     extract_relevant_test_data()
     prepare_data()
+    database_operations()
     display_test_data()

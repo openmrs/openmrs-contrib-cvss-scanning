@@ -102,9 +102,54 @@
                         Highest CVSS: {{ category.max_cvss }} — {{ category.max_severity}}</span>
                         <span class="cat-trend-wrapper">
                             <span class="cat-trend-label">Max CVSS trend:</span>
-                            <!-- INVOLVES DB ACTIVITY!!!-->
-                            {cat_trend_html} -- TODO with DB
+                            
+                            <!-- TODO: improvement badge -->
+                            <span class="improvement-badge {{ category.improvement_class }}">
+                                {{ category.improvement_symbol }}
+                                {{ category.improvement_number }}
+                                {{ category.improvement_arrow }}
+                            </span>
+                            <canvas 
+                                id="canvas_{{ category.id }}" 
+                                width="100" 
+                                height="28" 
+                                style="display:block;" 
+                                data-labels='{{ category.labels | tojson | e }}'
+                                data-history="{{ category.history | tojson }}"></canvas>
                         </span>
+                        <script>
+                            new_canvas = document.getElementById("canvas_{{ category.id }}");
+                            labels = JSON.parse(new_canvas.dataset.labels);
+                            history_data = JSON.parse(new_canvas.dataset.history);
+
+                            new Chart(new_canvas, {
+                                type: "line",
+                                data: {
+                                    labels: labels,
+                                    datasets: [{
+                                        data: history_data,
+                                        borderColor: "#e53e3e",
+                                        borderWidth: 1.5,
+                                        pointRadius: 1.5,
+                                        fill: false,
+                                        tension: 0.3
+                                    }]
+                                },
+                                options: {
+                                    plugins: { legend: { display: false }, tooltip: {
+                                        callbacks: {
+                                            title: function(items) { return items[0].label; },
+                                            label: function(item) { return "Max CVSS: " + item.parsed.y.toFixed(1); }
+                                        }
+                                    } },
+                                    scales: {
+                                        x: { display: false },
+                                        y: { display: false, min: 0, max: 10 }
+                                    },
+                                    animation: false
+                                }
+                            });
+                        </script>
                         <span class="category-header passed">{{ category.passed }} passed</span>
                         &nbsp;/&nbsp;
                         <span class="category-header failed">{{ category.failed }} failed</span>

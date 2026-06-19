@@ -405,3 +405,21 @@ iframe{
     height: 20px;
     border-radius: 4px;
 }
+
+.improvement-badge {
+    color:#28a745;
+    font-weight:bold;
+    font-size:11px;
+}
+
+.improvement-positive {
+    color:#28a745;
+}
+
+.improvement-negative {
+    color:#dc3545;
+}
+
+.improvement-neutral {
+    color:#718096;
+}
