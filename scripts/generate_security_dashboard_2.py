@@ -7,6 +7,7 @@
 
 import json
 import html
+import re
 
 from datetime import datetime, timezone
 from jinja2 import Environment, FileSystemLoader
@@ -22,6 +23,11 @@ summary_data : dict = {
 tests = []
 current_time = None
 categories = []
+pie_chart_data = {
+    "failed": {},
+    "coverage": {},
+    "category_colors": {},
+}
 
 def get_severity_class(severity, status="failed"):
     colors = {
@@ -192,7 +198,7 @@ def prepare_data():
                 "max_severity" : "UNKNOWN",
             }
             
-            new_category["id"] = "cat_" + category.replace(" ", "_")
+            new_category["id"] = "cat_" + re.sub(r'[^a-zA-Z_]', '_', category)
             
             categories.append(new_category)
 
@@ -218,6 +224,39 @@ def prepare_data():
         category["max_severity_class"] = get_severity_class(category["max_severity"])
         
         category["icon"] = '✅' if category["failed"] == 0 else ('❌' if category["passed"] == 0 else '⚠️')
+    
+    # prepare pie charts
+    prepare_pie_charts()
+
+def prepare_pie_charts():
+    # collect all failing categories
+    # collect percent failing from total    
+    pie_chart_data["failed"]["percents"] = []
+    for i in range(0, len(categories)):
+        if categories[i]["failed"] > 0:
+            
+            # calculate total failed out of all failed
+            percent_failed = 100 * categories[i]["failed"] / summary_data["failed"]
+            percent_failed = round(percent_failed, 2)
+            
+            pie_chart_data["failed"]["percents"].append([categories[i]["name"], percent_failed, categories[i]["id"]])
+    
+    # sort data
+    pie_chart_data["failed"]["percents"].sort(key=lambda x: x[1])
+    
+    # collect total test coverage
+    pie_chart_data["coverage"]["percents"] = []
+    for i in range(0, len(categories)):
+        if categories[i]["total"] > 0:
+            
+            # calculate total covered out of all tests
+            percent_covered = 100 * categories[i]["total"] / summary_data["total"]
+            percent_covered = round(percent_covered, 2)
+            
+            pie_chart_data["coverage"]["percents"].append([categories[i]["name"], percent_covered, categories[i]["id"]])
+    
+    # sort data
+    pie_chart_data["coverage"]["percents"].sort(key=lambda x: x[1])
 
 def display_pie_chart_css():
     # write custom css for pie chart
@@ -235,28 +274,48 @@ def display_pie_chart_css():
     
     # failed tests
     current_percent = 0
-    for i in range(0, len(categories)):
-        current_percent += (categories[i]["failed"] / summary_data['failed']) * 100
-        pie_chart_css += f"  --cat_fail_{i}: {current_percent}%;\n"
+    for category in pie_chart_data["failed"]["percents"]:
+        category_id = category[2]
+        current_percent += category[1]
+        current_percent = round(current_percent)
+        current_percent = min(100.0, current_percent)
+        pie_chart_css += f"  --fail_{category_id}: {current_percent}%;\n"
     
     # test coverage
+    # failed tests
     current_percent = 0
-    for i in range(0, len(categories)):
-        current_percent += round((categories[i]["total"] / summary_data['total']) * 100)
-        pie_chart_css += f"  --cat_total_{i}: {current_percent}%;\n"
+    for category in pie_chart_data["coverage"]["percents"]:
+        category_id = category[2]
+        current_percent += category[1]
+        current_percent = round(current_percent)
+        current_percent = min(100.0, current_percent)
+        pie_chart_css += f"  --coverage_{category_id}: {current_percent}%;\n"
     
     pie_chart_css += """}
 .chart-container-failed-tests {
     background: conic-gradient("""
     
-    for i in range(0, len(categories)):
+    for i in range(0, len(pie_chart_data["failed"]["percents"])):
+        
+        category = pie_chart_data["failed"]["percents"][i]
+        
+        # set HTML color
+        category_id = category[2]
+        
+        if category_id not in pie_chart_data["category_colors"]:
+            pie_chart_data["category_colors"][category_id] = html_colors.pop()
+        
+        color = pie_chart_data["category_colors"][category_id]
         
         if i == 0:
-            pie_chart_css += f"{html_colors[i]} 0% var(--cat_fail_{i})"
+            pie_chart_css += f"{color} 0% var(--fail_{category_id})"
         else:
-            pie_chart_css += f"{html_colors[i]} var(--cat_fail_{i-1}) var(--cat_fail_{i})"
+            prev_category = pie_chart_data["failed"]["percents"][i-1]
+            prev_category_id = prev_category[2]
+            
+            pie_chart_css += f"{color} var(--fail_{prev_category_id}) var(--fail_{category_id})"
         
-        if i != len(categories) - 1:
+        if i != len(pie_chart_data["failed"]["percents"]) - 1:
             pie_chart_css += ","
         
         pie_chart_css += "\n"
@@ -269,14 +328,24 @@ def display_pie_chart_css():
 .chart-container-total-tests {
     background: conic-gradient("""
     
-    for i in range(0, len(categories)):
+    for i in range(0, len(pie_chart_data["coverage"]["percents"])):
+        
+        category = pie_chart_data["coverage"]["percents"][i]
+        
+        # set HTML color
+        category_id = category[2]
+        category.append(html_colors[i])
+        color = category[3]
         
         if i == 0:
-            pie_chart_css += f"{html_colors[i]} 0% var(--cat_total_{i})"
+            pie_chart_css += f"{color} 0% var(--coverage_{category_id})"
         else:
-            pie_chart_css += f"{html_colors[i]} var(--cat_total_{i-1}) var(--cat_total_{i})"
+            prev_category = pie_chart_data["coverage"]["percents"][i-1]
+            prev_category_id = prev_category[2]
+            
+            pie_chart_css += f"{color} var(--coverage_{prev_category_id}) var(--coverage_{category_id})"
         
-        if i != len(categories) - 1:
+        if i != len(pie_chart_data["coverage"]["percents"]) - 1:
             pie_chart_css += ","
         
         pie_chart_css += "\n"
@@ -285,8 +354,11 @@ def display_pie_chart_css():
     );
 }"""
 
-    for i in range(0, len(categories)):
-        pie_chart_css += f"\n.category_color_{i} {{ background: {html_colors[i]}; }}"
+    for key in pie_chart_data["category_colors"].keys():
+        category_id = key
+        color = pie_chart_data["category_colors"][category_id]
+        
+        pie_chart_css += f"\n.category_color_{category_id} {{ background: {color}; }}"
     
     with open("assets/pie_chart.css", "w") as f:
         f.write(pie_chart_css)
@@ -304,6 +376,7 @@ def display_test_data():
         tests = tests,
         current_time = current_time,
         categories = categories,
+        pie_chart_data = pie_chart_data,
     )
         
     # save to file

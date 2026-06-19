@@ -65,8 +65,11 @@
                     <div class="chart-wrapper">
                         <div class="chart-container chart-container-failed-tests"></div>
                         <div class="legend">
-                            {% for category in categories %}
-                            <div class="legend-item"><div class="legend-color category_color_{{ loop.index0 }}"></div> {{ category.name }} - {{ (100 * category.failed / summary_data.failed) | round(1) }}%</div>
+                            {% for category in pie_chart_data.failed.percents %}
+                            <div class="legend-item">
+                                <div class="legend-color category_color_{{ category[2] }}"></div>
+                                {{ category[0] }}: {{ category[1] }}%
+                            </div>
                             {% endfor %}
                         </div>
                     </div>
@@ -76,8 +79,11 @@
                     <div class="chart-wrapper">
                         <div class="chart-container chart-container-total-tests"></div>
                         <div class="legend">
-                            {% for category in categories %}
-                            <div class="legend-item"><div class="legend-color category_color_{{ loop.index0 }}"></div> {{ category.name }} - {{ (100 * category.total / summary_data.total) | round(1) }}%</div>
+                            {% for category in pie_chart_data.coverage.percents %}
+                            <div class="legend-item">
+                                <div class="legend-color category_color_{{ category[2] }}"></div>
+                                {{ category[0] }}: {{ category[1] }}%
+                            </div>
                             {% endfor %}
                         </div>
                     </div>
