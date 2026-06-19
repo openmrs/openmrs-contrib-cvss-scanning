@@ -132,7 +132,11 @@
                                     {% if test.status == "passed" %}
                                         <tr>
                                             <td><strong>{{test.name}}</strong></td>
-                                            <td>{{ test.params }}</td>
+                                            <td>
+                                            {% for param in test.params %}
+                                                <p>{{ param }}</p>
+                                            {% endfor %}
+                                            </td>
                                             <td>{{ test.description }}</td>
                                             <!-- status class is the same as-->
                                             <td><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
@@ -172,7 +176,11 @@
                                     {% if test.status== "failed" %}    
                                         <tr>
                                             <td><strong>{{test.name}}</strong></td>
-                                            <td>{{ test.params }}</td>
+                                            <td>
+                                            {% for param in test.params %}
+                                                <p>{{ param }}</p>
+                                            {% endfor %}
+                                            </td>
                                             <td>{{ test.description }}</td>
                                             <td><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
                                             <td>

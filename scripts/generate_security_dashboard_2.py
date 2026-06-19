@@ -92,11 +92,20 @@ def extract_relevant_test_data():
         
         # parameter list
         # TODO: Fix 2D dicts
-        new_test['params'] = test.get("params", {})
-        new_test['params'] = ", ".join(f"{key}: {value}" for key, value in new_test["params"].items())
+        params_dict : dict = test.get("params", {})
+        new_test['params'] = []
         
-        new_test['params'] = html.escape(new_test['params'], quote=True)
-    
+        # if empty, add N/A
+        if bool(params_dict) == False:
+            new_test['params'].append("N/A")
+        
+        else:
+            # add parameters as lines
+            for key in params_dict.keys():
+                param_str = f"{key}: {str(params_dict[key])}"
+                param = html.escape(param_str, quote=True)
+                new_test['params'].append(param)
+            
         # duration
         setup_duration = test.get("setup", {}).get("duration", 0)
         call_duration = test.get("call", {}).get("duration", 0)
