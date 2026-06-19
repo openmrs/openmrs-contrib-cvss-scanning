@@ -97,7 +97,6 @@ def extract_relevant_test_data():
         new_test['severity_class'] = get_severity_class(new_test['severity'], new_test['status'])
         
         # parameter list
-        # TODO: Fix 2D dicts
         params_dict : dict = test.get("params", {})
         new_test['params'] = []
         
@@ -255,8 +254,26 @@ def prepare_pie_charts():
             
             pie_chart_data["coverage"]["percents"].append([categories[i]["name"], percent_covered, categories[i]["id"]])
     
+    # combine lower percent tests
+    keepGoing = True
+    current_index = 0
+    current_sum = 0
+    while keepGoing:
+        category_percent = pie_chart_data["coverage"]["percents"][current_index][1]
+        if category_percent < 5.0:
+            current_sum += category_percent
+            
+            # remove from list
+            pie_chart_data["coverage"]["percents"].pop(current_index)
+        else:
+            current_index += 1
+        
+        if current_index >= len(pie_chart_data["coverage"]["percents"]):
+            keepGoing = False
+    
     # sort data
     pie_chart_data["coverage"]["percents"].sort(key=lambda x: x[1])
+    pie_chart_data["coverage"]["percents"].insert(0, ["Other", current_sum, "other"])
 
 def display_pie_chart_css():
     # write custom css for pie chart
@@ -334,8 +351,9 @@ def display_pie_chart_css():
         
         # set HTML color
         category_id = category[2]
-        category.append(html_colors[i])
-        color = category[3]
+        if category_id not in pie_chart_data["category_colors"]:
+            pie_chart_data["category_colors"][category_id] = html_colors.pop()
+        color = pie_chart_data["category_colors"][category_id]
         
         if i == 0:
             pie_chart_css += f"{color} 0% var(--coverage_{category_id})"
