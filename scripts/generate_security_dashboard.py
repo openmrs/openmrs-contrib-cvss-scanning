@@ -406,7 +406,7 @@ def display_test_data():
     )
         
     # save to file
-    with open("assets/renders/security_dashboard.html", 'w', encoding="utf-8") as f:
+    with open("security_dashboard.html", 'w', encoding="utf-8") as f:
         f.write(output)
 
 def database_operations():
