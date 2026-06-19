@@ -1,329 +1,135 @@
-#!/usr/bin/env python3
-"""
-OpenMRS O3 Security Dashboard Generator
-Parses test results and generates HTML dashboard with CVSS scores
-
-CVSS 4.0 Migration: Automatically extracts test descriptions from docstrings
-"""
+# Dashboard Generator
+# Goal:
+# 1. Extract relevant test data from JSON
+# 2. Save relevant test data to DB
+# 3. Filter test data
+# 4. Display test data
 
 import json
 import html
 import re
-import sys
-import sqlite3
-import os
-import html as html_lib
-from datetime import datetime
-from datetime import timezone
-from pathlib import Path
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'test_results.db')
+from test_results_database_utils import *
 
-def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS baselines (
-            test_name TEXT PRIMARY KEY,
-            baseline_score REAL NOT NULL,
-            recorded_at TEXT NOT NULL
-        )
-    ''')
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS history (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            test_name TEXT NOT NULL,
-            cvss_score REAL NOT NULL,
-            status TEXT NOT NULL,
-            run_at TEXT NOT NULL
-        )
-    ''')
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS category_history (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            category TEXT NOT NULL,
-            max_cvss REAL NOT NULL,
-            run_at TEXT NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
+from datetime import datetime, timezone
+from jinja2 import Environment, FileSystemLoader
 
+JSON_REPORT_PATH = 'report.json'
 
-def save_test_result(test_name, cvss_score, status):
-    if cvss_score is None:
-        return
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    now = datetime.now().isoformat()
-    c.execute('SELECT baseline_score FROM baselines WHERE test_name = ?', (test_name,))
-    if c.fetchone() is None:
-        c.execute(
-            'INSERT INTO baselines (test_name, baseline_score, recorded_at) VALUES (?, ?, ?)',
-            (test_name, cvss_score, now)
-        )
-    c.execute(
-        'INSERT INTO history (test_name, cvss_score, status, run_at) VALUES (?, ?, ?, ?)',
-        (test_name, cvss_score, status, now)
-    )
-    conn.commit()
-    conn.close()
+summary_data : dict = {
+    "failed" : 0,
+    "passed" : 0,
+    "total" : 0,
+    "duration" : 0,
+}
+tests = []
+current_time = None
+categories = []
+pie_chart_data = {
+    "failed": {},
+    "coverage": {},
+    "category_colors": {},
+}
 
-
-def save_category_max_cvss(category, max_cvss):
-    if max_cvss is None:
-        return
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    now = datetime.now().isoformat()
-    c.execute(
-        'INSERT INTO category_history (category, max_cvss, run_at) VALUES (?, ?, ?)',
-        (category, max_cvss, now)
-    )
-    conn.commit()
-    conn.close()
-
-
-def get_baseline(test_name):
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute('SELECT baseline_score FROM baselines WHERE test_name = ?', (test_name,))
-        row = c.fetchone()
-        conn.close()
-        return row[0] if row else None
-    except Exception as e:
-        print(f'Warning: Could not get baseline for {test_name}: {e}')
-        return None
-
-
-def get_history(test_name, limit=20):
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute(
-            'SELECT cvss_score FROM history WHERE test_name = ? ORDER BY run_at DESC LIMIT ?',
-            (test_name, limit)
-        )
-        rows = c.fetchall()
-        conn.close()
-        return [row[0] for row in reversed(rows)]
-    except Exception as e:
-        print(f'Warning: Could not get history for {test_name}: {e}')
-        return []
-
-
-def get_category_history(category, limit=20):
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute(
-            'SELECT max_cvss FROM category_history WHERE category = ? ORDER BY run_at DESC LIMIT ?',
-            (category, limit)
-        )
-        rows = c.fetchall()
-        conn.close()
-        return [row[0] for row in reversed(rows)]
-    except Exception as e:
-        print(f'Warning: Could not get category history for {category}: {e}')
-        return []
-
-
-def generate_category_trend_html(category, history, max_cvss):
-    safe_id = ''.join(c if c.isalnum() else '_' for c in category)
-    chart_id = f"cat_trend_{safe_id}"
-
-    # Improvement badge vs category baseline (first recorded max_cvss)
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute('SELECT max_cvss FROM category_history WHERE category = ? ORDER BY run_at ASC LIMIT 1', (category,))
-        row = c.fetchone()
-        conn.close()
-        cat_baseline = row[0] if row else None
-    except Exception as e:
-        print(f'Warning: Could not get category baseline for {category}: {e}')
-        cat_baseline = None
-
-    if cat_baseline is not None and max_cvss is not None:
-        improvement = round(cat_baseline - max_cvss, 1)
-        if improvement > 0:
-            improvement_badge = f'<span style="color:#28a745; font-weight:bold; font-size:11px;">+{improvement:.1f} ↑</span>'
-        elif improvement < 0:
-            improvement_badge = f'<span style="color:#dc3545; font-weight:bold; font-size:11px;">{improvement:.1f} ↓</span>'
-        else:
-            improvement_badge = '<span style="color:#718096; font-size:11px;">0.0 —</span>'
-    else:
-        improvement_badge = ''
-
-    if len(history) < 2:
-        return f'{improvement_badge} <span style="color:#a0aec0; font-size:11px;">Not enough data</span>'
-
-    history_json = json.dumps(history)
-    labels_json = json.dumps([f"Run {i+1}" for i in range(len(history))])
-
-    return f'''{improvement_badge}<canvas id="{chart_id}" width="100" height="28" style="vertical-align:middle; display:block;"></canvas>
-    <script>
-    new Chart(document.getElementById("{chart_id}"), {{
-        type: "line",
-        data: {{
-            labels: {labels_json},
-            datasets: [{{
-                data: {history_json},
-                borderColor: "#e53e3e",
-                borderWidth: 1.5,
-                pointRadius: 1.5,
-                fill: false,
-                tension: 0.3
-            }}]
-        }},
-        options: {{
-            plugins: {{ legend: {{ display: false }}, tooltip: {{
-                callbacks: {{
-                    title: function(items) {{ return items[0].label; }},
-                    label: function(item) {{ return "Max CVSS: " + item.parsed.y.toFixed(1); }}
-                }}
-            }} }},
-            scales: {{
-                x: {{ display: false }},
-                y: {{ display: false, min: 0, max: 10 }}
-            }},
-            animation: false
-        }}
-    }});
-    </script>'''
-
-
-def get_test_description_from_docstring(test_nodeid):
-    try:
-        if '::' not in test_nodeid:
-            return get_test_description_fallback(test_nodeid)
-        
-        file_path, test_name = test_nodeid.split('::')
-        
-        abs_path = Path("tests/" + file_path).resolve()
-                
-        if not abs_path.exists():
-            print(f"Warning: Test file not found: {abs_path}")
-            return get_test_description_fallback(test_name)
-        
-        with open(abs_path, 'r', encoding="utf-8") as f:
-            content = f.read()
-        
-        pattern = rf'def {re.escape(test_name)}\([^)]*\):\s*"""(.*?)"""'
-        match = re.search(pattern, content, re.DOTALL)
-        
-        if match:
-            docstring = match.group(1).strip()
-            lines = [line.strip() for line in docstring.split('\n') if line.strip()]
-            description = ' '.join(lines)
-            
-            if len(description) > 250:
-                description = description[:247] + '...'
-            
-            return description
-        else:
-            print(f"Warning: No docstring found for {test_name}")
-            return get_test_description_fallback(test_name)
-        
-    except Exception as e:
-        print(f"Warning: Could not extract docstring for {test_nodeid}: {e}")
-        return get_test_description_fallback(test_nodeid.split('::')[-1] if '::' in test_nodeid else test_nodeid)
-
-
-def get_test_description_fallback(test_name):
-    descriptions = {
-        'test_brute_force_password': 'Tests account lockout and cooldown after 7 failed login attempts with known username "admin". Uses CVSS 4.0 with dynamic scoring based on observed security mechanisms.',
-        'test_credential_guessing': 'Complete credential guessing attack (random username + password)',
-        'test_password_attack_6_attempts': 'Password attack with 6 incorrect attempts',
-        'test_password_attack_7_attempts': 'Password attack with 7 incorrect attempts',
-        'test_password_attack_8_attempts': 'Password attack with 8 incorrect attempts',
-        'test_session_hijacking': 'Session hijacking attack using stolen session token',
-        'test_idle_timeout': 'Idle session timeout verification',
-        'test_expired_session_reuse': 'Expired session token reuse attempt',
-    }
-    
-    for key, desc in descriptions.items():
-        if key in test_name:
-            return desc
-    
-    readable_name = test_name.replace('test_', '').replace('_', ' ').title()
-    return f'{readable_name} security test'
-
-def get_severity_color(severity):
+def get_severity_class(severity, status="failed"):
     colors = {
-        'CRITICAL': '#dc3545',
-        'HIGH': '#fd7e14',
-        'MEDIUM': '#ffc107',
-        'LOW': '#28a745',
-        'NONE': '#6c757d',
-        'UNKNOWN': '#6c757d',
+        'CRITICAL': 'severity-critical',
+        'HIGH': 'severity-high',
+        'MEDIUM': 'severity-medium',
+        'LOW': 'severity-low',
+        'NONE': 'severity-none',
+        'UNKNOWN': 'severity-unknown',
     }
-    return colors.get(severity, '#6c757d')
+    
+    color = colors.get('NONE')
+    
+    if status != "passed":
+        color = colors.get(severity, '.severity-unknown')
+    
+    return color
 
-def get_cvss_severity(cvss_score):
-    if cvss_score >= 9.0:
-        severity = "CRITICAL"
-    elif cvss_score >= 7.0:
-        severity = "HIGH"
-    elif cvss_score >= 4.0:
-        severity = "MEDIUM"
-    else:
-        severity = "LOW"
-    
-    return severity
+def extract_relevant_test_data():
 
-def parse_test_results():
+    report = None
+
+    # import JSON
     try:
-        with open('report.json', 'r') as f:
-            json_report = json.load(f)
-    except FileNotFoundError:
-        print("Error: report.json not found")
-        sys.exit(1)
+        with open(JSON_REPORT_PATH, 'r') as report_file:
+            report = json.load(report_file)
+
+    except:
+        print("Could not load JSON file")
     
-    try:
-        with open('test_output.log', 'r') as f:
-            log_content = f.read()
-    except FileNotFoundError:
-        print("Warning: test_output.log not found")
-        log_content = ""
+    # get summary data
+    report_summary = report['summary']
     
-    results = []
+    summary_data["duration"] = report['duration']
+    summary_data["failed"] = report_summary['failed']
+    summary_data["passed"] = report_summary['passed']
+    summary_data["total"] = report_summary['total']
     
-    for test in json_report.get('tests', []):
-        test_name = test.get('nodeid', 'Unknown Test')
+    # extract relevant test data
+    report_tests = report["tests"]
+    
+    for test in report_tests:
+        new_test = {
+            'full_name':        "",
+            'name':             "",
+            'category':         "",
+            'description':      "",
+            'status':           "",
+            'status_class':     "",
+            'cvss_score':       "",
+            'severity':         "",
+            'severity_class':   "",
+            'duration':         "",
+            'params':           {},
+            'errors':           "",
+        }
         
-        status = 'PASS' if test.get('outcome') == 'passed' else 'FAIL'
+        new_test["full_name"] = test.get("nodeid", "Could not find in report.")
+        new_test["name"] = test.get("scenario", "Could not find in report.")
+        new_test["category"] = test.get("feature", "Could not find in report.")
+        new_test['description'] = test.get("scenario_description", "Could not find in report.")
+        new_test['status'] = test.get("outcome", "Could not find in report.")
+        new_test['status_class'] = "status-pass" if new_test['status'] == "passed" else "status-fail"
         
-        file_path = test_name.split('::')[0]
-        path_parts = file_path.split('/')
-        if len(path_parts) >= 2:
-            category = path_parts[-2]
+        new_test['cvss_score'] = test.get("cvss_score", "Could not find in report.")
+        new_test['severity'] = test.get("severity", "Could not find in report.")
+        new_test['severity_class'] = get_severity_class(new_test['severity'], new_test['status'])
+        
+        # parameter list
+        params_dict : dict = test.get("params", {})
+        new_test['params'] = []
+        
+        # if empty, add N/A
+        if bool(params_dict) == False:
+            new_test['params'].append("N/A")
+        
         else:
-            category = 'uncategorized'
-
-        duration = test.get('call', {}).get('duration', 0)
+            # add parameters as lines
+            for key in params_dict.keys():
+                param_str = f"{key}: {str(params_dict[key])}"
+                param = html.escape(param_str, quote=True)
+                new_test['params'].append(param)
+            
+        # duration
+        setup_duration = test.get("setup", {}).get("duration", 0)
+        call_duration = test.get("call", {}).get("duration", 0)
+        teardown_duration = test.get("teardown", {}).get("duration", 0)
         
-        if duration == 0 or duration is None:
-            setup_duration = test.get('setup', {}).get('duration', 0) or 0
-            call_duration = test.get('call', {}).get('duration', 0) or 0
-            teardown_duration = test.get('teardown', {}).get('duration', 0) or 0
-            duration = setup_duration + call_duration + teardown_duration
+        new_test['duration'] = setup_duration + call_duration + teardown_duration
         
-        cvss_score = test.get('cvss_score')
-        severity = test.get('severity')
+        # round
+        if new_test['duration'] > 60:
+            new_test['duration'] = new_test['duration'] / 60
+            new_test['duration'] = round(new_test['duration'], 2)
+            new_test['duration'] = f"{new_test['duration']}m"
+        else:
+            new_test['duration'] = round(new_test['duration'], 2)
+            new_test['duration'] = f"{new_test['duration']}s"
         
-        description = test.get("scenario_description", "No description available")
-        
-        category = test.get("feature", "No feature found")
-        scenario = test.get("scenario", "No scenario found")
-        
-        params_match = re.search(re.compile(r"\[.+\]"), test_name)
-        params = "N/A"
-        if params_match:
-            params = params_match.group(0)[1:-1]
-            params = html.escape(params, quote=True)
-        
+        # errors
         error_text = test.get('call', {}).get('longrepr', None)
         arrow_line = ""
         error_lines = []
@@ -348,331 +154,302 @@ def parse_test_results():
                         
         error_lines.insert(0, arrow_line)
         
-        results.append({
-            'full_name': test_name,
-            'name': test_name,
-            'category': category,
-            'scenario': scenario,
-            'description': description,
-            'status': status,
-            'cvss_score': cvss_score,
-            'severity': severity,
-            'duration': duration,
-            'params': params,
-            'errors':error_lines,
-        })
-    grouped = {}
-    for r in results:
-        grouped.setdefault(r['category'], []).append(r)
-
-    return grouped, json_report.get('summary', {})
-
-
-def generate_dashboard_html_header():
-    return f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenMRS O3 Security Dashboard - CVSS 4.0 Migration</title>
-    <link rel="stylesheet" href="assets/security_dashboard.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-    <script>
-        function toggleCategory(id) {{
-            const body    = document.getElementById(id);
-            const chevron = document.getElementById('chevron_' + id);
-            const isOpen  = body.classList.toggle('open');
-            chevron.classList.toggle('open', isOpen);
-        }}
-    </script>
-    <script>
-        function showDiv(id){{
-            const divs = document.querySelectorAll("#tabs_div>div");
-            divs.forEach(d=>{{d.classList.remove("visible")}});
-            document.getElementById(id).classList.add("visible");
-        }}
-    </script>
-</head>"""
-
-def generate_dashboard_page_header():
-    utc = timezone.utc
-    now = datetime.now(utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+        new_test['errors'] = error_lines
     
-    return f"""      <div class="header">
-            <h1>🔒 OpenMRS O3 Security Dashboard</h1>
-            <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
-            <p class="timestamp-line">Last Updated: 
-            <span class="timestamp">
-                {now}
-            </span>
-            </p>
-        </div>\n"""
+        # append test
+        tests.append(new_test)
 
-def generate_dashboard_vulnerability_testing(grouped_results, summary):
-    all_results = [r for group in grouped_results.values() for r in group]
-    total_duration_sec = sum(r['duration'] for r in all_results)
-    total_duration_min = total_duration_sec / 60
-    html = f"""     
-    <div id ="vulnerability_testing">
-        <div class="stats">
-            <div class="stat-card">
-                <h3>Total Tests</h3>
-                <p>{summary.get('total', 0)}</p>
-            </div>
-            <div class="stat-card">
-                <h3>Passed</h3>
-                <p style="color: #38a169;">{summary.get('passed', 0)}</p>
-            </div>
-            <div class="stat-card">
-                <h3>Failed</h3>
-                <p style="color: #e53e3e;">{summary.get('failed', 0)}</p>
-            </div>
-            <div class="stat-card">
-                <h3>Duration</h3>
-                <p>{total_duration_min:.1f}m</p>
-            </div>
-        </div>"""
+def get_cvss_severity(cvss_score):
+    if cvss_score >= 9.0:
+        severity = "CRITICAL"
+    elif cvss_score >= 7.0:
+        severity = "HIGH"
+    elif cvss_score >= 4.0:
+        severity = "MEDIUM"
+    else:
+        severity = "LOW"
+    
+    return severity
 
-    for category, results in grouped_results.items():
-        cat_total  = len(results)
-        cat_passed = sum(1 for r in results if r['status'] == 'PASS')
-        cat_failed = cat_total - cat_passed
-        cat_label  = category.replace('_', ' ').title()
+def prepare_data():
+    
+    # get current time
+    global current_time
+    current_time = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+    
+    # convert and round duration
+    summary_data["duration"] = summary_data["duration"] / 60
+    summary_data["duration"] = round(summary_data["duration"], 1)
+    
+    # get categories
+    for test in tests:
+        category:str = test["category"]
+        if category not in (c["name"] for c in categories):
+            
+            new_category = {
+                "name" : category,
+                "total" : 0,
+                "passed" : 0,
+                "failed" : 0,
+                "label" : "",
+                "icon" : "",
+                "id" : "",
+                "max_cvss" : 0,
+                "max_cvss_class" : "",
+                "max_severity" : "UNKNOWN",
+                "history": [],
+                "labels": [],
+                "improvement_number": 0.0,
+                "improvement_sybmol": "",
+                "improvement_arrow": "-",
+                "improvement_class": "improvement-neutral",
+            }
+            
+            new_category["id"] = "cat_" + re.sub(r'[^a-zA-Z_]', '_', category)
+            
+            categories.append(new_category)
 
-        cat_icon = '✅' if cat_failed == 0 else ('❌' if cat_passed == 0 else '⚠️')
+    # get category stats
+    for category in categories:
+        for test in tests:
+            if test["category"] == category["name"]:
+                # collect stats
+                category["total"] += 1
+                
+                if test["status"] == "passed":
+                    category["passed"] += 1
+                elif test["status"] == "failed":
+                    category["failed"] += 1
+                
+                # cvss
+                if test["cvss_score"] > category["max_cvss"]:
+                    if test["status"] == "failed":
+                        category["max_cvss"] = test["cvss_score"]
+        
+        category["max_severity"] = get_cvss_severity(category["max_cvss"])
+        
+        category["max_severity_class"] = get_severity_class(category["max_severity"])
+        
+        category["icon"] = '✅' if category["failed"] == 0 else ('❌' if category["passed"] == 0 else '⚠️')
+    
+    # prepare pie charts
+    prepare_pie_charts()
 
-        cat_id = f"cat_{category}"
-
-        failed_cvss_scores = [
-            r['cvss_score'] for r in results
-            if r['status'] == 'FAIL' and r['cvss_score'] is not None
-        ]
-        max_cvss = max(failed_cvss_scores) if failed_cvss_scores else 0.0
-
-        save_category_max_cvss(category, max_cvss)
-        cat_history = get_category_history(category)
-
-        if max_cvss is not None:
-            max_severity = max_cvss
-            max_severity_color = get_severity_color(get_cvss_severity(max_severity))
-            cvss_badge_html = (
-                f'<span style="background-color:{max_severity_color}; color:white; '
-                f'font-weight:600; font-size:12px; padding:3px 10px; '
-                f'border-radius:10px; margin-right:8px;">'
-                f'Highest CVSS: {max_cvss:.1f} — {get_cvss_severity(max_severity)}</span>'
-            )
+def prepare_pie_charts():
+    # collect all failing categories
+    # collect percent failing from total    
+    pie_chart_data["failed"]["percents"] = []
+    for i in range(0, len(categories)):
+        if categories[i]["failed"] > 0:
+            
+            # calculate total failed out of all failed
+            percent_failed = 100 * categories[i]["failed"] / summary_data["failed"]
+            percent_failed = round(percent_failed, 2)
+            
+            pie_chart_data["failed"]["percents"].append([categories[i]["name"], percent_failed, categories[i]["id"]])
+    
+    # sort data
+    pie_chart_data["failed"]["percents"].sort(key=lambda x: x[1])
+    
+    # collect total test coverage
+    pie_chart_data["coverage"]["percents"] = []
+    for i in range(0, len(categories)):
+        if categories[i]["total"] > 0:
+            
+            # calculate total covered out of all tests
+            percent_covered = 100 * categories[i]["total"] / summary_data["total"]
+            percent_covered = round(percent_covered, 2)
+            
+            pie_chart_data["coverage"]["percents"].append([categories[i]["name"], percent_covered, categories[i]["id"]])
+    
+    # combine lower percent tests
+    keepGoing = True
+    current_index = 0
+    current_sum = 0
+    while keepGoing:
+        category_percent = pie_chart_data["coverage"]["percents"][current_index][1]
+        if category_percent < 5.0:
+            current_sum += category_percent
+            
+            # remove from list
+            pie_chart_data["coverage"]["percents"].pop(current_index)
         else:
-            cvss_badge_html = ''
-
-        cat_trend_html = generate_category_trend_html(category, cat_history, max_cvss)
-        cat_trend_block = f'''<span class="cat-trend-wrapper">
-                    <span class="cat-trend-label">Max CVSS trend:</span>
-                    {cat_trend_html}
-                </span>'''
-
-        html += f"""
-        <div class="test-results">
-            <div class="category-header" onclick="toggleCategory('{cat_id}')">
-                <span class="category-title">
-                    {cat_icon}&nbsp;{cat_label}
-                </span>
-                <span class="category-meta">
-                    {cvss_badge_html}
-                    {cat_trend_block}
-                    <span class="category-header passed">{cat_passed} passed</span>
-                    &nbsp;/&nbsp;
-                    <span class="category-header failed">{cat_failed} failed</span>
-                    &nbsp;·&nbsp;{cat_total} test{'s' if cat_total != 1 else ''}
-                    <span class="chevron" id="chevron_{cat_id}">▼</span>
-                </span>
-            </div>
-            <div class="category-body" id="{cat_id}">\n"""
-
-        failed_results = [r for r in results if r['status'] == 'FAIL']
-        passed_results = [r for r in results if r['status'] == 'PASS']
-
-        TABLE_HEADER = """
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Test Name</th>
-                            <th>Parameters</th>
-                            <th>Description</th>
-                            <th>Status</th>
-                            <th>CVSS Score (Baseline)</th>
-                            <th>Severity</th>
-                            <th>Duration</th>
-                        </tr>
-                    </thead>
-                    <tbody>\n"""
-
-        def render_rows(rows, category):
-            out = ""
-            for r in rows:
-                status_class   = 'status-pass' if r['status'] == 'PASS' else 'status-fail'
-                severity_color = get_severity_color(r['severity'])
-                cvss_display   = f"{r['cvss_score']:.1f}" if r['cvss_score'] is not None else 'N/A'
-
-                duration = r['duration']
-                duration_display = f"{duration/60:.1f}m" if duration >= 60 else f"{duration:.2f}s"
-
-
-                safe_id_name = ''.join(c if c.isalnum() else '_' for c in r['name'])
-                chart_id     = f"chart_{category}_{safe_id_name}"
-
-                param_display = (
-                    f' <span style="font-size:11px; color:#718096; font-weight:400;">'
-                    f'[{html_lib.escape(r["param"])}]</span>'
-                    if r.get('param') else ''
-                )
-
-                if r['name'].find("/") !=-1:
-                    r['name']=r['name'].split("/")[1]
-                if r['name'].find("::") !=-1:
-                    r['name']=r['name'].split("::")[0]
-
-                if r['status'] == 'PASS':
-                    out += f"""
-                        <tr>
-                            <td><strong>{r['scenario'].title()}</strong>{param_display}</td>
-                            <td>{r['params']}</td>
-                            <td>{r['description']}</td>
-                            <td><span class="status-badge {status_class}">{r['status']}</span></td>
-                            <td><span class="cvss-score-pass">{cvss_display}</span></td>
-                            <td><span class="severity-badge" style="background-color: {get_severity_color("NONE")};">{r['severity']}</span></td>
-                            <td>{duration_display}</td>
-                        </tr>\n"""
-                else:
-                    error_text = ""
-                    for i in range(0, len(r["errors"])):
-                        error_text += "<p>" + r["errors"][i] + "</p>"
-                    
-                    out += f"""
-                        <tr>
-                            <td>
-                            <strong>{r['scenario'].title()}</strong>{param_display}
-                            </td>
-                            <td><span class="parameters">{r['params']}</span></td>
-                            <td>{r['description']}</td>
-                            <td><span class="status-badge {status_class}">{r['status']}</span></td>
-                            <td>
-                            <div class="tooltip">
-                                    <span class="cvss-score-fail">{cvss_display}</span>
-                                    <span class="tooltiptext">
-                                        <p><u>Recorded Errors</u></p>
-                                        {error_text}
-                                    </span>
-                                </div>
-                            </td>
-                            <td><span class="severity-badge" style="background-color: {severity_color};">{r['severity']}</span></td>
-                            <td>{duration_display}</td>
-                        </tr>\n"""
-            return out
-
-        if failed_results:
-            html += f"""
-                <details open>
-                    <summary class="subcategory-summary subcategory-fail">
-                        <span>Failed Tests</span>
-                        <span class="subcategory-count">{len(failed_results)} test{'s' if len(failed_results) != 1 else ''}</span>
-                    </summary>
-                    {TABLE_HEADER}
-                    {render_rows(failed_results, category)}
-                    </tbody>
-                </table>
-                </details>\n"""
-
-        if passed_results:
-            html += f"""
-                <details open>
-                    <summary class="subcategory-summary subcategory-pass">
-                        <span>Passed Tests</span>
-                        <span class="subcategory-count">{len(passed_results)} test{'s' if len(passed_results) != 1 else ''}</span>
-                    </summary>
-                    {TABLE_HEADER}
-                    {render_rows(passed_results, category)}
-                    </tbody>
-                </table>
-                </details>\n"""
-
-        html += """
-            </div>
-        </div>\n"""
-
-    html += """
-    </div>\n""" 
-
-    return html
-
-#Buttons to select tabs
-def generate_dashboard_tabs_buttons():
-    html = """  <div class = "tabs_buttons">
-        <button style="margin-right:5px;" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
-        <button style="margin-left:5px;" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
-    </div>\n"""
-    return html
-
-def generate_dependency_scanning_tab():
-    html = f""" <div id="dependency_scanning">
-        <iframe src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/"></iframe>
-    </div>"""
-    return html
-
-def generate_html_dashboard(grouped_results, summary):
-    html = generate_dashboard_html_header()
-    html += f"""
-<body  onload='showDiv("vulnerability_testing")'>
-    {generate_dashboard_page_header()}
-    {generate_dashboard_tabs_buttons()}
-    <div id="tabs_div">
-        {generate_dashboard_vulnerability_testing(grouped_results, summary)}
-        {generate_dependency_scanning_tab()}
-    </div>\n"""
-    html += """
-        <div class="footer">
-            <p>OpenMRS O3 Continuous Security Testing</p>
-            <p>Powered by <a href="https://www.first.org/cvss/v4.0/" target="_blank">CVSS 4.0</a> | 
-            <a href="https://github.com/openmrs/openmrs-contrib-cvss-scanning" target="_blank">GitHub Repository</a> | <a href='/detailed-report.html'>PyTest Report</a></p>
-        </div>
-    </div>
-</body>
-</html>\n"""
-
-    return html
-
-
-def main():
-    print("="*70)
-    print("OpenMRS O3 Security Dashboard Generator")
-    print("="*70)
-    print("")
+            current_index += 1
+        
+        if current_index >= len(pie_chart_data["coverage"]["percents"]):
+            keepGoing = False
     
-    print("Initializing database...")
+    # sort data
+    pie_chart_data["coverage"]["percents"].sort(key=lambda x: x[1])
+    pie_chart_data["coverage"]["percents"].insert(0, ["Other", current_sum, "other"])
+
+def display_pie_chart_css():
+    # write custom css for pie chart
+    
+    html_colors = [
+        "crimson", "teal", "gold", "coral",
+        "darkorchid", "yellowgreen", "hotpink", "steelblue", "orange",
+        "seagreen", "mediumpurple", "tomato", "cornflowerblue", "peru",
+        "limegreen", "deeppink", "dodgerblue", "sienna", "darkturquoise",
+        "indigo", "darkorange", "cadetblue", "firebrick", "mediumseagreen",
+        "slateblue", "salmon", "olivedrab", "mediumvioletred", "yellow",
+    ]
+    
+    pie_chart_css = ":root {\n"
+    
+    # failed tests
+    current_percent = 0
+    for category in pie_chart_data["failed"]["percents"]:
+        category_id = category[2]
+        current_percent += category[1]
+        current_percent = round(current_percent)
+        current_percent = min(100.0, current_percent)
+        pie_chart_css += f"  --fail_{category_id}: {current_percent}%;\n"
+    
+    # test coverage
+    # failed tests
+    current_percent = 0
+    for category in pie_chart_data["coverage"]["percents"]:
+        category_id = category[2]
+        current_percent += category[1]
+        current_percent = round(current_percent)
+        current_percent = min(100.0, current_percent)
+        pie_chart_css += f"  --coverage_{category_id}: {current_percent}%;\n"
+    
+    pie_chart_css += """}
+.chart-container-failed-tests {
+    background: conic-gradient("""
+    
+    for i in range(0, len(pie_chart_data["failed"]["percents"])):
+        
+        category = pie_chart_data["failed"]["percents"][i]
+        
+        # set HTML color
+        category_id = category[2]
+        
+        if category_id not in pie_chart_data["category_colors"]:
+            pie_chart_data["category_colors"][category_id] = html_colors.pop()
+        
+        color = pie_chart_data["category_colors"][category_id]
+        
+        if i == 0:
+            pie_chart_css += f"{color} 0% var(--fail_{category_id})"
+        else:
+            prev_category = pie_chart_data["failed"]["percents"][i-1]
+            prev_category_id = prev_category[2]
+            
+            pie_chart_css += f"{color} var(--fail_{prev_category_id}) var(--fail_{category_id})"
+        
+        if i != len(pie_chart_data["failed"]["percents"]) - 1:
+            pie_chart_css += ","
+        
+        pie_chart_css += "\n"
+    
+    pie_chart_css += """
+    );
+}"""
+    
+    pie_chart_css += """
+.chart-container-total-tests {
+    background: conic-gradient("""
+    
+    for i in range(0, len(pie_chart_data["coverage"]["percents"])):
+        
+        category = pie_chart_data["coverage"]["percents"][i]
+        
+        # set HTML color
+        category_id = category[2]
+        if category_id not in pie_chart_data["category_colors"]:
+            pie_chart_data["category_colors"][category_id] = html_colors.pop()
+        color = pie_chart_data["category_colors"][category_id]
+        
+        if i == 0:
+            pie_chart_css += f"{color} 0% var(--coverage_{category_id})"
+        else:
+            prev_category = pie_chart_data["coverage"]["percents"][i-1]
+            prev_category_id = prev_category[2]
+            
+            pie_chart_css += f"{color} var(--coverage_{prev_category_id}) var(--coverage_{category_id})"
+        
+        if i != len(pie_chart_data["coverage"]["percents"]) - 1:
+            pie_chart_css += ","
+        
+        pie_chart_css += "\n"
+    
+    pie_chart_css += """
+    );
+}"""
+
+    for key in pie_chart_data["category_colors"].keys():
+        category_id = key
+        color = pie_chart_data["category_colors"][category_id]
+        
+        pie_chart_css += f"\n.category_color_{category_id} {{ background: {color}; }}"
+    
+    with open("assets/pie_chart.css", "w") as f:
+        f.write(pie_chart_css)
+
+def display_test_data():
+
+    display_pie_chart_css()
+
+    # load template
+    env = Environment(loader = FileSystemLoader('assets/templates'))
+    template = env.get_template('security_dashboard_template.html')
+    
+    output = template.render(
+        summary_data = summary_data,
+        tests = tests,
+        current_time = current_time,
+        categories = categories,
+        pie_chart_data = pie_chart_data,
+    )
+        
+    # save to file
+    with open("assets/renders/security_dashboard.html", 'w', encoding="utf-8") as f:
+        f.write(output)
+
+def database_operations():
+    
     init_db()
-
-    print("Parsing test results...")
-    results, summary = parse_test_results()
-    total = sum(len(v) for v in results.values())
-    print(f"Found {total} test(s)")
-
-    print("")
-    print("Saving test results to database...")
-    for category_results in results.values():
-        for r in category_results:
-            save_test_result(r['name'], r['cvss_score'], r['status'])
-    print("✓ Test results saved")
-
-    print("")
-    print("Generating HTML dashboard...")
-    html_content = generate_html_dashboard(results, summary)
     
-    with open('security_dashboard.html', 'w', encoding="utf-8") as f:
-        f.write(html_content)
+    for test in tests:
+        # save test results in database
+        save_test_result(test["name"], test["cvss_score"], test["status"])
     
-    print("✓ Dashboard saved to security_dashboard.html")
-    print("")
-    print("="*70)
+    for category in categories:
+        # save max cvss of a category
+        save_category_max_cvss(category["name"], category["max_cvss"])
+    
+        # prepare history data and labels
+        category_history = get_category_history(category["name"])
+        category_history_labels = []
+        
+        for i in range(0, len(category_history)):
+            category_history_labels.append(f"Run {i+1}")
+        
+        category["history"] = category_history
+        category["labels"] = category_history_labels
+        
+        # improvement
+        baseline = get_category_baseline(category["name"])
+        
+        if baseline is not None and category["max_cvss"] is not None:
+            improvement = baseline - category["max_cvss"]
+            
+            category["improvement_number"] = round(improvement, 1)
+            
+            if improvement > 0:
+                category["improvement_class"] = "improvement-positive"
+                category["improvement_sybmol"] = "+"
+                category["improvement_arrow"] = "↑"
+            elif improvement < 0:
+                category["improvement_class"] = "improvement-negative"
+                category["improvement_sybmol"] = "-"
+                category["improvement_arrow"] = "↓"
 
-
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    extract_relevant_test_data()
+    prepare_data()
+    database_operations()
+    display_test_data()
