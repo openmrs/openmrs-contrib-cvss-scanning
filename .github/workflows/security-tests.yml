@@ -86,6 +86,7 @@ jobs:
         path: |
           security_dashboard.html
           assets/security_dashboard.css
+          assets/pie_chart.css
         retention-days: 30
 
     - name: Upload HTML Report
@@ -120,6 +121,7 @@ jobs:
         cp security_dashboard.html gh-pages/index.html
         cp detailed-report.html gh-pages/detailed-report.html
         cp assets/security_dashboard.css gh-pages/assets/security_dashboard.css
+        cp assets/pie_chart.css gh-pages/assets/pie_chart.css
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
