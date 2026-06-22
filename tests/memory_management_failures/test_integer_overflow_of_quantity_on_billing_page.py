@@ -80,6 +80,7 @@ def given_the_billings_history_page_is_shown(page:Page):
 def given_a_bill_is_created(page:Page, billing_category):
     
     add_bill_items = page.get_by_text("Add bill items", exact=True)
+    add_bill_items.wait_for(state="visible")
     expect(add_bill_items).to_be_visible()
     add_bill_items.click()
     
