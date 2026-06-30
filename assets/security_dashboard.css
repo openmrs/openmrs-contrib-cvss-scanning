@@ -64,6 +64,14 @@ body {
     font-weight: bold;
 }
 
+.stat-card .passed {
+    color: #38a169;
+}
+
+.stat-card .failed {
+    color: #e53e3e;
+}
+
 .test-results {
     background: white;
     border-radius: 12px;
@@ -102,6 +110,15 @@ body {
     gap: 10px;
     font-size: 13px;
     color: #718096;
+}
+
+.category-meta .max-cvss {
+    color:white;
+    font-weight:600;
+    font-size:12px;
+    padding:3px 10px;
+    border-radius:10px;
+    margin-right:8px;
 }
 
 .chevron {
@@ -286,6 +303,12 @@ tr:hover {
     width:50%;
     height:50px;
 }
+.tabs_buttons-left {
+    margin-right:5px;
+}
+.tabs_buttons-right {
+    margin-left:5px;
+}
 .tabs_buttons button:hover{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
     background-color:#edf2f7;
@@ -312,7 +335,7 @@ iframe{
     text-align: left;
     white-space: nowrap;
     padding: 10px;
-    overflow-x: hidden;
+    overflow-x: scroll;
     border-radius: 0px;
     position: absolute;
     z-index: 1;
@@ -321,6 +344,7 @@ iframe{
     margin-left: 0px;
     font-size: 14px;
     border: 1px solid gray;
+    max-width: 500px;
 }
 
 .tooltip:hover .tooltiptext {
@@ -347,4 +371,84 @@ iframe{
 .timestamp {
     color: black;
     font-weight: bold;
+}
+
+.severity-critical {
+  background-color: #dc3545;
+}
+.severity-high {
+  background-color: #fd7e14;
+}
+.severity-medium {
+  background-color: #ffc107;
+}
+.severity-low {
+  background-color: #28a745;
+}
+.severity-none {
+  background-color: #6c757d;
+}
+.severity-unknown {
+  background-color: #6c757d;
+}
+
+/* Pie Chart */
+
+.chart-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+.chart-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.legend {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 120px;
+    overflow-y: scroll;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+/* Improvement badges */
+
+.improvement-badge {
+    color:#28a745;
+    font-weight:bold;
+    font-size:11px;
+}
+
+.improvement-positive {
+    color:#28a745;
+}
+
+.improvement-negative {
+    color:#dc3545;
+}
+
+.improvement-neutral {
+    color:#718096;
+}
+
+.trendline-canvas {
+    display:block;
 }
