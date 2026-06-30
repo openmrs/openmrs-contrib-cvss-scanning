@@ -68,5 +68,4 @@ def then(page:Page):
 @pytest_bdd.when('the url is directed at /spa')
 def when_url_is_directed_at_spa(page:Page):
     # This function represents what will happen during the When step of the scenario.
-    page.wait_for_url(O3_LOGIN_URL)
     page.goto(O3_BASE_URL)
