@@ -5,6 +5,7 @@ from playwright.sync_api import Page
 
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, login_and_select_default_location, login_api, createTestPatient, BaseMetrics, LoginApiResponse, O3_ROOT_URL, DEFAULT_WAIT_TIME, O3_BASE_URL
 from tests.conftest import save_cvss_result
+from pytest_bdd import parsers
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -37,8 +38,12 @@ def given_cvss_score_is_calculted_and_printed(request):
 def test_appointments_should_be_blocked_after_reaching_max_load(reset_max_appointments_limit, service_name, cleanup_delete_patient):
     pass
 
-@pytest_bdd.given('3 test patients are created', target_fixture='scenario_data')
-def given_3_test_patients_are_created(page: Page, patient_data):
+@pytest_bdd.given(
+    parsers.parse('{numberOfPatients:d} test patients are created'),
+    target_fixture='scenario_data'
+    )
+def given_test_patients_are_created(page: Page, patient_data, numberOfPatients):
+        
     data = {}
     data['patient_uuids'] = []
 
@@ -46,16 +51,19 @@ def given_3_test_patients_are_created(page: Page, patient_data):
 
     login_and_select_default_location(page, "admin", "Admin123")
 
-    for _ in range(3):
+    for _ in range(numberOfPatients):
         uuid = create_test_patient_and_get_uuid(page, patient_data)
         data['patient_uuids'].append(uuid)
         print(f"Created patient: {uuid}")
 
-    assert len(data['patient_uuids']) == 3, "Failed to create 3 test patients"
+    assert len(data['patient_uuids']) == numberOfPatients, f"Failed to create {numberOfPatients} test patients"
     return data
 
-@pytest_bdd.given('the max appoitment limit for services is set to 2', target_fixture='scenario_data')
-def and_max_appointment_limit_is_set(scenario_data, cursor, connection, service_name):
+@pytest_bdd.given(
+    parsers.parse('the max appointment limit for services is set to {maxAppointments:d}'), 
+    target_fixture='scenario_data'
+    )
+def and_max_appointment_limit_is_set(scenario_data, cursor, connection, service_name, maxAppointments):
 
     # Fetch the service UUID from the API
     loginApiResponse : LoginApiResponse = login_api("admin", "Admin123")
@@ -67,10 +75,10 @@ def and_max_appointment_limit_is_set(scenario_data, cursor, connection, service_
     service_uuid = get_service_uuid(jsessionid, service_name)
     scenario_data['service_uuid'] = service_uuid
 
-    # Set the max limit to 2 via the database
+    # Set the max limit via the database
     cursor.execute(
-        "UPDATE appointment_service SET max_appointments_limit = 2 WHERE name = %s",
-        [service_name]
+        "UPDATE appointment_service SET max_appointments_limit = %s WHERE name = %s",
+        [maxAppointments, service_name]
     )
     
     connection.commit()
@@ -82,12 +90,15 @@ def and_max_appointment_limit_is_set(scenario_data, cursor, connection, service_
     )
     result = cursor.fetchone()
         
-    assert result["max_appointments_limit"] == 2, f"Expected max limit to be 2 but got {result[0]}"
+    assert result["max_appointments_limit"] == maxAppointments, f"Expected max limit to be {maxAppointments} but got {result[0]}"
 
     return scenario_data
 
-@pytest_bdd.when('3 appointment requests are made over the api', target_fixture='scenario_data')
-def when_3_appointments_are_made(scenario_data):
+@pytest_bdd.when(
+    parsers.parse('{numberOfPatients:d} appointment requests are made over the api'), 
+    target_fixture='scenario_data'
+    )
+def when_appointments_are_made(scenario_data, numberOfPatients):
     
     loginApiResponse : LoginApiResponse = login_api("admin", "Admin123")
     
@@ -104,13 +115,15 @@ def when_3_appointments_are_made(scenario_data):
     scenario_data['successful_bookings'] = successful_bookings
     return scenario_data
 
-@pytest_bdd.then('2 out of 3 appointments should be successful')
-def then_2_out_of_3_appointments_should_be_successful(scenario_data):
+@pytest_bdd.then(
+    parsers.parse('{maxAppointments:d} out of {numberOfPatients:d} appointments should be successful')
+    )
+def then_some_appointments_should_be_successful(scenario_data, maxAppointments, numberOfPatients):
     successful = scenario_data['successful_bookings']
 
     # If the system were secure, only 2 should succeed.
     # All 3 succeeding proves the vulnerability — the limit is not enforced.
-    assert successful == 2, ("The system does not enforce maxAppointmentsLimit.")
+    assert successful == maxAppointments, (f"{successful} successful appointments of {numberOfPatients} appointment attempts of a max {maxAppointments} appointments.")
 
 def create_test_patient_and_get_uuid(page: Page, patient_data):
     
