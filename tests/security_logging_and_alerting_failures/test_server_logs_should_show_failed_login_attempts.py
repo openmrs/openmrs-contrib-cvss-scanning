@@ -49,11 +49,6 @@ def given_cvss_score_is_calculted_and_printed(request):
 def test_server_logs_should_show_failed_login_attempts(cleanup_clear_user_lockout, username):
     pass
 
-@pytest_bdd.given('the current time is saved')
-def given_the_current_time_is_saved(date_time_data):
-    
-    date_time_data["saved_timestamp"] = datetime.now(timezone.utc)
-
 @pytest_bdd.when('a user attempts to login with the wrong username or password')
 def when_a_user_attempts_to_login_with_the_wrong_username_or_password(page:Page, username):
     
@@ -86,7 +81,3 @@ def then_a_failed_login_attempt_log_should_exist_after_the_saved_timestamp(page:
     
     assert lockout_text_pattern.search(last_row_text) != None
     assert username in last_row_text
-
-@pytest.fixture(scope="function")
-def date_time_data():
-    return {}

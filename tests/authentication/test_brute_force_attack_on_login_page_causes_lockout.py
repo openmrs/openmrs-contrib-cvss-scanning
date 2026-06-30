@@ -1,7 +1,7 @@
 import pytest_bdd
 import pytest
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL, USER_CREDENTIALS
 from tests.conftest import save_cvss_result
 from tests.utils import login
 from playwright.sync_api import Page
@@ -249,14 +249,15 @@ def given_cvss_score_is_calculted_and_printed(request):
     save_cvss_result(request, cvss_score, severity)
 
 @pytest.mark.parametrize('cleanup_clear_user_lockout', ["doctor"], indirect=True)
+@pytest.mark.parametrize("username,password", USER_CREDENTIALS)
 @pytest_bdd.scenario('authentication.feature', 'Brute force attack on login page causes lockout')
-def test_brute_force_attack_on_login_page_causes_lockout(cleanup_clear_user_lockout):
+def test_brute_force_attack_on_login_page_causes_lockout(cleanup_clear_user_lockout, username, password):
  pass
 
 @pytest_bdd.when('an attacker fails 7 login attempts on the login page')
-def when_an_attacker_fails_7_login_attempts_on_the_login_page(page:Page):    
+def when_an_attacker_fails_7_login_attempts_on_the_login_page(page:Page, username):    
     for i in range(0, 8):
-        login(page, f"doctor", f"wrong_password{i}")
+        login(page, username, f"wrong_password{i}")
         
         if page.url != O3_BASE_URL + '/login':
             break

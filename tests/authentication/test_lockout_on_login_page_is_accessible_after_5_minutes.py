@@ -1,10 +1,8 @@
 import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, O3_BASE_URL
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, USER_CREDENTIALS
 from tests.conftest import save_cvss_result
-
-from playwright.sync_api import Page
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -248,19 +246,8 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
-@pytest.mark.parametrize("cleanup_clear_user_lockout", ["doctor"], indirect=True)
-@pytest.mark.parametrize("username,password", [
-    ("doctor", "Doctor123")
-])
+
+@pytest.mark.parametrize("username,password", USER_CREDENTIALS)
 @pytest_bdd.scenario('authentication.feature', 'Lockout on login page is accessible after 5 minutes')
 def test_lockout_on_login_page_is_accessible_after_5_minutes(cleanup_clear_user_lockout, username, password):
  pass
-
-@pytest_bdd.then('the location selection or home page should be shown')
-def then_the_location_selection_or_home_page_should_be_shown(page:Page):
-    
-    page.reload()
-    
-    isOnLoginPageOrHomePage = page.url == O3_BASE_URL + "/login/location" or page.url == O3_BASE_URL + "/home/service-queues"
-    
-    assert isOnLoginPageOrHomePage

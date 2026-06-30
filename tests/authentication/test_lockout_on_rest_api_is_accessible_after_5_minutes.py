@@ -1,7 +1,7 @@
 import pytest
 import pytest_bdd
 
-from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
+from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics, USER_CREDENTIALS
 from tests.conftest import save_cvss_result
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
@@ -246,12 +246,8 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
-@pytest.mark.parametrize("cleanup_clear_user_lockout", ["doctor"], indirect=True)
-@pytest_bdd.scenario('authentication.feature', 'Lockout on REST API is accessible after 5 minutes')
-def test_lockout_on_rest_api_is_accessible_after_5_minutes(cleanup_clear_user_lockout):
- pass
-    
-@pytest_bdd.then('the user should be authenticated')
-def then_the_correct_credentials_should_log_into_the_rest_api(login_data):
 
-    assert login_data["is_authenticated"] == True
+@pytest.mark.parametrize("username,password", USER_CREDENTIALS)
+@pytest_bdd.scenario('authentication.feature', 'Lockout on REST API is accessible after 5 minutes')
+def test_lockout_on_rest_api_is_accessible_after_5_minutes(cleanup_clear_user_lockout, username, password):
+ pass

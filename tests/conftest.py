@@ -183,8 +183,8 @@ def given_user_logs_out(page:Page):
     page.get_by_role("button", name="My Account").click()
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_role("button", name="Logout").click()
-@pytest.fixture(scope="function")
 
+@pytest.fixture(scope="function")
 def cleanup_delete_patient(patient_data, page:Page):    
     yield
     
