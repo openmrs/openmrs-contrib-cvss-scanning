@@ -9,8 +9,8 @@
   --coverage_other: 16%;
   --coverage_cat_Authentication: 23%;
   --coverage_cat_Security_Logging___Alerting_Failures: 33%;
-  --coverage_cat_Memory_Management_Failures: 50%;
-  --coverage_cat_XSS: 75%;
+  --coverage_cat_Memory_Management_Failures: 49%;
+  --coverage_cat_XSS: 74%;
   --coverage_cat_Security_Misconfiguration: 100.0%;
 }
 .chart-container-failed-tests {
