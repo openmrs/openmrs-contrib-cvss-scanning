@@ -1,46 +1,44 @@
 :root {
   --fail_cat_Data_Integrity_Failures: 3%;
   --fail_cat_Mishandling_of_Exceptional_Conditions: 6%;
-  --fail_cat_Security_Logging___Alerting_Failures: 9%;
-  --fail_cat_Session_Management: 12%;
-  --fail_cat_Insecure_Design: 22%;
-  --fail_cat_Security_Misconfiguration: 35%;
-  --fail_cat_Memory_Management_Failures: 100.0%;
-  --coverage_other: 18%;
-  --coverage_cat_Authentication: 24%;
-  --coverage_cat_Security_Logging___Alerting_Failures: 34%;
-  --coverage_cat_Memory_Management_Failures: 50%;
-  --coverage_cat_XSS: 74%;
-  --coverage_cat_Security_Misconfiguration: 100.0%;
+  --fail_cat_Session_Management: 9%;
+  --fail_cat_Insecure_Design: 19%;
+  --fail_cat_Security_Misconfiguration: 32%;
+  --fail_cat_Memory_Management_Failures: 99%;
+  --coverage_other: 14%;
+  --coverage_cat_Security_Logging___Alerting_Failures: 22%;
+  --coverage_cat_Memory_Management_Failures: 35%;
+  --coverage_cat_XSS: 54%;
+  --coverage_cat_Security_Misconfiguration: 74%;
+  --coverage_cat_Authentication: 100.0%;
 }
 .chart-container-failed-tests {
     background: conic-gradient(yellow 0% var(--fail_cat_Data_Integrity_Failures),
 mediumvioletred var(--fail_cat_Data_Integrity_Failures) var(--fail_cat_Mishandling_of_Exceptional_Conditions),
-olivedrab var(--fail_cat_Mishandling_of_Exceptional_Conditions) var(--fail_cat_Security_Logging___Alerting_Failures),
-salmon var(--fail_cat_Security_Logging___Alerting_Failures) var(--fail_cat_Session_Management),
-slateblue var(--fail_cat_Session_Management) var(--fail_cat_Insecure_Design),
-mediumseagreen var(--fail_cat_Insecure_Design) var(--fail_cat_Security_Misconfiguration),
-firebrick var(--fail_cat_Security_Misconfiguration) var(--fail_cat_Memory_Management_Failures)
+olivedrab var(--fail_cat_Mishandling_of_Exceptional_Conditions) var(--fail_cat_Session_Management),
+salmon var(--fail_cat_Session_Management) var(--fail_cat_Insecure_Design),
+slateblue var(--fail_cat_Insecure_Design) var(--fail_cat_Security_Misconfiguration),
+mediumseagreen var(--fail_cat_Security_Misconfiguration) var(--fail_cat_Memory_Management_Failures)
 
     );
 }
 .chart-container-total-tests {
-    background: conic-gradient(cadetblue 0% var(--coverage_other),
-darkorange var(--coverage_other) var(--coverage_cat_Authentication),
-olivedrab var(--coverage_cat_Authentication) var(--coverage_cat_Security_Logging___Alerting_Failures),
-firebrick var(--coverage_cat_Security_Logging___Alerting_Failures) var(--coverage_cat_Memory_Management_Failures),
-indigo var(--coverage_cat_Memory_Management_Failures) var(--coverage_cat_XSS),
-mediumseagreen var(--coverage_cat_XSS) var(--coverage_cat_Security_Misconfiguration)
+    background: conic-gradient(firebrick 0% var(--coverage_other),
+cadetblue var(--coverage_other) var(--coverage_cat_Security_Logging___Alerting_Failures),
+mediumseagreen var(--coverage_cat_Security_Logging___Alerting_Failures) var(--coverage_cat_Memory_Management_Failures),
+darkorange var(--coverage_cat_Memory_Management_Failures) var(--coverage_cat_XSS),
+slateblue var(--coverage_cat_XSS) var(--coverage_cat_Security_Misconfiguration),
+indigo var(--coverage_cat_Security_Misconfiguration) var(--coverage_cat_Authentication)
 
     );
 }
 .category_color_cat_Data_Integrity_Failures { background: yellow; }
 .category_color_cat_Mishandling_of_Exceptional_Conditions { background: mediumvioletred; }
-.category_color_cat_Security_Logging___Alerting_Failures { background: olivedrab; }
-.category_color_cat_Session_Management { background: salmon; }
-.category_color_cat_Insecure_Design { background: slateblue; }
-.category_color_cat_Security_Misconfiguration { background: mediumseagreen; }
-.category_color_cat_Memory_Management_Failures { background: firebrick; }
-.category_color_other { background: cadetblue; }
-.category_color_cat_Authentication { background: darkorange; }
-.category_color_cat_XSS { background: indigo; }
+.category_color_cat_Session_Management { background: olivedrab; }
+.category_color_cat_Insecure_Design { background: salmon; }
+.category_color_cat_Security_Misconfiguration { background: slateblue; }
+.category_color_cat_Memory_Management_Failures { background: mediumseagreen; }
+.category_color_other { background: firebrick; }
+.category_color_cat_Security_Logging___Alerting_Failures { background: cadetblue; }
+.category_color_cat_XSS { background: darkorange; }
+.category_color_cat_Authentication { background: indigo; }
