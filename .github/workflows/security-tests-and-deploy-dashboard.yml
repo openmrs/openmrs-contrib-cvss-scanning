@@ -176,7 +176,7 @@ jobs:
       if: steps.download-html.outcome == 'failure'
       uses: dawidd6/action-download-artifact@v6
       with:
-        name: security-test-report-json
+        name: security-test-report-html
         path: .
     
     - name: Extract CVSS Scores and Generate Dashboard
