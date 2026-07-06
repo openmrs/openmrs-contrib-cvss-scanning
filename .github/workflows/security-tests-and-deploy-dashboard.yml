@@ -14,7 +14,7 @@ on:
 
 jobs:
   security-tests:
-    if: ${{ github.event_name != 'worflow_dispatch' || inputs.skip_security_tests == false }}
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_security_tests == false }}
     runs-on: ubuntu-latest
 
     steps:
