@@ -148,20 +148,38 @@ jobs:
       continue-on-error: true  # First run won't have a DB artifact yet
     
     - name: Download JSON Report
+      id: download-json
       uses: dawidd6/action-download-artifact@v6
       with:
         name: security-test-report-json
         path: .
         run_id: ${{ github.run_id }} # looks for current run
-      continue-on-error: true # uses previous run if skipping tests
+      continue-on-error: true
+
+    - name: Download JSON Report (fallback to last successful run)
+      if: steps.download-json.outcome == 'failure'
+      uses: dawidd6/action-download-artifact@v6
+      with:
+        workflow: current
+        name: security-test-report-json
+        path: .
     
     - name: Download HTML Report
+      id: download-html
       uses: dawidd6/action-download-artifact@v6
       with:
         name: security-test-report-html
         path: .
         run_id: ${{ github.run_id }} # looks for current run
-      continue-on-error: true # uses previous run if skipping tests
+      continue-on-error: true
+
+    - name: Download HTML Report (fallback to last successful run)
+      if: steps.download-html.outcome == 'failure'
+      uses: dawidd6/action-download-artifact@v6
+      with:
+        workflow: current
+        name: security-test-report-json
+        path: .
     
     - name: Extract CVSS Scores and Generate Dashboard
       if: always()
