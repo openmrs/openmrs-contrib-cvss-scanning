@@ -3,33 +3,9 @@ import pytest
 import requests
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
 from tests.conftest import save_cvss_result
-from tests.utils import O3_API_URL
-import json
 import base64
+from access_control.conftest import response_data
 
-
-def login_api_return_response(username, password):
-    #Retuns the login information of an account - UUID of user, person, permissions, more
-    credentials = base64.b64encode(f'{username}:{password}'.encode()).decode()
-    headers = {
-        'Authorization': f'Basic {credentials}',
-        'Content-Type': 'application/json'
-    }
-
-    try:
-        response = requests.get(O3_API_URL, headers=headers, timeout=10)
-        return response
-
-    except requests.exceptions.RequestException as e:
-        print(f"  Result: Request failed - {e}")
-
-@pytest_bdd.scenario("access_control.feature", "Users cannot edit the admin account password")
-def test_users_cannot_edit_the_admin_account_password():
-    pass
-
-# This given is the implementation of the first Given in the background
-# It should not be removed. It may be modified to pick the correct CVSS
-# metrics for this specific scenario.
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
     # For an indepth reference to CVSS 4.0
@@ -145,7 +121,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of confidentiality.
     
-    VC = BaseMetrics.Confidentiality.VulnerableSystem.HIGH
+    VC = BaseMetrics.Confidentiality.VulnerableSystem.NONE
 
     # Impact to the Subsequent System (SC) / .SubsequentSystem
     #   High        There is a total loss of confidentiality, resulting 
@@ -160,7 +136,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of confidentiality.
 
-    SC = BaseMetrics.Confidentiality.SubsequentSystem.HIGH
+    SC = BaseMetrics.Confidentiality.SubsequentSystem.NONE
 
     # Integrity (VI/SI) / BaseMetrics.Integrity
     # This metric measures the impact to integrity of a successfully 
@@ -178,7 +154,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of integrity.
     
-    VI = BaseMetrics.Integrity.VulnerableSystem.HIGH
+    VI = BaseMetrics.Integrity.VulnerableSystem.NONE
 
     # Impact to the Subsequent System (SI) / .SubsequentSystem
     #   High        There is a total loss of integrity, or a complete 
@@ -191,7 +167,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no loss of integrity.
 
-    SI = BaseMetrics.Integrity.SubsequentSystem.HIGH
+    SI = BaseMetrics.Integrity.SubsequentSystem.NONE
 
     # Availability (VA/SA) BaseMetrics.Availability
     # This metric measures the impact to the availability of the 
@@ -215,7 +191,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no impact to availability.
     
-    VA = BaseMetrics.Availability.VulnerableSystem.NONE
+    VA = BaseMetrics.Availability.VulnerableSystem.HIGH
 
     # Impact to the Subsequent System (SA) / .SubsequentSystem
     #   High        There is a total loss of availability, resulting in 
@@ -230,7 +206,7 @@ def given_cvss_score_is_calculted_and_printed(request):
     #
     #   None        There is no impact to availability.
 
-    SA = BaseMetrics.Availability.SubsequentSystem.NONE
+    SA = BaseMetrics.Availability.SubsequentSystem.HIGH
 
     # Calculate CVSS 4.0 score
     cvss_score = calculate_cvss_v4_score(
@@ -246,34 +222,37 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
-@pytest_bdd.given("the UUID of an admin user is known")
-def admin_account_logged_in_uuid_saved(response_data,request):
-    #login to the admin
-    response=login_api_return_response("admin","Admin123")
 
-    #parse the response as json and extract the uuid
-    admin_login_data = json.loads(response.content)
-    response_data["admin_uuid"]=admin_login_data["user"]["uuid"]
-    
+@pytest_bdd.scenario("access_control.feature","Users can edit their own passwords")
+def test_users_can_edit_their_own_passwords():
+    pass
 
-@pytest_bdd.when(pytest_bdd.parsers.parse("a {nonAdminType} user attempts to change the password of the admin"))
-def user_attempts_to_change_admin_password(response_data,request,nonAdminType):
+
+
+@pytest_bdd.when(pytest_bdd.parsers.parse("a {nonAdminType} user attempts to change the password of their account"))
+def user_attempts_to_change_their_password(response_data,request,nonAdminType):
     username = nonAdminType
     credentials = base64.b64encode(f'{username}:{username.title()+"123"}'.encode())
     headers={
-        "Authorization":credentials,
-        "newPassword":"newPassword"
+        "Authorization":f"Basic {credentials.decode()}" 
     }
-    response = requests.post("http://localhost/openmrs/ws/rest/v1/password/:"+response_data["admin_uuid"],headers)
+    data = {"oldPassword":username.title()+"123",
+        "newPassword":"newPassword1@"}
+    response = requests.post("http://localhost/openmrs/ws/rest/v1/password/",headers=headers,json=data)
     response_data["status_code"]=response.status_code
 
-
-
-@pytest_bdd.then("the system should respond with a http 500 error")
-def the_system_should_respond_with_a_rejection_of_the_attempt(response_data):
-    #A 500 means the request was denied, see https://rest.openmrs.org/#changing-password , expected behavior
-    assert response_data["status_code"]==500
+@pytest_bdd.then("the system should respond with a http 200 status")
+def checkStatusCode(response_data):
+    assert response_data["status_code"]==200
 
 @pytest.fixture(scope="function")
-def response_data():
-    return {}
+def cleanup_user(request,nonAdminType):
+    yield
+    username = nonAdminType
+    credentials = base64.b64encode(f'{username}:{"newPassword"}'.encode())
+    headers={
+        "Authorization":f"Basic {credentials.decode()}" 
+    }
+    data = {"oldPassword":"newPassword1@",
+        "newPassword":username.title()+"123"}
+    response = requests.post("http://localhost/openmrs/ws/rest/v1/password/:",headers,json=data)

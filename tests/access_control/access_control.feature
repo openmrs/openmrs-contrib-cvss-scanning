@@ -9,6 +9,13 @@ Feature: Access Control
         When a <nonAdminType> user attempts to change the password of the admin
         Then the system should respond with a http 500 error
 
+    Scenario: Users can edit their own passwords
+        Non Admin users should be able to edit their passwords
+
+        When a <nonAdminType> user attempts to change the password of their account
+        Then the system should respond with a http 200 status
+
+
     Examples:
         | nonAdminType |  
         | clerk        |
