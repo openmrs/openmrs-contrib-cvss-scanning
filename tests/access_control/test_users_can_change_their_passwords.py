@@ -230,14 +230,14 @@ def test_users_can_edit_their_own_passwords():
 
 
 @pytest_bdd.when(pytest_bdd.parsers.parse("a {nonAdminType} user attempts to change the password of their account"))
-def user_attempts_to_change_their_password(response_data,request,nonAdminType):
+def user_attempts_to_change_their_password(response_data,request,nonAdminType,cleanup_user):
+    response_data['username']=nonAdminType
     username = nonAdminType
     credentials = base64.b64encode(f'{username}:{username.title()+"123"}'.encode())
     headers={
         "Authorization":f"Basic {credentials.decode()}" 
     }
-    data = {"oldPassword":username.title()+"123",
-        "newPassword":"newPassword1@"}
+    data = {"oldPassword":username.title()+"123","newPassword":"newPassword1@"}
     response = requests.post("http://localhost/openmrs/ws/rest/v1/password/",headers=headers,json=data)
     response_data["status_code"]=response.status_code
 
@@ -245,14 +245,16 @@ def user_attempts_to_change_their_password(response_data,request,nonAdminType):
 def checkStatusCode(response_data):
     assert response_data["status_code"]==200
 
-@pytest.fixture(scope="function")
-def cleanup_user(request,nonAdminType):
+@pytest.fixture(scope="function",autouse=True)
+def cleanup_user(response_data):
+    print("fixture")
     yield
-    username = nonAdminType
-    credentials = base64.b64encode(f'{username}:{"newPassword"}'.encode())
+    print("fixture2")
+    username = response_data['username']
+    credentials = base64.b64encode(f'{username}:newPassword1@'.encode())
     headers={
         "Authorization":f"Basic {credentials.decode()}" 
     }
-    data = {"oldPassword":"newPassword1@",
-        "newPassword":username.title()+"123"}
-    response = requests.post("http://localhost/openmrs/ws/rest/v1/password/:",headers,json=data)
+    data = {"oldPassword":"newPassword1@","newPassword":username.title()+"123"}
+    response = requests.post("http://localhost/openmrs/ws/rest/v1/password/",headers=headers,json=data)
+    print("fixture 3",response.status_code)
