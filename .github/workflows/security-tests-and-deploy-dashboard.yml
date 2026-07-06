@@ -1,0 +1,206 @@
+name: Security Tests & Deploy Dashboard
+
+on:
+  push:
+    branches: [ main, develop ]
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+    inputs:
+      skip_security_tests:
+        description: 'Skip Security Tests and Only Deploy Dashboard'
+        type: boolean
+        default: false
+
+jobs:
+  security-tests:
+    if: ${{ github.event_name != 'worflow_dispatch' || inputs.skip_security_tests == false }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Starting early since OpenMRS takes time to spin up; this allows it to initialize
+    # in the background while dependencies are being installed.
+    - name: Start an OpenMRS instance
+      run: docker compose -f docker-compose.yml up -d
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+
+        echo "Searching for requirements.txt files..."
+        find . -name "requirements.txt" -type f | while read req; do
+          echo "Installing dependencies from: $req"
+          pip install -r "$req"
+        done
+
+    - name: Install Playwright browsers
+      run: |
+        python -m playwright install chromium
+
+    - name: Wait for the OpenMRS instance to start
+      id: wait-for-omrs-instance
+      run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
+
+    - name: Run Security Tests
+      id: run-security-tests
+      if: always() && (steps.wait-for-omrs-instance.outcome == 'success')
+      run: |
+        # Run pytest and capture ALL output (including CVSS scores)
+        pytest tests/ \
+          --html=detailed-report.html \
+          --self-contained-html \
+          --json-report \
+          --json-report-file=report.json \
+          -v -s 2>&1 | tee test_output.log
+      continue-on-error: true
+
+    - name: Upload HTML Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-test-report-html
+        path: detailed-report.html
+        retention-days: 30
+
+    - name: Upload JSON Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-test-report-json
+        path: report.json
+        retention-days: 30
+
+    - name: Upload Test Output
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-test-output
+        path: test_output.log
+        retention-days: 30
+
+    - name: Comment on PR
+      if: ${{ github.event_name == 'pull_request' && github.repository_owner == 'openmrs' }}
+      continue-on-error: true
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const summary = '## 🔒 Security Test Results\n\nTests completed. View the [security dashboard](https://cvss-report.openmrs.org) for detailed CVSS scores and trends.\n\n📊 [Download artifacts](../actions/runs/${{ github.run_id }})';
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: summary
+          });
+
+    - name: Capture Server Logs
+      if: always()
+      uses: jwalton/gh-docker-logs@v2
+      with:
+        dest: "./logs"
+
+    - name: Upload Logs as Artifact
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: server-logs
+        path: "./logs"
+        retention-days: 2
+        overwrite: true
+  
+  deploy-dashboard:
+    needs: security-tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+
+        echo "Searching for requirements.txt files..."
+        find . -name "requirements.txt" -type f | while read req; do
+          echo "Installing dependencies from: $req"
+          pip install -r "$req"
+        done
+    
+    - name: Download previous test results DB
+      uses: dawidd6/action-download-artifact@v6
+      with:
+        name: test-results-db
+        path: .
+      continue-on-error: true  # First run won't have a DB artifact yet
+    
+    - name: Download JSON Report
+      uses: dawidd6/action-download-artifact@v6
+      with:
+        name: security-test-report-json
+        path: .
+        run_id: ${{ github.run_id }} # looks for current run
+      continue-on-error: true # uses previous run if skipping tests
+    
+    - name: Download HTML Report
+      uses: dawidd6/action-download-artifact@v6
+      with:
+        name: security-test-report-html
+        path: .
+        run_id: ${{ github.run_id }} # looks for current run
+      continue-on-error: true # uses previous run if skipping tests
+    
+    - name: Extract CVSS Scores and Generate Dashboard
+      if: always()
+      run: python scripts/generate_security_dashboard.py
+
+    - name: Upload test results DB
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-db
+        path: test_results.db
+        retention-days: 90
+        overwrite: true
+
+    - name: Upload Security Dashboard
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-dashboard
+        path: |
+          security_dashboard.html
+          assets/security_dashboard.css
+          assets/pie_chart.css
+        retention-days: 30
+      
+    - name: Prepare GitHub Pages Deployment
+      if: github.ref == 'refs/heads/main'
+      run: |
+        mkdir -p gh-pages
+        mkdir -p gh-pages/assets
+        cp security_dashboard.html gh-pages/index.html
+        cp detailed-report.html gh-pages/detailed-report.html
+        cp assets/security_dashboard.css gh-pages/assets/security_dashboard.css
+        cp assets/pie_chart.css gh-pages/assets/pie_chart.css
+
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./gh-pages
+        cname: security-dashboard.openmrs.org
+        keep_files: false
