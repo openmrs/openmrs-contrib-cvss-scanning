@@ -161,6 +161,7 @@ jobs:
       uses: dawidd6/action-download-artifact@v6
       with:
         name: security-test-report-json
+        search_artifacts: true
         path: .
     
     - name: Download HTML Report
@@ -177,6 +178,7 @@ jobs:
       uses: dawidd6/action-download-artifact@v6
       with:
         name: security-test-report-html
+        search_artifacts: true
         path: .
     
     - name: Extract CVSS Scores and Generate Dashboard
