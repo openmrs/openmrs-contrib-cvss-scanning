@@ -160,7 +160,6 @@ jobs:
       if: steps.download-json.outcome == 'failure'
       uses: dawidd6/action-download-artifact@v6
       with:
-        workflow: current
         name: security-test-report-json
         path: .
     
@@ -177,7 +176,6 @@ jobs:
       if: steps.download-html.outcome == 'failure'
       uses: dawidd6/action-download-artifact@v6
       with:
-        workflow: current
         name: security-test-report-json
         path: .
     
