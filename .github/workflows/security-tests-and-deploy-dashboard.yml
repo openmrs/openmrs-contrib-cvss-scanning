@@ -118,6 +118,7 @@ jobs:
   
   deploy-dashboard:
     needs: security-tests
+    if: always()
     runs-on: ubuntu-latest
 
     steps:
