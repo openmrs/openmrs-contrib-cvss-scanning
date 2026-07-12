@@ -70,3 +70,21 @@ Feature: Security Misconfiguration
           | frame-ancestors | False    |
           | form-action     | False    |
           | base-uri        | False    |
+
+Scenario: Content Security Policy should not allow unsafe-eval
+    Given a CVSS score is calculated and printed
+    Given the login page response is returned
+    When the security headers are checked
+    Then the Content-Security-Policy header should not contain unsafe-eval
+
+  Scenario: Content Security Policy should not allow unsafe-inline scripts
+    Given a CVSS score is calculated and printed
+    Given the login page response is returned
+    When the security headers are checked
+    Then the Content-Security-Policy header should not contain unsafe-inline for scripts
+
+  Scenario: Content Security Policy should have form-action directive
+    Given a CVSS score is calculated and printed
+    Given the login page response is returned
+    When the security headers are checked
+    Then the Content-Security-Policy header should contain a form-action directive
