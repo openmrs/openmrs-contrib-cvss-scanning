@@ -14,9 +14,22 @@ Feature: XSS
       When the attacker tries to edit a patient <scenarioString> using a set of potential XSS strings
       Then see if XSS injection was successful
 
+  Examples:
+    | scenarioString |
+    | first name     |
+    | middle name    |
+    | family name    |
+    | address 1      |
+    | address 2      |
+    | city           |
+    | state          |
+    | country        |
+    | postal code    |
+    | phone number   |
+
   Scenario Outline: Valid input for <scenarioString> field of edit patient page is not blocked by filters
     A parameterized test to try valid input on the <scenarioString> to ensure they aren't block by XSS filters/.
-      When the attacker tries to edit a patient <scenarioString> using a valid input
+      When a user tries to edit a patient <scenarioString> using a valid input
       Then see if the field was modified in any way
       
   Examples:

@@ -4,7 +4,7 @@ from pytest_bdd import parsers, scenario
 from playwright.sync_api import Page,expect
 from tests.utils import get_cvss_severity, calculate_cvss_v4_score, createTestPatient, display_results, BaseMetrics, O3_HOME_URL, O3_LOGIN_URL, DEFAULT_WAIT_TIME
 from tests.conftest import save_cvss_result
-from xss.conftest import page_data, cleanupTestPatient
+
 
 xssEditProfileLocations = {
     "first name":    "#givenName",
@@ -20,7 +20,7 @@ xssEditProfileLocations = {
 }
 validEditStrings={
     "first name":    "John",
-    "middle name":   "Johnson",
+    "middle name":   "Jon",
     "family name":   "Doe",
     "address 1":     "2121 West Michigan Street",
     "address 2":     "Room 999",
@@ -251,16 +251,20 @@ def given_cvss_score_is_calculted_and_printed(request):
     # This is required to be able to add the CVSS and Severity to the dashboard.
     save_cvss_result(request, cvss_score, severity)
 
-@pytest_bdd.given(parsers.parse('the attacker tries to edit a patient {scenarioString} using a valid input'))
+@pytest_bdd.when(parsers.parse('a user tries to edit a patient {scenarioString} using a valid input'))
 def when_attacker_edits_valid_input(page,page_data,request,scenarioString):
+    page_data['string']=scenarioString
     page.goto(page_data["editUrl"])
     #scenarioString = request.getfixturevalue('_pytest_bdd_example')['scenarioString']
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.locator(xssEditProfileLocations[scenarioString]).fill(validEditStrings[scenarioString])
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Update patient").click()
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.then("see if the field was modified in any way")
-def see_if_the_field_was_modified(page,page_data,scenarioString):
+def see_if_the_field_was_modified(page,page_data,cleanupTestPatient):
+    scenarioString = page_data['string']
     page.goto(page_data["editUrl"])
-    expect(page.locator(xssEditProfileLocations[scenarioString]).to_have_value(validEditStrings[scenarioString]))
+    page.wait_for_timeout(DEFAULT_WAIT_TIME)
+    assert page.locator(xssEditProfileLocations[scenarioString]).input_value() == validEditStrings[scenarioString]
