@@ -5,9 +5,9 @@
   --fail_cat_Insecure_Design: 19%;
   --fail_cat_Security_Misconfiguration: 32%;
   --fail_cat_Memory_Management_Failures: 99%;
-  --coverage_other: 14%;
-  --coverage_cat_Security_Logging___Alerting_Failures: 22%;
-  --coverage_cat_Memory_Management_Failures: 35%;
+  --coverage_other: 17%;
+  --coverage_cat_Security_Logging___Alerting_Failures: 24%;
+  --coverage_cat_Memory_Management_Failures: 36%;
   --coverage_cat_XSS: 54%;
   --coverage_cat_Security_Misconfiguration: 74%;
   --coverage_cat_Authentication: 100.0%;
