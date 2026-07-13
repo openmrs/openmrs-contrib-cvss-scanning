@@ -4,7 +4,7 @@ import requests
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
 from tests.conftest import save_cvss_result
 import base64
-from access_control.conftest import response_data
+
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -247,9 +247,7 @@ def checkStatusCode(response_data):
 
 @pytest.fixture(scope="function",autouse=True)
 def cleanup_user(response_data):
-    print("fixture")
     yield
-    print("fixture2")
     username = response_data['username']
     credentials = base64.b64encode(f'{username}:newPassword1@'.encode())
     headers={
