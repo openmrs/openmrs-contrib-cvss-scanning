@@ -123,4 +123,4 @@ def then_the_quantity_should_not_overflow_or_wraparound(page:Page, quantity):
     cells = line_items_table.locator('tbody tr td').all()
     quantity_value = int(cells[3].text_content())
     
-    assert quantity_value == quantity
+    assert quantity_value == quantity, f"Original quantity {quantity} has wrapped around to {quantity_value}"
