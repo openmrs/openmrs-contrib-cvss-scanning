@@ -1,4 +1,4 @@
-name: Run Test Subset
+name: Run Test Subset & Upload Screenshots
 on:
   push:
     branches: [ main, develop ]
