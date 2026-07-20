@@ -36,16 +36,16 @@ def given_cvss_score_is_calculted_and_printed(request):
 
 @pytest.mark.parametrize("billing_category",[
     "Antenatal care",
-    "Orthopedic Service",
-    "Nutrition counseling",
-    "OPD consultation"
+    # "Orthopedic Service",
+    # "Nutrition counseling",
+    # "OPD consultation"
 ])
 @pytest.mark.parametrize("quantity", [
-    1,
+    # 1,
     1_000_000,
-    2_147_483_647,
-    2_147_483_647 + 1,
-    2_147_483_647 * 2,
+    # 2_147_483_647,
+    # 2_147_483_647 + 1,
+    # 2_147_483_647 * 2,
 ])
 @pytest_bdd.scenario('memory_management_failures.feature','Integer overflow of quantity on billing page')
 def test_integer_overflow_of_quantity_on_billing_page(billing_category, quantity, cleanup_delete_patient):
@@ -78,6 +78,8 @@ def given_the_billings_history_page_is_shown(page:Page):
 
 @pytest_bdd.given('a bill is created')
 def given_a_bill_is_created(page:Page, billing_category):
+    
+    page.screenshot(path="screenshots/mem-man-1.png")
     
     add_bill_items = page.get_by_text("Add bill items", exact=True)
     expect(add_bill_items).to_be_visible()

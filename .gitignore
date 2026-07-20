@@ -34,3 +34,6 @@ out/
 .DS_Store
 Thumbs.db
 test_results.db
+
+# Debugging
+screenshots/
