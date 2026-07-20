@@ -1,0 +1,16 @@
+name: Run Test Subset
+on:
+  push:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      test_path:
+        description: 'Test path'
+        type: string
+        default: 'tests/'
+jobs:
+  print-text:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print text
+        run: echo "${{ inputs.test_path }}"
