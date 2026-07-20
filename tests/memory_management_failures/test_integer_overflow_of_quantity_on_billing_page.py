@@ -36,16 +36,16 @@ def given_cvss_score_is_calculted_and_printed(request):
 
 @pytest.mark.parametrize("billing_category",[
     "Antenatal care",
-    # "Orthopedic Service",
-    # "Nutrition counseling",
-    # "OPD consultation"
+    "Orthopedic Service",
+    "Nutrition counseling",
+    "OPD consultation"
 ])
 @pytest.mark.parametrize("quantity", [
-    # 1,
+    1,
     1_000_000,
-    # 2_147_483_647,
-    # 2_147_483_647 + 1,
-    # 2_147_483_647 * 2,
+    2_147_483_647,
+    2_147_483_647 + 1,
+    2_147_483_647 * 2,
 ])
 @pytest_bdd.scenario('memory_management_failures.feature','Integer overflow of quantity on billing page')
 def test_integer_overflow_of_quantity_on_billing_page(billing_category, quantity, cleanup_delete_patient):
@@ -79,10 +79,7 @@ def given_the_billings_history_page_is_shown(page:Page):
 @pytest_bdd.given('a bill is created')
 def given_a_bill_is_created(page:Page, billing_category):
     
-    #TODO: Remove after debugging
-    page.screenshot(path="screenshots/mem-man-1.png")
-    
-    add_bill_items = page.get_by_text("Add bill items", exact=True)
+    add_bill_items = page.get_by_text("Create bill", exact=True)
     expect(add_bill_items).to_be_visible()
     add_bill_items.click()
     
@@ -114,7 +111,9 @@ def when_a_quantity_is_inputted(page:Page, quantity):
 @pytest_bdd.then('the quantity should not overflow or wraparound')
 def then_the_quantity_should_not_overflow_or_wraparound(page:Page, quantity):
     
-    page.locator("td button").click()
+    expand_button = page.get_by_role("button", name="Expand current row")
+    expect(expand_button).to_be_visible()
+    expand_button.click()
     
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
         

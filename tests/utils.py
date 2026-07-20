@@ -341,3 +341,9 @@ def login_api(username, password) -> LoginApiResponse:
         print(f"  Result: Request failed - {e}")
     
     return loginApiResponse
+
+# This can be used for debugging purposes
+def save_screenshot(page:Page, file_name:str):
+    """Saves a screenshot at screenshots/<file_name>. This folder is properly ignored by gitignore"""
+
+    page.screenshot(f"screenshots/{file_name}")
