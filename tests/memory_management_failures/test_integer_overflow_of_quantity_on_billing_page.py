@@ -79,6 +79,7 @@ def given_the_billings_history_page_is_shown(page:Page):
 @pytest_bdd.given('a bill is created')
 def given_a_bill_is_created(page:Page, billing_category):
     
+    #TODO: Remove after debugging
     page.screenshot(path="screenshots/mem-man-1.png")
     
     add_bill_items = page.get_by_text("Add bill items", exact=True)
