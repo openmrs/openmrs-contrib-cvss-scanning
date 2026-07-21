@@ -3,7 +3,7 @@ import pytest
 from playwright.sync_api import Page, Playwright,expect
 from tests.utils import calculate_cvss_v4_score, get_cvss_severity, display_results, BaseMetrics
 from tests.conftest import save_cvss_result
-from tests.utils import O3_BASE_URL,login
+from tests.utils import O3_BASE_URL, login
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
 def given_cvss_score_is_calculted_and_printed(request):
@@ -97,6 +97,12 @@ def test_another_accounts_login_token_is_replaced(page:Page,login_data):
 
     #set admin account session cookie to clerk's
     page.context.add_cookies(login_data["clerk_cookies"])
+    
+    # wait for the page url
+    page.wait_for_url(O3_BASE_URL + "/home/**")
+    
+    # wait for the page to fully load
+    page.wait_for_load_state("domcontentloaded")
 
 @pytest_bdd.then("the page shouldn't be logged into the clerk account")
 def the_page_shouldnt_be_logged_into_the_clerk_account(page:Page):
@@ -104,7 +110,7 @@ def the_page_shouldnt_be_logged_into_the_clerk_account(page:Page):
     page.reload()
     #see who's logged in on it, should be the admin and thats who was logged in on the browser
     page.get_by_label("My Account").click()
-    expect(page.get_by_text("Super User")).to_have_count(1)
+    expect(page.get_by_text("Super User"), message="Another account, other than Admin, was logged in to").to_have_count(1)
         
 
 @pytest.fixture(scope="function")
