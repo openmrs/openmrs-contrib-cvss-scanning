@@ -63,10 +63,10 @@ def extract_relevant_test_data():
     # get summary data
     report_summary = report['summary']
     
-    summary_data["duration"] = report['duration']
-    summary_data["failed"] = report_summary['failed']
-    summary_data["passed"] = report_summary['passed']
-    summary_data["total"] = report_summary['total']
+    summary_data["duration"] = report.get('duration', 0)
+    summary_data["failed"] = report_summary.get('failed', 0)
+    summary_data["passed"] = report_summary.get('passed', 0)
+    summary_data["total"] = report_summary.get('total', 0)
     
     # extract relevant test data
     report_tests = report["tests"]
