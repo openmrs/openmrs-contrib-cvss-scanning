@@ -1,7 +1,5 @@
 name: Run Test Subset & Upload Screenshots
 on:
-  push:
-    branches: [ main, develop ]
   workflow_dispatch:
     inputs:
       test_path:
