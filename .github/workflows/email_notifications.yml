@@ -19,7 +19,8 @@ jobs:
       - name: Download previous test results DB
         uses: dawidd6/action-download-artifact@v6
         with:
-          workflow: security-tests.yml
+          workflow: security-tests-and-deploy-dashboard.yml
+          search_artifacts: true
           name: test-results-db
           path: .
         continue-on-error: true  # First run won't have a DB artifact yet
@@ -27,7 +28,8 @@ jobs:
       - name: Download previous test report.json file
         uses: dawidd6/action-download-artifact@v6
         with:
-          workflow: security-tests.yml
+          workflow: security-tests-and-deploy-dashboard.yml
+          search_artifacts: true
           name: security-test-report-json
           path: .
         continue-on-error: false       
