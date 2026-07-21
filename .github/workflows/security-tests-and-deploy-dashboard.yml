@@ -115,6 +115,21 @@ jobs:
         path: "./logs"
         retention-days: 2
         overwrite: true
+    
+    - name: Extract CVSS Scores and Generate Dashboard
+      if: always()
+      run: python scripts/generate_security_dashboard.py
+    
+    - name: Upload Security Dashboard
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-dashboard
+        path: |
+          security_dashboard.html
+          assets/security_dashboard.css
+          assets/pie_chart.css
+        retention-days: 30
   
   deploy-dashboard:
     needs: security-tests
@@ -181,9 +196,29 @@ jobs:
         search_artifacts: true
         path: .
     
+    - name: Download Security Dashboard
+      if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_security_tests == false }}
+      uses: dawidd6/action-download-artifact@v6
+      with:
+        name: security-dashboard
+        path: .
+        run_id: ${{ github.run_id }} # looks for current run
+    
+    # Generate and upload dashboard if it was not done in the previous job
     - name: Extract CVSS Scores and Generate Dashboard
-      if: always()
+      if: ${{ always() && inputs.skip_security_tests == true }}
       run: python scripts/generate_security_dashboard.py
+    
+    - name: Upload Security Dashboard
+      if: ${{ always() && inputs.skip_security_tests == true }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-dashboard
+        path: |
+          security_dashboard.html
+          assets/security_dashboard.css
+          assets/pie_chart.css
+        retention-days: 30
 
     - name: Upload test results DB
       if: always()
@@ -193,17 +228,6 @@ jobs:
         path: test_results.db
         retention-days: 90
         overwrite: true
-
-    - name: Upload Security Dashboard
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: security-dashboard
-        path: |
-          security_dashboard.html
-          assets/security_dashboard.css
-          assets/pie_chart.css
-        retention-days: 30
       
     - name: Prepare GitHub Pages Deployment
       if: github.ref == 'refs/heads/main'
