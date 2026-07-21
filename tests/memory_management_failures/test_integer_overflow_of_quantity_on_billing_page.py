@@ -79,7 +79,7 @@ def given_the_billings_history_page_is_shown(page:Page):
 @pytest_bdd.given('a bill is created')
 def given_a_bill_is_created(page:Page, billing_category):
     
-    add_bill_items = page.get_by_text("Add bill items", exact=True)
+    add_bill_items = page.get_by_text("Create bill", exact=True)
     expect(add_bill_items).to_be_visible()
     add_bill_items.click()
     
@@ -111,7 +111,9 @@ def when_a_quantity_is_inputted(page:Page, quantity):
 @pytest_bdd.then('the quantity should not overflow or wraparound')
 def then_the_quantity_should_not_overflow_or_wraparound(page:Page, quantity):
     
-    page.locator("td button").click()
+    expand_button = page.get_by_role("button", name="Expand current row")
+    expect(expand_button).to_be_visible()
+    expand_button.click()
     
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
         
@@ -121,4 +123,4 @@ def then_the_quantity_should_not_overflow_or_wraparound(page:Page, quantity):
     cells = line_items_table.locator('tbody tr td').all()
     quantity_value = int(cells[3].text_content())
     
-    assert quantity_value == quantity
+    assert quantity_value == quantity, f"Original quantity {quantity} has wrapped around to {quantity_value}"
