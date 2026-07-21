@@ -54,6 +54,21 @@ jobs:
           --json-report-file=report.json \
           -v -s 2>&1 | tee test_output.log
       continue-on-error: true
+    
+    - name: Extract CVSS Scores and Generate Dashboard
+      if: always()
+      run: python scripts/generate_security_dashboard.py
+    
+    - name: Upload Security Dashboard
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-dashboard
+        path: |
+          security_dashboard.html
+          assets/security_dashboard.css
+          assets/pie_chart.css
+        retention-days: 30
 
     - name: Upload HTML Report
       if: always()
