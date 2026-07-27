@@ -16,7 +16,7 @@ def cleanupTestPatient(page:Page,page_data):
 
         page.locator("#givenName").fill("Test")
         page.locator("#middleName").fill("Ing")
-        page.locator("#familyName").fill("Ing")
+        page.locator("#familyName").fill("Patient")
         page.locator("#address1").fill("10000 Avenue Road")
         page.locator("#address2").fill("243")
         page.locator("#cityVillage").fill("Village Town")
@@ -28,6 +28,7 @@ def cleanupTestPatient(page:Page,page_data):
         #waits for page to load then ends
         child = page.get_by_text("Vitals and biometrics")
         child.wait_for()
+
 
 @pytest_bdd.given("logged into OpenMRS O3")
 def login(page:Page,page_data):
@@ -46,16 +47,18 @@ def login(page:Page,page_data):
         page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.given('a test patient has been created')
-def verifyTestPatientExists(page:Page,page_data):
+def verifyTestPatientExists(page:Page,page_data,patient_data):
     page.goto(O3_HOME_URL)
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_label('Search patient',exact=True).click()
-    page.get_by_placeholder('Search for a patient by name or identifier number').fill("Test Ing")
+    page.get_by_placeholder('Search for a patient by name or identifier number').fill("Test Patient")
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     if(page.get_by_text("Other").count()>=1):
-        "hello"
+        pass
     else:
-        createTestPatient(page)
+        createTestPatient(page,family_name="Patient")
+        print(page.url.split("/")[6])
+        patient_data["patient_id"].append(page.url.split("/")[6])
         page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.given('the OpenMRS 3 edit patient page is displayed')
@@ -65,7 +68,7 @@ def navigateToTestPatient(page:Page,page_data):
     
     if(page.get_by_placeholder('Search for a patient by name or identifier number').count()<1):
         page.get_by_label('Search patient',exact=True).click()    
-    page.get_by_placeholder('Search for a patient by name or identifier number').fill("Test Ing")
+    page.get_by_placeholder('Search for a patient by name or identifier number').fill("Test Patient")
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
     page.get_by_role("button",name="Search").first.click()

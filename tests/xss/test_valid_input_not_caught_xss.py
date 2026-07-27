@@ -32,7 +32,7 @@ validEditStrings={
 }
 
 @pytest_bdd.scenario('o3_xss_security.feature','Valid input for <scenarioString> field of edit patient page is not blocked by filters')
-def test_valid_input_no_xss_filter():
+def test_valid_input_no_xss_filter(cleanup_delete_patient):
     pass
 
 @pytest_bdd.given('a CVSS score is calculated and printed')
