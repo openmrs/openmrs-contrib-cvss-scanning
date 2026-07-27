@@ -1,11 +1,10 @@
 :root {
-  --fail_cat_Data_Integrity_Failures: 2%;
-  --fail_cat_Mishandling_of_Exceptional_Conditions: 4%;
-  --fail_cat_Session_Management: 6%;
-  --fail_cat_Insecure_Design: 11%;
-  --fail_cat_Security_Misconfiguration: 18%;
-  --fail_cat_Memory_Management_Failures: 32%;
-  --fail_cat_XSS: 100.0%;
+  --fail_cat_Data_Integrity_Failures: 6%;
+  --fail_cat_Mishandling_of_Exceptional_Conditions: 12%;
+  --fail_cat_Session_Management: 18%;
+  --fail_cat_Insecure_Design: 35%;
+  --fail_cat_Security_Misconfiguration: 57%;
+  --fail_cat_Memory_Management_Failures: 100.0%;
   --coverage_other: 16%;
   --coverage_cat_Security_Logging___Alerting_Failures: 23%;
   --coverage_cat_Memory_Management_Failures: 35%;
@@ -19,17 +18,16 @@ mediumvioletred var(--fail_cat_Data_Integrity_Failures) var(--fail_cat_Mishandli
 olivedrab var(--fail_cat_Mishandling_of_Exceptional_Conditions) var(--fail_cat_Session_Management),
 salmon var(--fail_cat_Session_Management) var(--fail_cat_Insecure_Design),
 slateblue var(--fail_cat_Insecure_Design) var(--fail_cat_Security_Misconfiguration),
-mediumseagreen var(--fail_cat_Security_Misconfiguration) var(--fail_cat_Memory_Management_Failures),
-firebrick var(--fail_cat_Memory_Management_Failures) var(--fail_cat_XSS)
+mediumseagreen var(--fail_cat_Security_Misconfiguration) var(--fail_cat_Memory_Management_Failures)
 
     );
 }
 .chart-container-total-tests {
-    background: conic-gradient(cadetblue 0% var(--coverage_other),
-darkorange var(--coverage_other) var(--coverage_cat_Security_Logging___Alerting_Failures),
+    background: conic-gradient(firebrick 0% var(--coverage_other),
+cadetblue var(--coverage_other) var(--coverage_cat_Security_Logging___Alerting_Failures),
 mediumseagreen var(--coverage_cat_Security_Logging___Alerting_Failures) var(--coverage_cat_Memory_Management_Failures),
 slateblue var(--coverage_cat_Memory_Management_Failures) var(--coverage_cat_Security_Misconfiguration),
-firebrick var(--coverage_cat_Security_Misconfiguration) var(--coverage_cat_XSS),
+darkorange var(--coverage_cat_Security_Misconfiguration) var(--coverage_cat_XSS),
 indigo var(--coverage_cat_XSS) var(--coverage_cat_Authentication)
 
     );
@@ -40,7 +38,7 @@ indigo var(--coverage_cat_XSS) var(--coverage_cat_Authentication)
 .category_color_cat_Insecure_Design { background: salmon; }
 .category_color_cat_Security_Misconfiguration { background: slateblue; }
 .category_color_cat_Memory_Management_Failures { background: mediumseagreen; }
-.category_color_cat_XSS { background: firebrick; }
-.category_color_other { background: cadetblue; }
-.category_color_cat_Security_Logging___Alerting_Failures { background: darkorange; }
+.category_color_other { background: firebrick; }
+.category_color_cat_Security_Logging___Alerting_Failures { background: cadetblue; }
+.category_color_cat_XSS { background: darkorange; }
 .category_color_cat_Authentication { background: indigo; }
