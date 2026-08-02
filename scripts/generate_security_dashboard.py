@@ -279,6 +279,9 @@ def prepare_pie_charts():
         if current_index >= len(pie_chart_data["coverage"]["percents"]):
             keepGoing = False
     
+    # round current sum
+    current_sum = round(current_sum, 2)
+    
     # sort data
     pie_chart_data["coverage"]["percents"].sort(key=lambda x: x[1])
     pie_chart_data["coverage"]["percents"].insert(0, ["Other", current_sum, "other"])
