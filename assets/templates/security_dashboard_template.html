@@ -85,7 +85,11 @@
             <!-- Test Results -->
             {% for category in categories %}
             <div class="test-results">
+                {% if category.failed > 0 %}
+                <details open>
+                {% else %}
                 <details>
+                {% endif %}
                     <summary class="category-header">
                         <span class="category-title">
                             {{ category.icon }}&nbsp;{{ category.name }}
