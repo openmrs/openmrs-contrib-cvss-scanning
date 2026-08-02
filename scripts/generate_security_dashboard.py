@@ -232,6 +232,9 @@ def prepare_data():
         
         category["icon"] = '✅' if category["failed"] == 0 else ('❌' if category["passed"] == 0 else '⚠️')
     
+    # sort category by failing then by name
+    categories.sort(key=lambda x: (-x["failed"], x["name"]))
+    
     # prepare pie charts
     prepare_pie_charts()
 

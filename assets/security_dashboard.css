@@ -452,3 +452,8 @@ iframe{
 .trendline-canvas {
     display:block;
 }
+
+/* Chevron */
+details[open] summary .chevron {
+    transform: rotate(180deg);
+}
