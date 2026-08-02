@@ -86,9 +86,9 @@
             {% for category in categories %}
             <div class="test-results">
                 {% if category.failed > 0 %}
-                <details open>
+                <details open class="details-category">
                 {% else %}
-                <details>
+                <details class="details-category">
                 {% endif %}
                     <summary class="category-header">
                         <span class="category-title">
@@ -287,4 +287,6 @@
             <a href="https://github.com/openmrs/openmrs-contrib-cvss-scanning" target="_blank">GitHub Repository</a> | <a href='/detailed-report.html'>PyTest Report</a></p>
         </div>
     </div>
+
+    <script src="assets/security_dashboard.js"></script>
 </body>
