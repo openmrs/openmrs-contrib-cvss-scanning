@@ -398,6 +398,7 @@ iframe{
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
     gap: 20px;
 }
 
@@ -456,4 +457,21 @@ iframe{
 /* Chevron */
 details[open] summary .chevron {
     transform: rotate(180deg);
+}
+
+/* Sorting bar */
+.sorting-bar {
+    padding: 10px;
+    color: white;
+    text-align: right;
+}
+
+.sorting-bar button {
+    padding: 2px;
+    border-radius: 7px;
+}
+
+.sorting-bar select {
+    padding: 2px;
+    border-radius: 7px;
 }

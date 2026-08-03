@@ -82,6 +82,25 @@
                 </div>
             </div>
 
+            <!-- Sorting Bar -->
+            <div class="sorting-bar">
+                    <button id="open-categories">Open All Categories</button>
+                    &#x2022
+                    <button id="close-categories">Close All Categories</button>
+                    &#x2022
+                    <label for="category-sorting-options">Sort Category By</label>
+                    <select name="category-sorting-options">
+                        <option value=""># of Failing</option>
+                        <option value=""># of Passing</option>
+                        <option value=""># of Tests</option>
+                        <option value="">Alphabetical</option>
+                    </select>
+                    <select>
+                        <option>Ascending</option>
+                        <option>Descending</option>
+                    </select>
+            </div>
+
             <!-- Test Results -->
             {% for category in categories %}
             <div class="test-results">
