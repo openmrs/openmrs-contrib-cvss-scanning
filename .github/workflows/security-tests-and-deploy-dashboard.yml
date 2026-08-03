@@ -203,6 +203,7 @@ jobs:
           security_dashboard.html
           assets/security_dashboard.css
           assets/pie_chart.css
+          assets/security_dashboard.js
         retention-days: 30
       
     - name: Prepare GitHub Pages Deployment
@@ -214,6 +215,7 @@ jobs:
         cp detailed-report.html gh-pages/detailed-report.html
         cp assets/security_dashboard.css gh-pages/assets/security_dashboard.css
         cp assets/pie_chart.css gh-pages/assets/pie_chart.css
+        cp assets/security_dashboard.js gh-pages/assets/security_dashboard.js
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
