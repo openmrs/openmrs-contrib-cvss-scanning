@@ -467,8 +467,16 @@ details[open] summary .chevron {
 }
 
 .sorting-bar button {
-    padding: 2px;
+    padding: 3px 5px 3px 5px;
     border-radius: 7px;
+    border: 0px solid black;
+}
+
+.sorting-bar button:active {
+    padding: 3px 5px 3px 5px;
+    border-radius: 7px;
+    background-color: grey;
+    border: 2px solid inset black;
 }
 
 .sorting-bar select {

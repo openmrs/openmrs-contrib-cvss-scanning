@@ -89,17 +89,20 @@
                     <button id="close-categories">Close All Categories</button>
                     &#x2022
                     <label for="category-sorting-options">Sort Category By</label>
-                    <select name="category-sorting-options">
-                        <option value=""># of Failing</option>
-                        <option value=""># of Passing</option>
-                        <option value=""># of Tests</option>
-                        <option value="">Alphabetical</option>
+                    <select id="category-sorting-options" name="category-sorting-options">
+                        <option value="fail"># of Failing</option>
+                        <option value="pass"># of Passing</option>
+                        <option value="tests"># of Tests</option>
+                        <option value="max-cvss">Max CVSS</option>
+                        <option value="alpha">Alphabetical</option>
                     </select>
-                    <select>
-                        <option>Ascending</option>
-                        <option>Descending</option>
+                    <select id="category-ascn-desc-options">
+                        <option value="ascn">Ascending</option>
+                        <option value="desc">Descending</option>
                     </select>
             </div>
+
+            <div id="categories">
 
             <!-- Test Results -->
             {% for category in categories %}
@@ -111,12 +114,20 @@
                 {% endif %}
                     <summary class="category-header">
                         <span class="category-title">
-                            {{ category.icon }}&nbsp;{{ category.name }}
+                            <span>
+                                {{ category.icon }}
+                            </span>
+                            <span class="category-title-text">
+                                {{ category.name }}
+                            </span>
                         </span>
                         <span class="category-meta">
                             {% if category.failed > 0 %}
                             <span class="{{ category.max_severity_class }} max-cvss">
-                            Highest CVSS: {{ category.max_cvss }} — {{ category.max_severity}}</span>
+                            Highest CVSS: 
+                            <span class="max-cvss-score-text">
+                                {{ category.max_cvss }}
+                            </span> — {{ category.max_severity}}</span>
                             {% endif %}
                             <span class="cat-trend-wrapper">
                                 <span class="cat-trend-label">Max CVSS trend:</span>
@@ -171,20 +182,33 @@
                             <!-- color based on passing / failing count -->
 
                             {% if category.passed > 0 %}
-                            <span class="category-header passed">{{ category.passed }} passed</span>
+                            <span class="category-header passed">
                             {% else %}
-                            <span class="category-header">{{ category.passed }} passed</span>
+                            <span class="category-header">
                             {% endif %}
+                                <span class="pass-count">
+                                    {{ category.passed }}
+                                </span>
+                                &nbsp;passed
+                            </span>
 
                             &nbsp;/&nbsp;
                             
                             {% if category.failed > 0 %}
-                            <span class="category-header failed">{{ category.failed }} failed</span>
+                            <span class="category-header failed">
                             {% else %}
-                            <span class="category-header">{{ category.failed }} failed</span>
+                            <span class="category-header">
                             {% endif %}
+                                <span class="fail-count">
+                                    {{ category.failed }}
+                                </span>
+                                &nbsp;failed
+                            </span>
 
-                            &nbsp;·&nbsp;{{ category.total }} test{{ 's' if cat_total != 1 else '' }}
+                            &nbsp;·&nbsp;
+                            <span class="total-tests">
+                                {{ category.total }}
+                            </span> test{{ 's' if cat_total != 1 else '' }}
                             <span class="chevron">▼</span>
                         </span>
                     </summary>
@@ -294,6 +318,7 @@
                 </details>
             </div>
             {% endfor %}
+        </div>
         </div>
         <div id="dependency_scanning">
             <iframe src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/"></iframe>
