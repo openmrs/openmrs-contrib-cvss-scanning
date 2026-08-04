@@ -483,3 +483,24 @@ details[open] summary .chevron {
     padding: 2px;
     border-radius: 7px;
 }
+
+/* Dashboard Links */
+.dashboard-return-button {
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+.return-link {
+    color: white;
+}
+
+.return-link:hover {
+    color: purple;
+}
+
+.category-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 10px;
+}

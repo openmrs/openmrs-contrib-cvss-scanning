@@ -41,12 +41,17 @@
     <td>{{ test.category }}</td>
     {% endif %}
     <td><strong>{{test.name}}</strong></td>
+    
     <td>
     {% for param in test.params %}
         <p>{{ param }}</p>
     {% endfor %}
     </td>
+
+    {% if isSpreadsheet == false %}
     <td>{{ test.description }}</td>
+    {% endif %}
+
     <td><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
     <td>
         {% if isFailing %}

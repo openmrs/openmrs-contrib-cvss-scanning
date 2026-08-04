@@ -9,6 +9,10 @@
 <body>
     {{ macros.dashboard_header(current_time) }}
 
+    <div class="dashboard-return-button">
+        <a class="return-link" href="/security_dashboard.html">Return to Main Dashboard</a>
+    </div>
+
     <div class="test-results">
     <table>
         <thead>
@@ -16,7 +20,6 @@
                 <th>Category</th>
                 <th>Test Name</th>
                 <th>Parameters</th>
-                <th>Description</th>
                 <th>Status</th>
                 <th>CVSS Score (Baseline)</th>
                 <th>Severity</th>
