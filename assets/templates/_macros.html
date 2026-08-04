@@ -36,24 +36,29 @@
 {%endmacro%}
 
 {%macro test_row(isFailing, test, isSpreadsheet=false) %}
-<tr>
+{% if isFailing %}
+<tr class="fail-row">
+{% else %}
+<tr class="pass-row">
+{% endif %}
+
     {% if isSpreadsheet %}
-    <td>{{ test.category }}</td>
+    <td class="row-category">{{ test.category }}</td>
     {% endif %}
-    <td><strong>{{test.name}}</strong></td>
+    <td class="row-test-name"><strong>{{test.name}}</strong></td>
     
-    <td>
+    <td class="row-params">
     {% for param in test.params %}
         <p>{{ param }}</p>
     {% endfor %}
     </td>
 
     {% if isSpreadsheet == false %}
-    <td>{{ test.description }}</td>
+    <td class="row-description">{{ test.description }}</td>
     {% endif %}
 
-    <td><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
-    <td>
+    <td class="row-status"><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
+    <td class="row-cvss">
         {% if isFailing %}
         <div class="tooltip">
             <span class="cvss-score-fail">{{ test.cvss_score }}</span>
@@ -68,7 +73,7 @@
         <span class="cvss-score-pass">{{ test.cvss_score }}</span>
         {% endif %}
     </td>
-    <td><span class="severity-badge {{ test.severity_class }}">{{ test.severity }}</span></td>
-    <td>{{ test.duration }}</td>
+    <td class="row-severity"><span class="severity-badge {{ test.severity_class }}">{{ test.severity }}</span></td>
+    <td class="row-duration">{{ test.duration }}</td>
 </tr>
 {%endmacro%}

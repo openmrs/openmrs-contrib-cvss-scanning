@@ -461,14 +461,14 @@ details[open] summary .chevron {
 
 .spreadsheet-chevron {
     font-size: larger;
-    color: green;
+    color: red;
     display: inline-block;
     transition: transform 0.2s ease;
 }
 
 .spreadsheet-chevron.flipped {
     transform: rotate(180deg);
-    color: red;
+    color: green;
 }
 
 /* Sorting bar */
@@ -494,6 +494,16 @@ details[open] summary .chevron {
 .sorting-bar select {
     padding: 2px;
     border-radius: 7px;
+}
+
+.failed-label {
+    color: rgb(97, 0, 0);
+    font-weight: bold;
+}
+
+.passed-label {
+    color: lime;
+    font-weight: bold;
 }
 
 /* Dashboard Links */

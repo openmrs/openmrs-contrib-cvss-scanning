@@ -9,9 +9,18 @@
 <body>
     {{ macros.dashboard_header(current_time) }}
 
-    <div class="dashboard-return-button">
-        <a class="return-link" href="/security_dashboard.html">Return to Main Dashboard</a>
-    </div>
+    <div class="category-bar">
+                <a class="return-link" href="/security_dashboard.html">Return to Main Dashboard</a>
+                <!-- Sorting Bar -->
+                <div class="sorting-bar">
+                    Check/Uncheck to filter results: 
+                    <input id="fail-checkbox" name="Failed" type="checkbox" checked>
+                    <label for="Failed" class="failed-label">Failed</label>
+
+                    <input id="pass-checkbox" name="Passed" type="checkbox" checked>
+                    <label for="Passed" class="passed-label">Passed</label>
+                </div>
+            </div>
 
     <div class="test-results">
     <table id="spreadsheet-table" class="spreadsheet-table">
