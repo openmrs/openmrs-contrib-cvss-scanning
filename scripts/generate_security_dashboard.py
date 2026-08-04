@@ -401,19 +401,27 @@ def display_test_data():
 
     # load template
     env = Environment(loader = FileSystemLoader('assets/templates'))
-    template = env.get_template('security_dashboard_template.html')
+    dashboard_template = env.get_template('security_dashboard_template.html')
+    spreadsheet_template = env.get_template('security_dashboard_spreadsheet_view_template.html')
     
-    output = template.render(
+    dashboard_output = dashboard_template.render(
         summary_data = summary_data,
         tests = tests,
         current_time = current_time,
         categories = categories,
         pie_chart_data = pie_chart_data,
     )
+    
+    spreadsheet_output = spreadsheet_template.render(
+        current_time = current_time,
+    )
         
     # save to file
     with open("security_dashboard.html", 'w', encoding="utf-8") as f:
-        f.write(output)
+        f.write(dashboard_output)
+    
+    with open("security_dashboard_spreadsheet_view.html", 'w', encoding="utf-8") as f:
+            f.write(spreadsheet_output)
 
 def database_operations():
     

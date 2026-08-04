@@ -1,31 +1,15 @@
+{% import '_macros.html' as macros %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenMRS O3 Security Dashboard - CVSS 4.0 Migration</title>
-    <link rel="stylesheet" href="assets/security_dashboard.css">
-    <link rel="stylesheet" href="assets/pie_chart.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-    <script>
-        function showDiv(id){
-            const divs = document.querySelectorAll("#tabs_div>div");
-            divs.forEach(d=>{d.classList.remove("visible")});
-            document.getElementById(id).classList.add("visible");
-        }
-    </script>
+    {{ macros.dashboard_head() }}
+    <title>OpenMRS O3 Security Dashboard</title>
 </head>
-<body>
 <body  onload='showDiv("vulnerability_testing")'>
-    <div class="header">
-        <h1>🔒 OpenMRS O3 Security Dashboard</h1>
-        <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
-        <p class="timestamp-line">Last Updated: 
-        <span class="timestamp">
-            {{ current_time }}
-        </span>
-        </p>
-    </div>
+
+    {{ macros.dashboard_header(current_time) }}
+    
     <div class = "tabs_buttons">
         <button class="tabs_buttons-left" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
         <button class=".tabs_buttons-right" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
@@ -324,13 +308,8 @@
             <iframe src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/"></iframe>
         </div>
     </div>
-        <div class="footer">
-            <p>OpenMRS O3 Continuous Security Testing</p>
-            <p><a href="https://openmrs.atlassian.net/wiki/spaces/docs/pages/940212225/OpenMRS+Security+Test+Implementation+Guideline">How to contribute to this dashboard</a></p>
-            <p>Powered by <a href="https://www.first.org/cvss/v4.0/" target="_blank">CVSS 4.0</a> | 
-            <a href="https://github.com/openmrs/openmrs-contrib-cvss-scanning" target="_blank">GitHub Repository</a> | <a href='/detailed-report.html'>PyTest Report</a></p>
-        </div>
-    </div>
+
+    {{ macros.dashboard_footer() }}
 
     <script src="assets/security_dashboard.js"></script>
 </body>
