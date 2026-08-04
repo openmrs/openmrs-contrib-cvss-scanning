@@ -14,16 +14,51 @@
     </div>
 
     <div class="test-results">
-    <table>
+    <table id="spreadsheet-table" class="spreadsheet-table">
         <thead>
             <tr>
-                <th>Category</th>
-                <th>Test Name</th>
-                <th>Parameters</th>
-                <th>Status</th>
-                <th>CVSS Score (Baseline)</th>
-                <th>Severity</th>
-                <th>Duration</th>
+                <th>
+                    <div class="th-content">
+                        <span>Category</span>
+                        <span class="spreadsheet-chevron">▼</span>
+                    </div>
+                </th>
+                <th>
+                    <div class="th-content">
+                        <span>Test Name</span>
+                        <span class="spreadsheet-chevron">▼</span>
+                    </div>
+                </th>
+                <th>
+                    <div class="th-content">
+                        <span>Parameters</span>
+                        <span class="spreadsheet-chevron">▼</span>
+                    </div>
+                </th>
+                <th>
+                    <div class="th-content">
+                        <span>Status</span>
+                        <span class="spreadsheet-chevron">▼</span>
+                    </div>
+                </th>
+                <th>
+                    <div class="th-content">
+                        <span>CVSS Score (Baseline)</span>
+                        <span class="spreadsheet-chevron">▼</span>
+                    </div>
+                </th>
+                <th>
+                    <div class="th-content">
+                        <span>Severity</span>
+                        <span class="spreadsheet-chevron">▼</span>
+                    </div>
+                </th>
+                <th>
+                    <div class="th-content">
+                        <span>Duration</span>
+                        <span class="spreadsheet-chevron">▼</span>
+                    </div>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -36,5 +71,7 @@
 </div>
 
     {{ macros.dashboard_footer() }}
+
+    <script src="/assets/security_dashboard_spreadsheet_view.js"></script>
 </body>
 </html>

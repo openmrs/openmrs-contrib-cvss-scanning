@@ -459,6 +459,18 @@ details[open] summary .chevron {
     transform: rotate(180deg);
 }
 
+.spreadsheet-chevron {
+    font-size: larger;
+    color: green;
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.spreadsheet-chevron.flipped {
+    transform: rotate(180deg);
+    color: red;
+}
+
 /* Sorting bar */
 .sorting-bar {
     padding: 10px;
@@ -503,4 +515,12 @@ details[open] summary .chevron {
     align-items: center;
     justify-content: space-between;
     padding-left: 10px;
+}
+
+/* Spreadsheet Table */
+.th-content {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    user-select: none;
 }
