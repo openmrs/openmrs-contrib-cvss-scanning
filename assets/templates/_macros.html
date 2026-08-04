@@ -34,3 +34,36 @@
         <a href="https://github.com/openmrs/openmrs-contrib-cvss-scanning" target="_blank">GitHub Repository</a> | <a href='/detailed-report.html'>PyTest Report</a></p>
     </div>
 {%endmacro%}
+
+{%macro test_row(isFailing, test, isSpreadsheet=false) %}
+<tr>
+    {% if isSpreadsheet %}
+    <td>{{ test.category }}</td>
+    {% endif %}
+    <td><strong>{{test.name}}</strong></td>
+    <td>
+    {% for param in test.params %}
+        <p>{{ param }}</p>
+    {% endfor %}
+    </td>
+    <td>{{ test.description }}</td>
+    <td><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
+    <td>
+        {% if isFailing %}
+        <div class="tooltip">
+            <span class="cvss-score-fail">{{ test.cvss_score }}</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                {{ "</p><p>".join(test.errors) }}
+                </p>
+            </span>
+        </div>
+        {% else %}
+        <span class="cvss-score-pass">{{ test.cvss_score }}</span>
+        {% endif %}
+    </td>
+    <td><span class="severity-badge {{ test.severity_class }}">{{ test.severity }}</span></td>
+    <td>{{ test.duration }}</td>
+</tr>
+{%endmacro%}

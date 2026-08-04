@@ -414,6 +414,7 @@ def display_test_data():
     
     spreadsheet_output = spreadsheet_template.render(
         current_time = current_time,
+        tests = tests,
     )
         
     # save to file

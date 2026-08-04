@@ -220,29 +220,7 @@
                                 {% for test in tests %}
                                     {% if test.category == category.name %}
                                         {% if test.status== "failed" %}    
-                                            <tr>
-                                                <td><strong>{{test.name}}</strong></td>
-                                                <td>
-                                                {% for param in test.params %}
-                                                    <p>{{ param }}</p>
-                                                {% endfor %}
-                                                </td>
-                                                <td>{{ test.description }}</td>
-                                                <td><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
-                                                <td>
-                                                    <div class="tooltip">
-                                                        <span class="cvss-score-fail">{{ test.cvss_score }}</span>
-                                                        <span class="tooltiptext">
-                                                            <p><u>Recorded Errors</u></p>
-                                                            <p>
-                                                            {{ "</p><p>".join(test.errors) }}
-                                                            </p>
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td><span class="severity-badge {{ test.severity_class }}">{{ test.severity }}</span></td>
-                                                <td>{{ test.duration }}</td>
-                                            </tr>
+                                            {{ macros.test_row(true, test) }}
                                         {% endif %}
                                     {% endif %}
                                 {% endfor %}
@@ -278,20 +256,7 @@
                                 {% for test in tests %}
                                     {% if test.category == category.name %}
                                         {% if test.status == "passed" %}
-                                            <tr>
-                                                <td><strong>{{test.name}}</strong></td>
-                                                <td>
-                                                {% for param in test.params %}
-                                                    <p>{{ param }}</p>
-                                                {% endfor %}
-                                                </td>
-                                                <td>{{ test.description }}</td>
-                                                <!-- status class is the same as-->
-                                                <td><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
-                                                <td><span class="cvss-score-pass">{{ test.cvss_score }}</span></td>
-                                                <td><span class="severity-badge {{ test.severity_class }}">{{ test.severity }}</span></td>
-                                                <td>{{ test.duration }}</td>
-                                            </tr>
+                                            {{ macros.test_row(false, test) }}
                                         {% endif %}
                                     {% endif %}
                                 {% endfor %}

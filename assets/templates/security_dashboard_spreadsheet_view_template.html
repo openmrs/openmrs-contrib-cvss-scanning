@@ -8,6 +8,30 @@
 </head>
 <body>
     {{ macros.dashboard_header(current_time) }}
+
+    <div class="test-results">
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Test Name</th>
+                <th>Parameters</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>CVSS Score (Baseline)</th>
+                <th>Severity</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for test in tests %}
+                {% set isFailing = test.status == "failed" %}
+                {{ macros.test_row(isFailing, test, isSpreadsheet=true) }}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
     {{ macros.dashboard_footer() }}
 </body>
 </html>
