@@ -109,9 +109,18 @@ def extract_relevant_test_data():
         else:
             # add parameters as lines
             for key in params_dict.keys():
-                param_str = f"{key}: {str(params_dict[key])}"
-                param = html.escape(param_str, quote=True)
-                new_test['params'].append(param)
+                # if key is a dict, go another level deeper
+                if type(params_dict[key]) == dict:
+                    seconary_dict : dict = params_dict[key]
+                    
+                    for secondary_key in seconary_dict.keys():
+                        param_str = f"{secondary_key}: {str(seconary_dict[secondary_key])}"
+                        param = html.escape(param_str, quote=True)
+                        new_test['params'].append(param)
+                else:
+                    param_str = f"{key}: {str(params_dict[key])}"
+                    param = html.escape(param_str, quote=True)
+                    new_test['params'].append(param)
             
         # duration
         setup_duration = test.get("setup", {}).get("duration", 0)
