@@ -506,6 +506,13 @@ details[open] summary .chevron {
     font-weight: bold;
 }
 
+.search-bar {
+    padding: 5px;
+    border-radius: 10px;
+    border-width: 1px;
+    width: 300px;
+}
+
 /* Dashboard Links */
 .dashboard-return-button {
     text-align: center;
