@@ -14,6 +14,7 @@ let failCheckbox = document.getElementById("fail-checkbox");
 // searching
 let spreadsheetSearchBar = document.getElementById("spreadsheet-search-bar");
 let searchFieldSelect = document.getElementById("searchField");
+let sortByRelevanceCheckbox = document.getElementById("relevance-checkbox");
 
 function resetChevrons() {
     // reset all chevrons
@@ -110,26 +111,44 @@ function sortTableRows(sortByField, isAscending, relevanceRank) {
 
     const rows = getTableRows();
 
-    // sort by
-    const sortByMap = {
-        "Category": "categoryText",
-        "Test Name": "testNameText",
-        "Parameters": "parametersText",
-        "Status": "statusText",
-        "CVSS Score (Baseline)": "cvssText",
-        "Duration": "durationText",
-    };
+    // sort by relevance
+    if (sortByField == "Relevance") {
+        rows.sort(function (a,b) {
+            const rankA = relevanceRank.has(a.currentRow) ? relevanceRank.get(a.currentRow) : Infinity;
+            const rankB = relevanceRank.has(b.currentRow) ? relevanceRank.get(b.currentRow) : Infinity;
 
-    const sortKey = sortByMap[sortByField];
+            // unmatched rows (Infinity) always sink to the bottom,
+            // regardless of ascending/descending
+            if (rankA === Infinity && rankB === Infinity) return 0;
+            if (rankA === Infinity) return 1;
+            if (rankB === Infinity) return -1;
 
-    rows.sort(function (a,b) {
-        const result = a[sortKey].localeCompare(b[sortKey], undefined, {
-            numeric: true,
-            sensitivity: 'base',
+            const result = rankA - rankB;
+            return isAscending ? result : -result;
         });
+    }
+    else {
+        // sort by
+        const sortByMap = {
+            "Category": "categoryText",
+            "Test Name": "testNameText",
+            "Parameters": "parametersText",
+            "Status": "statusText",
+            "CVSS Score (Baseline)": "cvssText",
+            "Duration": "durationText",
+        };
 
-        return isAscending ? result : -result;
-    });
+        const sortKey = sortByMap[sortByField];
+
+        rows.sort(function (a,b) {
+            const result = a[sortKey].localeCompare(b[sortKey], undefined, {
+                numeric: true,
+                sensitivity: 'base',
+            });
+
+            return isAscending ? result : -result;
+        });
+    }
     
     if (rows.length === 0) return;
 
@@ -150,8 +169,12 @@ function searchByField(searchText, searchField) {
 
     if (searchText.trim() == "") {
         for (let i = 0; i < rows.length; i++) {
-            rows[i].classList.remove("search-visible");
-            rows[i].classList.remove("search-invisible");
+
+            if (rows[i].classList != undefined) {
+                console.log(rows[i]);
+            }
+            rows[i].currentRow.classList.remove("search-visible");
+            rows[i].currentRow.classList.remove("search-invisible");
         }
 
         return;
@@ -215,6 +238,10 @@ function searchByField(searchText, searchField) {
     results.forEach((result, index) => {
         relevanceRank.set(result.item.currentRow, index);
     });
+
+    if (sortByRelevanceCheckbox.checked) {
+        sortTableRows("Relevance", true, relevanceRank);
+    }
 }
 
 tableHead.addEventListener('click', (e) => {
@@ -228,6 +255,9 @@ tableHead.addEventListener('click', (e) => {
 
     // add a chevron
     updateChevron(target);
+
+    sortByRelevanceCheckbox.checked = false;
+
     // sort by corresponding feature
     let isAscending = target.getElementsByClassName("spreadsheet-chevron")[0].classList.contains("flipped");
     sortTableRows(sortByField, isAscending);
@@ -266,6 +296,17 @@ searchFieldSelect.addEventListener('change', (e) => {
     searchField = e.target.value;
 
     searchByField(searchText, searchField);
+});
+
+sortByRelevanceCheckbox.addEventListener('change', (e) => {
+    if (e.target.checked) {
+        resetChevrons();
+
+        searchText = spreadsheetSearchBar.value;
+        searchField = searchFieldSelect.value;
+
+        searchByField(searchText, searchField);
+    }
 });
 
 //begin with no chevrons
