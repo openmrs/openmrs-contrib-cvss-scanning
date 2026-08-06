@@ -14,15 +14,16 @@
                 <!-- Sorting Bar -->
                 <div class="sorting-bar">
                     <label>Search: </label>
-                    <input class="search-bar" type="text" placeholder="Start typing to search">
-                    <select>
-                        <option>Category</option>
-                        <option>Test Name</option>
-                        <option>Parameters</option>
-                        <option>Status</option>
-                        <option>CVSS Score</option>
-                        <option>Severity</option>
-                        <option>Duration</option>
+                    <input id="spreadsheet-search-bar" class="search-bar" type="text" placeholder="Start typing to search">
+                    <select id="searchField">
+                        <option value="">All Fields</option>
+                        <option value="Category">Category</option>
+                        <option value="Test Name">Test Name</option>
+                        <option value="Parameters">Parameters</option>
+                        <option value="Status">Status</option>
+                        <option value="CVSS Score">CVSS Score</option>
+                        <option value="Severity">Severity</option>
+                        <option value="Duration">Duration</option>
                     </select>
                     
 
@@ -30,10 +31,10 @@
 
                     Check/Uncheck to filter results: 
                     <input id="fail-checkbox" name="Failed" type="checkbox" checked>
-                    <label for="Failed" class="failed-label">Failed</label>
+                    <label for="fail-checkbox" class="failed-label">Failed</label>
 
                     <input id="pass-checkbox" name="Passed" type="checkbox" checked>
-                    <label for="Passed" class="passed-label">Passed</label>
+                    <label for="pass-checkbox" class="passed-label">Passed</label>
                 </div>
             </div>
 
@@ -96,6 +97,7 @@
 
     {{ macros.dashboard_footer() }}
 
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js"></script>
     <script src="/assets/security_dashboard_spreadsheet_view.js"></script>
 </body>
 </html>

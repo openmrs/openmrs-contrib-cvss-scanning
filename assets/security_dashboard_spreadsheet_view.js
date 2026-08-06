@@ -11,6 +11,10 @@ let failedRows = document.getElementsByClassName("fail-row");
 let passCheckbox = document.getElementById("pass-checkbox");
 let failCheckbox = document.getElementById("fail-checkbox");
 
+// searching
+let spreadsheetSearchBar = document.getElementById("spreadsheet-search-bar");
+let searchFieldSelect = document.getElementById("searchField");
+
 function resetChevrons() {
     // reset all chevrons
     for (let i = 0; i < chevrons.length; i++) {
@@ -126,6 +130,129 @@ function sortTableRows(sortByField, isAscending) {
     parent.appendChild(fragment);
 }
 
+function searchByField(searchText, searchField) {
+
+    // collect all rows and their cells in an object
+    const tableBody = spreadsheetTable.getElementsByTagName("tbody")[0]
+    const tableRows = Array.from(tableBody.getElementsByTagName("tr"));
+
+    if (searchText.trim() == "") {
+        for (let i = 0; i < tableRows.length; i++) {
+            tableRows[i].style.display = "";
+        }
+
+        return;
+    }
+
+    const rows = [];
+
+    for (let i = 0; i < tableRows.length; i++) {
+
+        const currentRow = tableRows[i];
+        const categoryEl = currentRow.getElementsByClassName("row-category")[0];
+
+        // category name
+        let categoryText = categoryEl.textContent;
+
+        // test name
+        let testNameEl = currentRow.getElementsByClassName("row-test-name")[0];
+        let testNameText = testNameEl.textContent;
+
+        // parameters
+        let parametersEl = currentRow.getElementsByClassName("row-params")[0];
+        let parametersText = parametersEl.textContent;
+
+        // severity
+        let severityEl = currentRow.getElementsByClassName("row-severity")[0];
+        let severityText = severityEl.textContent;
+
+        // status
+        let statusEl = currentRow.getElementsByClassName("row-status")[0];
+        let statusText = statusEl.textContent;
+
+        // CVSS
+        let cvssEl = currentRow.getElementsByClassName("row-cvss")[0];
+        let cvssText = cvssEl.textContent;
+
+        // duration
+        let durationEl = currentRow.getElementsByClassName("row-duration")[0];
+        let durationText = durationEl.textContent;
+
+        categoryText = categoryText.trim();
+        testNameText = testNameText.trim();
+        parametersText = parametersText.trim();
+        severityText = severityText.trim();
+        statusText = statusText.trim();
+        cvssText = cvssText.trim();
+        durationText = durationText.trim();
+    
+        //sortable
+        rows.push({
+            uniqueId: i,
+            currentRow: currentRow,
+            categoryText: categoryText,
+            testNameText: testNameText,
+            parametersText: parametersText,
+            severityText: severityText,
+            statusText: statusText,
+            cvssText: cvssText,
+            durationText: durationText,
+        });
+    }
+
+    // sort by
+    const searchFieldMap = {
+        "Category": "categoryText",
+        "Test Name": "testNameText",
+        "Parameters": "parametersText",
+        "Severity": "severityText",
+        "Status": "statusText",
+        "CVSS Score": "cvssText",
+        "Duration": "durationText",
+    };
+
+    let keys = [];
+
+    if (searchField == "") {
+        keys = [
+            'categoryText',
+            'testNameText',
+            'parametersText',
+            'severityText',
+            'statusText',
+            'cvssText',
+            'durationText',
+        ];
+    } else {
+        keys = [
+            searchFieldMap[searchField]
+        ];
+    }
+
+    // use object and search field to search
+    const fuse = new Fuse(rows, {
+        keys: keys,
+        includeScore: true,
+        threshold: 0.5,
+    });
+
+    // use results to set display
+    const results = fuse.search(searchText);
+    
+    for (let i = 0; i < rows.length; i++) {
+        // if row is in the results, display
+        let hasResult = results.some(result => result.item.uniqueId === rows[i].uniqueId);
+
+        // check passed/failed filter
+
+        if (hasResult) {
+            rows[i].currentRow.style.display = "";
+        } else {
+            rows[i].currentRow.style.display = "none";
+        }
+    }
+}
+
 tableHead.addEventListener('click', (e) => {
 
     let target = e.target.closest('th');
@@ -158,6 +285,21 @@ failCheckbox.addEventListener('change', (e) => {
     for (let i = 0; i < failedRows.length; i++) {
         failedRows[i].style.display = displayValue;
     }
+});
+
+// search bar
+spreadsheetSearchBar.addEventListener('input', (e) => {
+    searchText = e.target.value;
+    searchField = searchFieldSelect.value;
+
+    searchByField(searchText, searchField);
+});
+
+searchFieldSelect.addEventListener('change', (e) => {
+    searchText = spreadsheetSearchBar.value;
+    searchField = e.target.value;
+
+    searchByField(searchText, searchField);
 });
 
 //begin with no chevrons
