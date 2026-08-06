@@ -138,7 +138,8 @@ function searchByField(searchText, searchField) {
 
     if (searchText.trim() == "") {
         for (let i = 0; i < tableRows.length; i++) {
-            tableRows[i].style.display = "";
+            tableRows[i].classList.remove("search-visible");
+            tableRows[i].classList.remove("search-invisible");
         }
 
         return;
