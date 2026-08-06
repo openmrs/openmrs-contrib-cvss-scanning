@@ -43,111 +43,13 @@ function updateChevron(target) {
 
 }
 
-function sortTableRows(sortByField, isAscending) {
-
-    const tableBody = spreadsheetTable.getElementsByTagName("tbody")[0]
+function getTableRows() {
+    const tableBody = spreadsheetTable.getElementsByTagName("tbody")[0];
     const tableRows = Array.from(tableBody.getElementsByTagName("tr"));
 
     const rows = [];
 
-    for (let i = 0; i < tableRows.length; i++) {
-
-        const currentRow = tableRows[i];
-        const categoryEl = currentRow.getElementsByClassName("row-category")[0];
-
-        // category name
-        let categoryText = categoryEl.textContent;
-
-        // test name
-        let testNameEl = currentRow.getElementsByClassName("row-test-name")[0];
-        let testNameText = testNameEl.textContent;
-
-        // parameters
-        let parametersEl = currentRow.getElementsByClassName("row-params")[0];
-        let parametersText = parametersEl.textContent;
-
-        // status
-        let statusEl = currentRow.getElementsByClassName("row-status")[0];
-        let statusText = statusEl.textContent;
-
-        // CVSS
-        let cvssEl = currentRow.getElementsByClassName("row-cvss")[0];
-        let cvssText = cvssEl.textContent;
-
-        // duration
-        let durationEl = currentRow.getElementsByClassName("row-duration")[0];
-        let durationText = durationEl.textContent;
-
-        categoryText = categoryText.trim();
-        testNameText = testNameText.trim();
-        parametersText = parametersText.trim();
-        statusText = statusText.trim();
-        cvssText = cvssText.trim();
-        durationText = durationText.trim();
-    
-        //sortable
-        rows.push({
-            currentRow: currentRow,
-            categoryText: categoryText,
-            testNameText: testNameText,
-            parametersText: parametersText,
-            statusText: statusText,
-            cvssText: cvssText,
-            durationText: durationText,
-        });
-    }
-
-    // sort by
-    const sortByMap = {
-        "Category": "categoryText",
-        "Test Name": "testNameText",
-        "Parameters": "parametersText",
-        "Status": "statusText",
-        "CVSS Score (Baseline)": "cvssText",
-        "Duration": "durationText",
-    };
-
-    const sortKey = sortByMap[sortByField];
-
-    rows.sort(function (a,b) {
-        const result = a[sortKey].localeCompare(b[sortKey], undefined, {
-            numeric: true,
-            sensitivity: 'base',
-        });
-
-        return isAscending ? result : -result;
-    });
-    
-    if (rows.length === 0) return;
-
-    const fragment = document.createDocumentFragment();
-
-    for (let i = 0; i < rows.length; i++) {
-        fragment.appendChild(rows[i].currentRow);
-    }
-
-    const parent = tableBody;
-    parent.appendChild(fragment);
-}
-
-function searchByField(searchText, searchField) {
-
-    // collect all rows and their cells in an object
-    const tableBody = spreadsheetTable.getElementsByTagName("tbody")[0]
-    const tableRows = Array.from(tableBody.getElementsByTagName("tr"));
-
-    if (searchText.trim() == "") {
-        for (let i = 0; i < tableRows.length; i++) {
-            tableRows[i].classList.remove("search-visible");
-            tableRows[i].classList.remove("search-invisible");
-        }
-
-        return;
-    }
-
-    const rows = [];
-
-    for (let i = 0; i < tableRows.length; i++) {
+for (let i = 0; i < tableRows.length; i++) {
 
         const currentRow = tableRows[i];
         const categoryEl = currentRow.getElementsByClassName("row-category")[0];
@@ -201,6 +103,60 @@ function searchByField(searchText, searchField) {
         });
     }
 
+    return rows;
+}
+
+function sortTableRows(sortByField, isAscending, relevanceRank) {
+
+    const rows = getTableRows();
+
+    // sort by
+    const sortByMap = {
+        "Category": "categoryText",
+        "Test Name": "testNameText",
+        "Parameters": "parametersText",
+        "Status": "statusText",
+        "CVSS Score (Baseline)": "cvssText",
+        "Duration": "durationText",
+    };
+
+    const sortKey = sortByMap[sortByField];
+
+    rows.sort(function (a,b) {
+        const result = a[sortKey].localeCompare(b[sortKey], undefined, {
+            numeric: true,
+            sensitivity: 'base',
+        });
+
+        return isAscending ? result : -result;
+    });
+    
+    if (rows.length === 0) return;
+
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < rows.length; i++) {
+        fragment.appendChild(rows[i].currentRow);
+    }
+
+    const parent = spreadsheetTable.getElementsByTagName("tbody")[0];
+    parent.appendChild(fragment);
+}
+
+function searchByField(searchText, searchField) {
+
+    // collect all rows and their cells in an object
+    const rows = getTableRows();
+
+    if (searchText.trim() == "") {
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].classList.remove("search-visible");
+            rows[i].classList.remove("search-invisible");
+        }
+
+        return;
+    }
+
     // sort by
     const searchFieldMap = {
         "Category": "categoryText",
@@ -252,6 +208,13 @@ function searchByField(searchText, searchField) {
             rows[i].currentRow.classList.add("search-invisible");
         }
     }
+
+    console.log(results);
+    // sort by relevance (if no other sorts selected)
+    let relevanceRank = new Map();
+    results.forEach((result, index) => {
+        relevanceRank.set(result.item.currentRow, index);
+    });
 }
 
 tableHead.addEventListener('click', (e) => {
