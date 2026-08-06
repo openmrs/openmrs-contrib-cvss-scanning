@@ -77,3 +77,67 @@
     <td class="row-duration">{{ test.duration }}</td>
 </tr>
 {%endmacro%}
+
+{%macro dashboard_stats(summary_data, pie_chart_data) %}
+    <div class = "tabs_buttons">
+        <button class="tabs_buttons-left" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
+        <button class=".tabs_buttons-right" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
+    </div>
+    <div id="tabs_div">
+        <div id ="vulnerability_testing">
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Total Tests</h3>
+                    <p>{{ summary_data.total }}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Passed</h3>
+                    <p class="passed">{{ summary_data.passed }}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Failed</h3>
+                    <p class="failed">{{ summary_data.failed }}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Duration</h3>
+                    <p>{{ summary_data.duration }} min</p>
+                </div>
+                
+            </div>
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Failed Tests by Category</h3>
+                    <div class="chart-wrapper">
+                        <div class="chart-container chart-container-failed-tests"></div>
+                        <div class="legend">
+                            {% for category in pie_chart_data.failed.percents %}
+                            <div class="legend-item">
+                                <div class="legend-color category_color_{{ category[2] }}"></div>
+                                {{ category[0] }}: {{ category[1] }}%
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Test Coverage</h3>
+                    <div class="chart-wrapper">
+                        <div class="chart-container chart-container-total-tests"></div>
+                        <div class="legend">
+                            {% for category in pie_chart_data.coverage.percents %}
+                            <div class="legend-item">
+                                <div class="legend-color category_color_{{ category[2] }}"></div>
+                                {{ category[0] }}: {{ category[1] }}%
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+{%endmacro%}
+
+{%macro dependency_scanning() %}
+    <div id="dependency_scanning">
+        <iframe src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/"></iframe>
+    </div>
+{%endmacro%}

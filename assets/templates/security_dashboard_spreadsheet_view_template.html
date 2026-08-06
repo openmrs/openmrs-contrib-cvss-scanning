@@ -6,8 +6,10 @@
     {{ macros.dashboard_head() }}
     <title>Spreadsheet View - OpenMRS O3 Security Dashboard</title>
 </head>
-<body>
+<body onload='showDiv("vulnerability_testing")'>
     {{ macros.dashboard_header(current_time) }}
+
+    {{ macros.dashboard_stats(summary_data, pie_chart_data) }}
 
     <div class="category-bar">
                 <a class="return-link" href="/security_dashboard.html">Return to Main Dashboard</a>
@@ -96,7 +98,9 @@
         </tbody>
     </table>
 </div>
-
+</div>
+    {{ macros.dependency_scanning() }}
+</div>
     {{ macros.dashboard_footer() }}
 
     <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js"></script>

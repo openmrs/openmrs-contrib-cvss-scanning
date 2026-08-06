@@ -422,8 +422,10 @@ def display_test_data():
     )
     
     spreadsheet_output = spreadsheet_template.render(
+        summary_data = summary_data,
         current_time = current_time,
         tests = tests,
+        pie_chart_data = pie_chart_data,
     )
         
     # save to file
