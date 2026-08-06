@@ -121,3 +121,13 @@ ascnDescDropdown.addEventListener('change', (e) => {
 
     sortDetailsPanel(value, isDescending);
 });
+
+/* Table sorting */
+let sortableTables = document.getElementsByClassName("sub-details-head");
+
+for (let i = 0; i < sortableTables.length; i++) {
+    sortableTables[i].addEventListener('click', (e) => {tableHeadEventListener(e, sortableTables[i], null);});
+}
+
+let allChevrons = document.getElementsByClassName("spreadsheet-chevron");
+resetChevrons(allChevrons);

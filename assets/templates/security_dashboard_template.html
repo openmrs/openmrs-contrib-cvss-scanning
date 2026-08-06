@@ -153,17 +153,7 @@
                             <span class="subcategory-count">{{ category.failed }} test{{'s' if category.failed != 1 else '' }}</span>
                         </summary>
                         <table>
-                            <thead>
-                                <tr>
-                                    <th>Test Name</th>
-                                    <th>Parameters</th>
-                                    <th>Description</th>
-                                    <th>Status</th>
-                                    <th>CVSS Score (Baseline)</th>
-                                    <th>Severity</th>
-                                    <th>Duration</th>
-                                </tr>
-                            </thead>
+                            {{ macros.test_table_head(false) }}
                             <tbody>
                                 <!-- Failed Tests-->
                                 {% for test in tests %}
@@ -189,17 +179,7 @@
                             <span class="subcategory-count">{{ category.passed }} test{{'s' if category.passed != 1 else '' }}</span>
                         </summary>
                         <table>
-                            <thead>
-                                <tr>
-                                    <th>Test Name</th>
-                                    <th>Parameters</th>
-                                    <th>Description</th>
-                                    <th>Status</th>
-                                    <th>CVSS Score (Baseline)</th>
-                                    <th>Severity</th>
-                                    <th>Duration</th>
-                                </tr>
-                            </thead>
+                            {{ macros.test_table_head(false) }}
                             <tbody>
                                 <!-- Passed Tests -->
                                 {% for test in tests %}
@@ -223,5 +203,6 @@
 
     {{ macros.dashboard_footer() }}
 
-    <script src="assets/js/security_dashboard.js"></script>
+    <script src="/assets/js/utils.js"></script>
+    <script src="/assets/js/security_dashboard.js"></script>
 </body>

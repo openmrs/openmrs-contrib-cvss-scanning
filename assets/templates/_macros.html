@@ -141,3 +141,62 @@
         <iframe src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/"></iframe>
     </div>
 {%endmacro%}
+
+{%macro test_table_head(isSpreadsheet) %}
+<thead class="sub-details-head">
+    <tr>
+        {% if isSpreadsheet == true %}
+        <th>
+            <div class="th-content">
+                <span>Category</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        {% endif %}
+        <th>
+            <div class="th-content">
+                <span>Test Name</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        <th>
+            <div class="th-content">
+                <span>Parameters</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        {% if isSpreadsheet == false %}
+        <th>
+            <div class="th-content">
+                <span>Description</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        {% endif %}
+        <th>
+            <div class="th-content">
+                <span>Status</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        <th>
+            <div class="th-content">
+                <span>CVSS Score (Baseline)</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        <th>
+            <div class="th-content">
+                <span>Severity</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        <th>
+            <div class="th-content">
+                <span>Duration</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+    </tr>
+</thead>
+{%endmacro%}

@@ -44,52 +44,7 @@
 
     <div class="test-results">
     <table id="spreadsheet-table" class="spreadsheet-table">
-        <thead>
-            <tr>
-                <th>
-                    <div class="th-content">
-                        <span>Category</span>
-                        <span class="spreadsheet-chevron">▼</span>
-                    </div>
-                </th>
-                <th>
-                    <div class="th-content">
-                        <span>Test Name</span>
-                        <span class="spreadsheet-chevron">▼</span>
-                    </div>
-                </th>
-                <th>
-                    <div class="th-content">
-                        <span>Parameters</span>
-                        <span class="spreadsheet-chevron">▼</span>
-                    </div>
-                </th>
-                <th>
-                    <div class="th-content">
-                        <span>Status</span>
-                        <span class="spreadsheet-chevron">▼</span>
-                    </div>
-                </th>
-                <th>
-                    <div class="th-content">
-                        <span>CVSS Score (Baseline)</span>
-                        <span class="spreadsheet-chevron">▼</span>
-                    </div>
-                </th>
-                <th>
-                    <div class="th-content">
-                        <span>Severity</span>
-                        <span class="spreadsheet-chevron">▼</span>
-                    </div>
-                </th>
-                <th>
-                    <div class="th-content">
-                        <span>Duration</span>
-                        <span class="spreadsheet-chevron">▼</span>
-                    </div>
-                </th>
-            </tr>
-        </thead>
+        {{ macros.test_table_head(true) }}
         <tbody>
             {% for test in tests %}
                 {% set isFailing = test.status == "failed" %}
@@ -104,6 +59,7 @@
     {{ macros.dashboard_footer() }}
 
     <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js"></script>
+    <script src="/assets/js/utils.js"></script>
     <script src="/assets/js/security_dashboard_spreadsheet_view.js"></script>
 </body>
 </html>
