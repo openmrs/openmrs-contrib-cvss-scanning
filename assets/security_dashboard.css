@@ -541,3 +541,16 @@ details[open] summary .chevron {
     gap: 5px;
     user-select: none;
 }
+
+/* Visibility Hierachies */
+.search-invisible {
+    display: none;
+}
+
+.search-visible {
+    display: revert;
+}
+
+.pass-fail-invisible {
+    display: none;
+}

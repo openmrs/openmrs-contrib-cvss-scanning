@@ -243,12 +243,12 @@ function searchByField(searchText, searchField) {
         // if row is in the results, display
         let hasResult = results.some(result => result.item.uniqueId === rows[i].uniqueId);
 
-        // check passed/failed filter
-
         if (hasResult) {
-            rows[i].currentRow.style.display = "";
+            rows[i].currentRow.classList.add("search-visible");
+            rows[i].currentRow.classList.remove("search-invisible");
         } else {
-            rows[i].currentRow.style.display = "none";
+            rows[i].currentRow.classList.remove("search-visible");
+            rows[i].currentRow.classList.add("search-invisible");
         }
     }
 }
@@ -269,22 +269,24 @@ tableHead.addEventListener('click', (e) => {
     sortTableRows(sortByField, isAscending);
 });
 
-passCheckbox.addEventListener('change', (e) => {
+function setPassFailRowsDisplay(e, rows) {
+    for (let i = 0; i < rows.length; i++) {
 
-    let displayValue = e.target.checked == true ? "" : "none";
-
-    for (let i = 0; i < passedRows.length; i++) {
-        passedRows[i].style.display = displayValue;
+        if (e.target.checked) {
+            rows[i].classList.remove("pass-fail-invisible");
+        }
+        else {
+            rows[i].classList.add("pass-fail-invisible");
+        }
     }
+}
+
+passCheckbox.addEventListener('change', (e) => {
+    setPassFailRowsDisplay(e, passedRows);
 });
 
 failCheckbox.addEventListener('change', (e) => {
-
-    let displayValue = e.target.checked == true ? "" : "none";
-
-    for (let i = 0; i < failedRows.length; i++) {
-        failedRows[i].style.display = displayValue;
-    }
+    setPassFailRowsDisplay(e, failedRows);
 });
 
 // search bar
