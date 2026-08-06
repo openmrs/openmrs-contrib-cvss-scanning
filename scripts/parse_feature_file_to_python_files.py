@@ -54,7 +54,7 @@ def read_feature_file_as_json(path:str) -> dict:
 def read_boilerplate() -> dict:
     """Returns the boilderplate code as JSON"""
     
-    boilerplate_path = "./assets/boilerplate.json"
+    boilerplate_path = ".assets/boilerplate.json"
     
     with open(boilerplate_path) as json_file:
         data = json.load(json_file)
