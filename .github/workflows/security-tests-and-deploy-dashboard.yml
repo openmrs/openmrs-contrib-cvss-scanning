@@ -262,7 +262,7 @@ jobs:
     
     - name: Create Comment File
       if: always()
-      run: python scripts\prepare_pr_comment.py report.json previous-report\report.json
+      run: python /scripts/prepare_pr_comment.py report.json previous-report\report.json
     
     - name: Leave comment on PR
       if: ${{ github.event_name == 'pull_request' && github.repository_owner == 'openmrs' }}
