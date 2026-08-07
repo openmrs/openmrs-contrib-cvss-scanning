@@ -8,6 +8,7 @@ tests/*/__pycache__/
 detailed-report.html
 report.html
 report.json
+prev-report.json
 security_dashboard.html
 debug_output.txt
 security_results.json
