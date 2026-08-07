@@ -3,6 +3,8 @@ name: Security Tests & Deploy Dashboard
 on:
   push:
     branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
@@ -85,21 +87,6 @@ jobs:
         name: security-test-output
         path: test_output.log
         retention-days: 30
-
-    - name: Comment on PR
-      if: ${{ github.event_name == 'pull_request' && github.repository_owner == 'openmrs' }}
-      continue-on-error: true
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const summary = '## 🔒 Security Test Results\n\nTests completed. View the [security dashboard](https://cvss-report.openmrs.org) for detailed CVSS scores and trends.\n\n📊 [Download artifacts](../actions/runs/${{ github.run_id }})';
-
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: summary
-          });
 
     - name: Capture Server Logs
       if: always()
@@ -223,3 +210,47 @@ jobs:
         publish_dir: ./gh-pages
         cname: security-dashboard.openmrs.org
         keep_files: false
+
+  comment-on-pr:
+    permissions:
+      contents: read
+      pull-requests: write
+
+    needs: security-tests
+    if: always() && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+
+        echo "Searching for requirements.txt files..."
+        find . -name "requirements.txt" -type f | while read req; do
+          echo "Installing dependencies from: $req"
+          pip install -r "$req"
+        done
+    
+    - name: Leave comment on PR
+      if: ${{ github.event_name == 'pull_request' && github.repository_owner == 'openmrs' }}
+      continue-on-error: true
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const summary = 'This is a test comment';
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: summary
+          });
+        
