@@ -51,13 +51,12 @@ jobs:
       id: wait-for-omrs-instance
       run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
 
-      ### TODO: CHANGE BACK TO TESTS/
     - name: Run Security Tests
       id: run-security-tests
       if: always() && (steps.wait-for-omrs-instance.outcome == 'success')
       run: |
         # Run pytest and capture ALL output (including CVSS scores)
-        pytest tests/data_integrity_failures/ \
+        pytest tests/ \
           --html=detailed-report.html \
           --self-contained-html \
           --json-report \
