@@ -239,6 +239,9 @@ def test_cookies_have_session_httpOnly_attribute():
 # When statement in the Scenario. It should be copied and pasted.
 @pytest_bdd.then('the cookies attribute httpOnly should be True')
 def then(context_data):
+    
+    assert 1 == 2
+    
     # This function represents what will happen during the Then step of the scenario.
     
     # Check cookies attributes
