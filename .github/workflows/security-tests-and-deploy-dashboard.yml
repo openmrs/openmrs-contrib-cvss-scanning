@@ -181,6 +181,56 @@ jobs:
         search_artifacts: true
         path: .
     
+    # get last 10 successful test runs to add as snapshots
+    - name: Download last 10 successful full-suite runs on main
+      id: get-snapshots
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        mkdir -p snapshots
+        COUNT=0
+
+        RUN_IDS=$(gh run list \
+          --repo "${{ github.repository }}" \
+          --workflow "${{ github.workflow }}" \
+          --branch main \
+          --status success \
+          --limit 50 \
+          --json databaseId --jq '.[].databaseId')
+
+        for RUN_ID in $RUN_IDS; do
+          if [ "$COUNT" -ge 10 ]; then
+            break
+          fi
+
+          JOB_STATUS=$(gh api "repos/${{ github.repository }}/actions/runs/$RUN_ID/jobs" \
+            --jq '.jobs[] | select(.name == "security-tests") | .conclusion')
+
+          if [ "$JOB_STATUS" != "success" ]; then
+            echo "Skipping run $RUN_ID (security-tests job didn't run/succeed)"
+            continue
+          fi
+
+          # Get the run's creation date for the snapshot folder name
+          CREATED_AT=$(gh api "repos/${{ github.repository }}/actions/runs/$RUN_ID" --jq '.created_at')
+          TIMESTAMP=$(date -u -d "$CREATED_AT" +"%Y-%m-%dT%H-%M-%SZ")
+          SNAPSHOT_DIR="snapshots/${TIMESTAMP}_${RUN_ID}"
+
+          mkdir -p "$SNAPSHOT_DIR"
+          if gh run download "$RUN_ID" \
+              --repo "${{ github.repository }}" \
+              -n security-dashboard \
+              -D "$SNAPSHOT_DIR"; then
+            echo "Included run $RUN_ID -> $SNAPSHOT_DIR"
+            COUNT=$((COUNT + 1))
+          else
+            echo "Artifact expired or missing for run $RUN_ID, removing empty dir"
+            rmdir "$SNAPSHOT_DIR" 2>/dev/null || true
+          fi
+        done
+
+        echo "Collected $COUNT snapshots into ./snapshots"
+    
     - name: Extract CVSS Scores and Generate Dashboard
       if: always()
       run: python scripts/generate_security_dashboard.py
@@ -212,8 +262,11 @@ jobs:
         mkdir -p gh-pages/assets
         cp security_dashboard.html gh-pages/index.html
         cp detailed-report.html gh-pages/detailed-report.html
-        cp assets/security_dashboard.css gh-pages/assets/security_dashboard.css
-        cp assets/pie_chart.css gh-pages/assets/pie_chart.css
+        cp -r assets/. gh-pages/assets
+
+        # copy all files in snapshots
+        mkdir -p gh-pages/snapshots
+        cp -r snapshots/. gh-pages/snapshots
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
