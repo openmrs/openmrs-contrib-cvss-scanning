@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snapshots</title>
+</head>
+<body>
+    <h1>OpenMRS Previous Snapshots</h1>
+
+    <ol>
+    {% for path in snapshots %}
+        <li>
+            <a href="snapshots/{{ path }}/security_dashboard.html">{{ path }}</a>
+        </li>
+    {% endfor %}
+    </ol>
+
+</body>
+</html>

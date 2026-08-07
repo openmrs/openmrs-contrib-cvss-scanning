@@ -8,6 +8,7 @@
 import json
 import html
 import re
+import os
 
 from test_results_database_utils import *
 
@@ -30,6 +31,7 @@ pie_chart_data = {
     "coverage": {},
     "category_colors": {},
 }
+snapshots = []
 
 def get_severity_class(severity, status="failed"):
     colors = {
@@ -232,6 +234,13 @@ def prepare_data():
         
         category["icon"] = '✅' if category["failed"] == 0 else ('❌' if category["passed"] == 0 else '⚠️')
     
+    # get files from snapshots
+    snapshotsPath = 'snapshots'
+    if os.path.isdir(snapshotsPath):
+        snapshotDirs = os.listdir(snapshotsPath)
+        for path in snapshotDirs:
+            snapshots.append(path)
+    
     # prepare pie charts
     prepare_pie_charts()
 
@@ -397,6 +406,8 @@ def display_test_data():
     env = Environment(loader = FileSystemLoader('assets/templates'))
     template = env.get_template('security_dashboard_template.html')
     
+    snapshotsTemplate = env.get_template('snapshots_template.html')
+    
     output = template.render(
         summary_data = summary_data,
         tests = tests,
@@ -404,10 +415,17 @@ def display_test_data():
         categories = categories,
         pie_chart_data = pie_chart_data,
     )
+    
+    snapshotsTemplateOutput = snapshotsTemplate.render(
+        snapshots = snapshots,
+    )
         
     # save to file
     with open("security_dashboard.html", 'w', encoding="utf-8") as f:
         f.write(output)
+    
+    with open("snapshots.html", 'w', encoding="utf-8") as f:
+        f.write(snapshotsTemplateOutput)
 
 def database_operations():
     
