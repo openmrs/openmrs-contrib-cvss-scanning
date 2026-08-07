@@ -150,6 +150,7 @@ jobs:
       with:
         name: security-test-report-json
         search_artifacts: true
+        branch: main
         path: .
     
     - name: Download HTML Report
@@ -167,6 +168,7 @@ jobs:
       with:
         name: security-test-report-html
         search_artifacts: true
+        branch: main
         path: .
     
     - name: Extract CVSS Scores and Generate Dashboard
@@ -249,12 +251,13 @@ jobs:
         path: .
         run_id: ${{ github.run_id }} # looks for current run
       
-    - name: Download JSON Report (fallback to last successful run)
+    - name: Download JSON Report from Last Successful Main Run
       if: always()
       uses: dawidd6/action-download-artifact@v6
       with:
         name: security-test-report-json
         search_artifacts: true
+        branch: main
         path: .
     
     - name: Leave comment on PR
