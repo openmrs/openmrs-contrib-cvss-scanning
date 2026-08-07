@@ -14,6 +14,7 @@ debug_output.txt
 security_results.json
 test_results.db
 pie_chart.css
+pr-comment.txt
 
 # IntelliJ IDEA
 .idea/
