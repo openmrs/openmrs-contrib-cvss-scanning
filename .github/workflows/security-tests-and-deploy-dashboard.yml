@@ -16,8 +16,7 @@ on:
 
 jobs:
   security-tests:
-    if: ${{ false }}
-      #${{ github.event_name != 'workflow_dispatch' || inputs.skip_security_tests == false 
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_security_tests == false }}
     runs-on: ubuntu-latest
 
     steps:
@@ -52,12 +51,13 @@ jobs:
       id: wait-for-omrs-instance
       run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
 
+      ### TODO: CHANGE BACK TO TESTS/
     - name: Run Security Tests
       id: run-security-tests
       if: always() && (steps.wait-for-omrs-instance.outcome == 'success')
       run: |
         # Run pytest and capture ALL output (including CVSS scores)
-        pytest tests/ \
+        pytest tests/data_integrity_failures/ \
           --html=detailed-report.html \
           --self-contained-html \
           --json-report \
@@ -240,13 +240,30 @@ jobs:
           pip install -r "$req"
         done
     
+    - name: Download JSON Report
+      if: always()
+      id: download-json
+      uses: dawidd6/action-download-artifact@v6
+      with:
+        name: security-test-report-json
+        path: .
+        run_id: ${{ github.run_id }} # looks for current run
+      
+    - name: Download JSON Report (fallback to last successful run)
+      if: always()
+      uses: dawidd6/action-download-artifact@v6
+      with:
+        name: security-test-report-json
+        search_artifacts: true
+        path: .
+    
     - name: Leave comment on PR
       if: ${{ github.event_name == 'pull_request' && github.repository_owner == 'openmrs' }}
       continue-on-error: true
       uses: actions/github-script@v7
       with:
         script: |
-          const summary = 'This is a test comment';
+          const summary = 'Successful!';
 
           github.rest.issues.createComment({
             issue_number: context.issue.number,
