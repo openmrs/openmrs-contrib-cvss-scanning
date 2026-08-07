@@ -43,21 +43,21 @@ def compare_test_data(new_tests:dict, prev_tests:dict):
         
         # if in new & not prev
         if is_in_new and not is_in_prev:
-            output["add"].append(f"➕ | {test_name} | {pass_icon}")
+            output["add"].append(f"➕ | {pass_icon} | {test_name}")
         
         # if in prev & not new
         elif is_in_prev and not is_in_new:
-            output["sub"].append(f"➖ | {test_name} | N/A")
+            output["sub"].append(f"➖ | N/A | {test_name}")
         
         # if in both
         elif is_in_new and is_in_prev:
             # if pass -> fail
             if prev_tests[test_name] == "passed" and new_tests[test_name] == "failed":
-                output["pass_to_fail"].append(f"⚠️ | {test_name} | {pass_icon}")
+                output["pass_to_fail"].append(f"⚠️ | {pass_icon} | {test_name}")
             
             # if fail -> pass
             if prev_tests[test_name] == "failed" and new_tests[test_name] == "passed":
-                output["fail_to_pass"].append(f"🎉 | {test_name} | {pass_icon}")
+                output["fail_to_pass"].append(f"🎉 | {pass_icon} | {test_name}")
             
         else:
             print("Missing test name")
@@ -67,7 +67,7 @@ def compare_test_data(new_tests:dict, prev_tests:dict):
 def create_comment(output:dict):
     
     # table header
-    comment = "| Change | Test name | Status |\n|--------|-----------|--------|\n"
+    comment = "| Change | Status | Test name |\n|--------|-----------|--------|\n"
     
     # additions
     for key in output.keys():
