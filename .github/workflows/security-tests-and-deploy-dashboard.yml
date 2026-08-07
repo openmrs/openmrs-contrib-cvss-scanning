@@ -262,6 +262,7 @@ jobs:
         mkdir -p gh-pages/assets
         cp security_dashboard.html gh-pages/index.html
         cp detailed-report.html gh-pages/detailed-report.html
+        cp snapshots.html gh-pages/snapshots.html
         cp -r assets/. gh-pages/assets
 
         # copy all files in snapshots
