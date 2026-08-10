@@ -1,0 +1,85 @@
+a CVSS score is calculated and printed
+the OpenMRS 3 home page is show after login
+Cookies are accessed from the browser
+the cookies attribute secure should be True
+the cookies attribute httpOnly should be True
+the cookies attribute sameSite should be Strict or Lax
+cookie information is saved
+the browser is closed and reopened and directed at /spa
+the cookies expire and new cookies with different IDs are generated
+the login page should be shown
+the user logs out of their account
+the UUID of an admin user is known
+a <nonAdminType> user attempts to change the password of the admin
+the system should respond with a http 500 error
+a <nonAdminType> user attempts to change the password of their account
+the system should respond with a http 200 status
+the OpenMRS 3 login page is displayed
+the attacker tries to login with known username admin and random passwords
+the login page should be displayed
+the attacker sends 7 API login requests with known username admin and random passwords
+the user should not be authenticated
+a user logs in to the login page with the correct credentials
+the location selection or home page should be shown
+a user logs in to the REST API with the correct credentials
+the user should be authenticated
+an attacker fails 7 login attempts on the login page
+the login page should block the correct credentials
+an attacker fails 7 login attempts through the REST API
+the REST API should block the correct credentials
+the login page is locked out from 7 failed login attempts
+a user simulates waiting 4 minutes and 50 seconds for a lockout
+a user simulates waiting 5 minutes for a lockout
+the REST API is locked out from 7 failed login attempts
+the default encrpytion key
+the runtime properties are accessed
+the encryption key is found
+the encryption key should not equal to the default key
+the default encrpytion vector
+the encryption vector is found
+the encryption vector should not equal to the default vector
+a clerk account has been logged into and their login token saved
+another account's login token is replaced with the clerk's
+the page shouldn't be logged into the clerk account
+<numberOfPatients> test patients are created
+the max appointment limit for services is set to <maxAppointments>
+<numberOfPatients> appointment requests are made over the api
+<maxAppointments> out of <numberOfPatients> appointments should be successful
+the admin logs in
+a new patient is created
+the billings history page is shown
+a bill is created
+a quantity is inputted
+the quantity should not overflow or wraparound
+the attacker visits the page /openmrs/doesnotexist
+the HTTP status 404 error page is shown
+the attacker looks for the version number
+the version number will not be shown
+the current time is saved
+a user attempts to login with the wrong username or password
+an admin logs in on the login page
+visits the server logs page
+a failed login attempt log should exist after the saved timestamp
+a failed login attempt log should not exist
+the login page response is returned
+the security headers are checked
+the x-content-type-options should be present
+the value of x-content-type-options is set to nosniff
+the content-security-policy should be present
+<attribute> should not be present in default-src
+<directive> should be set to 'none' or 'self' if it exists or <fallback> to default-src
+<directive> should not be set to * or http: if it exists and <fallback> to default-src
+the url is directed at /spa
+an attacker injects an old cookie
+the user navigates to a different page
+a valid cookie is injected
+the home page should be shown
+logged into OpenMRS O3
+a test patient has been created
+the OpenMRS 3 edit patient page is displayed
+the attacker tries to edit a patient <personNameSQLString> using a set of potential SQL strings
+the database should not have a testing table made in it
+the attacker tries to edit a patient <scenarioString> using a set of potential XSS strings
+see if XSS injection was successful
+a user tries to edit a patient <scenarioString> using a valid input
+see if the field was modified in any way
