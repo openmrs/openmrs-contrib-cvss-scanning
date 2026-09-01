@@ -1,0 +1,65 @@
+{% import '_macros.html' as macros %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{ macros.dashboard_head() }}
+    <title>Spreadsheet View - OpenMRS O3 Security Dashboard</title>
+</head>
+<body onload='showDiv("vulnerability_testing")'>
+    {{ macros.dashboard_header(current_time) }}
+
+    {{ macros.dashboard_stats(summary_data, pie_chart_data) }}
+
+    <div class="category-bar">
+                <a class="return-link" href="security_dashboard.html">Return to Main Dashboard</a>
+                <!-- Sorting Bar -->
+                <div class="sorting-bar">
+                    <label>Search: </label>
+                    <input id="spreadsheet-search-bar" class="search-bar" type="text" placeholder="Start typing to search">
+                    <select id="searchField">
+                        <option value="">All Fields</option>
+                        <option value="Category">Category</option>
+                        <option value="Test Name">Test Name</option>
+                        <option value="Parameters">Parameters</option>
+                        <option value="Status">Status</option>
+                        <option value="CVSS Score">CVSS Score</option>
+                        <option value="Severity">Severity</option>
+                        <option value="Duration">Duration</option>
+                    </select>
+                    <input id="relevance-checkbox" type="checkbox" checked>
+                    <label for="relevance-checkbox" class="">Sort by Relevance</label>
+                    
+
+                    &#x2022
+
+                    Check/Uncheck to filter results: 
+                    <input id="fail-checkbox" name="Failed" type="checkbox" checked>
+                    <label for="fail-checkbox" class="failed-label">Failed</label>
+
+                    <input id="pass-checkbox" name="Passed" type="checkbox" checked>
+                    <label for="pass-checkbox" class="passed-label">Passed</label>
+                </div>
+            </div>
+
+    <div class="test-results">
+    <table id="spreadsheet-table" class="spreadsheet-table">
+        {{ macros.test_table_head(true) }}
+        <tbody>
+            {% for test in tests %}
+                {% set isFailing = test.status == "failed" %}
+                {{ macros.test_row(isFailing, test, isSpreadsheet=true) }}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
+    {{ macros.dependency_scanning() }}
+</div>
+    {{ macros.dashboard_footer() }}
+
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/security_dashboard_spreadsheet_view.js"></script>
+</body>
+</html>

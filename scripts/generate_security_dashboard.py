@@ -109,9 +109,18 @@ def extract_relevant_test_data():
         else:
             # add parameters as lines
             for key in params_dict.keys():
-                param_str = f"{key}: {str(params_dict[key])}"
-                param = html.escape(param_str, quote=True)
-                new_test['params'].append(param)
+                # if key is a dict, go another level deeper
+                if type(params_dict[key]) == dict:
+                    seconary_dict : dict = params_dict[key]
+                    
+                    for secondary_key in seconary_dict.keys():
+                        param_str = f"{secondary_key}: {str(seconary_dict[secondary_key])}"
+                        param = html.escape(param_str, quote=True)
+                        new_test['params'].append(param)
+                else:
+                    param_str = f"{key}: {str(params_dict[key])}"
+                    param = html.escape(param_str, quote=True)
+                    new_test['params'].append(param)
             
         # duration
         setup_duration = test.get("setup", {}).get("duration", 0)
@@ -232,6 +241,9 @@ def prepare_data():
         
         category["icon"] = '✅' if category["failed"] == 0 else ('❌' if category["passed"] == 0 else '⚠️')
     
+    # sort category by failing then by name
+    categories.sort(key=lambda x: (-x["failed"], x["name"]))
+    
     # prepare pie charts
     prepare_pie_charts()
 
@@ -278,6 +290,9 @@ def prepare_pie_charts():
         
         if current_index >= len(pie_chart_data["coverage"]["percents"]):
             keepGoing = False
+    
+    # round current sum
+    current_sum = round(current_sum, 2)
     
     # sort data
     pie_chart_data["coverage"]["percents"].sort(key=lambda x: x[1])
@@ -395,19 +410,30 @@ def display_test_data():
 
     # load template
     env = Environment(loader = FileSystemLoader('assets/templates'))
-    template = env.get_template('security_dashboard_template.html')
+    dashboard_template = env.get_template('security_dashboard_template.html')
+    spreadsheet_template = env.get_template('security_dashboard_spreadsheet_view_template.html')
     
-    output = template.render(
+    dashboard_output = dashboard_template.render(
         summary_data = summary_data,
         tests = tests,
         current_time = current_time,
         categories = categories,
         pie_chart_data = pie_chart_data,
     )
+    
+    spreadsheet_output = spreadsheet_template.render(
+        summary_data = summary_data,
+        current_time = current_time,
+        tests = tests,
+        pie_chart_data = pie_chart_data,
+    )
         
     # save to file
     with open("security_dashboard.html", 'w', encoding="utf-8") as f:
-        f.write(output)
+        f.write(dashboard_output)
+    
+    with open("security_dashboard_spreadsheet_view.html", 'w', encoding="utf-8") as f:
+            f.write(spreadsheet_output)
 
 def database_operations():
     

@@ -201,8 +201,12 @@ jobs:
         name: security-dashboard
         path: |
           security_dashboard.html
+          security_dashboard_spreadsheet_view.html
           assets/security_dashboard.css
           assets/pie_chart.css
+          assets/js/security_dashboard.js
+          assets/js/security_dashboard_spreadsheet_view.js
+          assets/js/utils.js
         retention-days: 30
       
     - name: Prepare GitHub Pages Deployment
@@ -211,9 +215,13 @@ jobs:
         mkdir -p gh-pages
         mkdir -p gh-pages/assets
         cp security_dashboard.html gh-pages/index.html
+        cp security_dashboard_spreadsheet_view.html gh-pages/security_dashboard_spreadsheet_view.html
         cp detailed-report.html gh-pages/detailed-report.html
         cp assets/security_dashboard.css gh-pages/assets/security_dashboard.css
         cp assets/pie_chart.css gh-pages/assets/pie_chart.css
+        cp assets/js/security_dashboard.js gh-pages/assets/js/security_dashboard.js
+        cp assets/js/security_dashboard_spreadsheet_view.js gh-pages/assets/js/security_dashboard_spreadsheet_view.js
+        cp assets/js/utils.js gh-pages/assets/js/utils.js
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'

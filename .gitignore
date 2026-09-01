@@ -13,6 +13,7 @@ debug_output.txt
 security_results.json
 test_results.db
 pie_chart.css
+security_dashboard_spreadsheet_view.html
 
 # IntelliJ IDEA
 .idea/

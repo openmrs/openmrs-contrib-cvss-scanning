@@ -1,272 +1,208 @@
+{% import '_macros.html' as macros %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenMRS O3 Security Dashboard - CVSS 4.0 Migration</title>
-    <link rel="stylesheet" href="assets/security_dashboard.css">
-    <link rel="stylesheet" href="assets/pie_chart.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-    <script>
-        function toggleCategory(id) {
-            const body    = document.getElementById(id);
-            const chevron = document.getElementById('chevron_' + id);
-            const isOpen  = body.classList.toggle('open');
-            chevron.classList.toggle('open', isOpen);
-        }
-    </script>
-    <script>
-        function showDiv(id){
-            const divs = document.querySelectorAll("#tabs_div>div");
-            divs.forEach(d=>{d.classList.remove("visible")});
-            document.getElementById(id).classList.add("visible");
-        }
-    </script>
+    {{ macros.dashboard_head() }}
+    <title>OpenMRS O3 Security Dashboard</title>
 </head>
-<body>
 <body  onload='showDiv("vulnerability_testing")'>
-    <div class="header">
-        <h1>🔒 OpenMRS O3 Security Dashboard</h1>
-        <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
-        <p class="timestamp-line">Last Updated: 
-        <span class="timestamp">
-            {{ current_time }}
-        </span>
-        </p>
-    </div>
-    <div class = "tabs_buttons">
-        <button class="tabs_buttons-left" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
-        <button class=".tabs_buttons-right" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
-    </div>
-    <div id="tabs_div">
-        <div id ="vulnerability_testing">
-            <div class="stats">
-                <div class="stat-card">
-                    <h3>Total Tests</h3>
-                    <p>{{ summary_data.total }}</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Passed</h3>
-                    <p class="passed">{{ summary_data.passed }}</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Failed</h3>
-                    <p class="failed">{{ summary_data.failed }}</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Duration</h3>
-                    <p>{{ summary_data.duration }} min</p>
-                </div>
-                
-            </div>
-            <div class="stats">
-                <div class="stat-card">
-                    <h3>Failed Tests by Category</h3>
-                    <div class="chart-wrapper">
-                        <div class="chart-container chart-container-failed-tests"></div>
-                        <div class="legend">
-                            {% for category in pie_chart_data.failed.percents %}
-                            <div class="legend-item">
-                                <div class="legend-color category_color_{{ category[2] }}"></div>
-                                {{ category[0] }}: {{ category[1] }}%
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <h3>Test Coverage</h3>
-                    <div class="chart-wrapper">
-                        <div class="chart-container chart-container-total-tests"></div>
-                        <div class="legend">
-                            {% for category in pie_chart_data.coverage.percents %}
-                            <div class="legend-item">
-                                <div class="legend-color category_color_{{ category[2] }}"></div>
-                                {{ category[0] }}: {{ category[1] }}%
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
+
+    {{ macros.dashboard_header(current_time) }}
+    
+    {{ macros.dashboard_stats(summary_data, pie_chart_data) }}
+
+            <div class="category-bar">
+                <a class="return-link" href="security_dashboard_spreadsheet_view.html">Go to Spreadsheet View</a>
+                <!-- Sorting Bar -->
+                <div class="sorting-bar">
+                    <button id="open-categories">Open All Categories</button>
+                    &#x2022
+                    <button id="close-categories">Close All Categories</button>
+                    &#x2022
+                    <label for="category-sorting-options">Sort Category By</label>
+                    <select id="category-sorting-options" name="category-sorting-options">
+                        <option value="fail"># of Failing</option>
+                        <option value="pass"># of Passing</option>
+                        <option value="tests"># of Tests</option>
+                        <option value="max-cvss">Max CVSS</option>
+                        <option value="alpha">Alphabetical</option>
+                    </select>
+                    <select id="category-ascn-desc-options">
+                        <option value="ascn">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
                 </div>
             </div>
+
+            <div id="categories">
 
             <!-- Test Results -->
             {% for category in categories %}
             <div class="test-results">
-                <div class="category-header" onclick="toggleCategory('{{ category.id }}')">
-                    <span class="category-title">
-                        {{ category.icon }}&nbsp;{{ category.name }}
-                    </span>
-                    <span class="category-meta">
-                        <span class="{{ category.max_severity_class }} max-cvss">
-                        Highest CVSS: {{ category.max_cvss }} — {{ category.max_severity}}</span>
-                        <span class="cat-trend-wrapper">
-                            <span class="cat-trend-label">Max CVSS trend:</span>
-                            
-                            <span class="improvement-badge {{ category.improvement_class }}">
-                                {{ category.improvement_symbol }}
-                                {{ category.improvement_number }}
-                                {{ category.improvement_arrow }}
-                            </span>
-                            <canvas 
-                                id="canvas_{{ category.id }}" 
-                                width="100" 
-                                height="28" 
-                                class="trendline-canvas"
-                                data-labels='{{ category.labels | tojson | e }}'
-                                data-history="{{ category.history | tojson }}"></canvas>
-                        </span>
-                        <script>
-                            new_canvas = document.getElementById("canvas_{{ category.id }}");
-                            labels = JSON.parse(new_canvas.dataset.labels);
-                            history_data = JSON.parse(new_canvas.dataset.history);
-
-                            new Chart(new_canvas, {
-                                type: "line",
-                                data: {
-                                    labels: labels,
-                                    datasets: [{
-                                        data: history_data,
-                                        borderColor: "#e53e3e",
-                                        borderWidth: 1.5,
-                                        pointRadius: 1.5,
-                                        fill: false,
-                                        tension: 0.3
-                                    }]
-                                },
-                                options: {
-                                    plugins: { legend: { display: false }, tooltip: {
-                                        callbacks: {
-                                            title: function(items) { return items[0].label; },
-                                            label: function(item) { return "Max CVSS: " + item.parsed.y.toFixed(1); }
-                                        }
-                                    } },
-                                    scales: {
-                                        x: { display: false },
-                                        y: { display: false, min: 0, max: 10 }
-                                    },
-                                    animation: false
-                                }
-                            });
-                        </script>
-                        <span class="category-header passed">{{ category.passed }} passed</span>
-                        &nbsp;/&nbsp;
-                        <span class="category-header failed">{{ category.failed }} failed</span>
-                        &nbsp;·&nbsp;{{ category.total }} test{{ 's' if cat_total != 1 else '' }}
-                        <span class="chevron" id="chevron_{{ category.id }}">▼</span>
-                    </span>
-                </div>
-                <div class="category-body" id="{{ category.id }}">
-                {% if category.passed > 0 %}
-                <details open>
-                    <summary class="subcategory-summary subcategory-pass">
-                        <span>Passed Tests</span>
-                        <span class="subcategory-count">{{ category.passed }} test{{'s' if category.passed != 1 else '' }}</span>
-                    </summary>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Test Name</th>
-                                <th>Parameters</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                                <th>CVSS Score (Baseline)</th>
-                                <th>Severity</th>
-                                <th>Duration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Passed Tests -->
-                            {% for test in tests %}
-                                {% if test.category == category.name %}
-                                    {% if test.status == "passed" %}
-                                        <tr>
-                                            <td><strong>{{test.name}}</strong></td>
-                                            <td>
-                                            {% for param in test.params %}
-                                                <p>{{ param }}</p>
-                                            {% endfor %}
-                                            </td>
-                                            <td>{{ test.description }}</td>
-                                            <!-- status class is the same as-->
-                                            <td><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
-                                            <td><span class="cvss-score-pass">{{ test.cvss_score }}</span></td>
-                                            <td><span class="severity-badge {{ test.severity_class }}">{{ test.severity }}</span></td>
-                                            <td>{{ test.duration }}</td>
-                                        </tr>
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </details>
-                {% endif %}
                 {% if category.failed > 0 %}
-                <details open>
-                    <summary class="subcategory-summary subcategory-fail">
-                        <span>Failed Tests</span>
-                        <span class="subcategory-count">{{ category.failed }} test{{'s' if category.failed != 1 else '' }}</span>
-                    </summary>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Test Name</th>
-                                <th>Parameters</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                                <th>CVSS Score (Baseline)</th>
-                                <th>Severity</th>
-                                <th>Duration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Failed Tests-->
-                            {% for test in tests %}
-                                {% if test.category == category.name %}
-                                    {% if test.status== "failed" %}    
-                                        <tr>
-                                            <td><strong>{{test.name}}</strong></td>
-                                            <td>
-                                            {% for param in test.params %}
-                                                <p>{{ param }}</p>
-                                            {% endfor %}
-                                            </td>
-                                            <td>{{ test.description }}</td>
-                                            <td><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
-                                            <td>
-                                                <div class="tooltip">
-                                                    <span class="cvss-score-fail">{{ test.cvss_score }}</span>
-                                                    <span class="tooltiptext">
-                                                        <p><u>Recorded Errors</u></p>
-                                                        <p>
-                                                        {{ "</p><p>".join(test.errors) }}
-                                                        </p>
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td><span class="severity-badge {{ test.severity_class }}">{{ test.severity }}</span></td>
-                                            <td>{{ test.duration }}</td>
-                                        </tr>
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </details>
+                <details open class="details-category">
+                {% else %}
+                <details class="details-category">
                 {% endif %}
-                </div>
+                    <summary class="category-header">
+                        <span class="category-title">
+                            <span>
+                                {{ category.icon }}
+                            </span>
+                            <span class="category-title-text">
+                                {{ category.name }}
+                            </span>
+                        </span>
+                        <span class="category-meta">
+                            {% if category.failed > 0 %}
+                            <span class="{{ category.max_severity_class }} max-cvss">
+                            Highest CVSS: 
+                            <span class="max-cvss-score-text">
+                                {{ category.max_cvss }}
+                            </span> — {{ category.max_severity}}</span>
+                            {% endif %}
+                            <span class="cat-trend-wrapper">
+                                <span class="cat-trend-label">Max CVSS trend:</span>
+                                
+                                <span class="improvement-badge {{ category.improvement_class }}">
+                                    {{ category.improvement_symbol }}
+                                    {{ category.improvement_number }}
+                                    {{ category.improvement_arrow }}
+                                </span>
+                                <canvas 
+                                    id="canvas_{{ category.id }}" 
+                                    width="100" 
+                                    height="28" 
+                                    class="trendline-canvas"
+                                    data-labels='{{ category.labels | tojson | e }}'
+                                    data-history="{{ category.history | tojson }}"></canvas>
+                            </span>
+                            <script>
+                                new_canvas = document.getElementById("canvas_{{ category.id }}");
+                                labels = JSON.parse(new_canvas.dataset.labels);
+                                history_data = JSON.parse(new_canvas.dataset.history);
+
+                                new Chart(new_canvas, {
+                                    type: "line",
+                                    data: {
+                                        labels: labels,
+                                        datasets: [{
+                                            data: history_data,
+                                            borderColor: "#e53e3e",
+                                            borderWidth: 1.5,
+                                            pointRadius: 1.5,
+                                            fill: false,
+                                            tension: 0.3
+                                        }]
+                                    },
+                                    options: {
+                                        plugins: { legend: { display: false }, tooltip: {
+                                            callbacks: {
+                                                title: function(items) { return items[0].label; },
+                                                label: function(item) { return "Max CVSS: " + item.parsed.y.toFixed(1); }
+                                            }
+                                        } },
+                                        scales: {
+                                            x: { display: false },
+                                            y: { display: false, min: 0, max: 10 }
+                                        },
+                                        animation: false
+                                    }
+                                });
+                            </script>
+                            
+                            <!-- color based on passing / failing count -->
+
+                            {% if category.passed > 0 %}
+                            <span class="category-header passed">
+                            {% else %}
+                            <span class="category-header">
+                            {% endif %}
+                                <span class="pass-count">
+                                    {{ category.passed }}
+                                </span>
+                                &nbsp;passed
+                            </span>
+
+                            &nbsp;/&nbsp;
+                            
+                            {% if category.failed > 0 %}
+                            <span class="category-header failed">
+                            {% else %}
+                            <span class="category-header">
+                            {% endif %}
+                                <span class="fail-count">
+                                    {{ category.failed }}
+                                </span>
+                                &nbsp;failed
+                            </span>
+
+                            &nbsp;·&nbsp;
+                            <span class="total-tests">
+                                {{ category.total }}
+                            </span> test{{ 's' if cat_total != 1 else '' }}
+                            <span class="chevron">▼</span>
+                        </span>
+                    </summary>
+
+                    {% if category.failed > 0 %}
+                    <details open>
+                        <summary class="subcategory-summary subcategory-fail">
+                            <span>Failed Tests</span>
+                            <span class="subcategory-count">{{ category.failed }} test{{'s' if category.failed != 1 else '' }}</span>
+                        </summary>
+                        <table>
+                            {{ macros.test_table_head(false) }}
+                            <tbody>
+                                <!-- Failed Tests-->
+                                {% for test in tests %}
+                                    {% if test.category == category.name %}
+                                        {% if test.status== "failed" %}    
+                                            {{ macros.test_row(true, test) }}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </details>
+                    {% endif %}
+                    {% if category.passed > 0 %}
+                    <!-- leave the details open if there are no failed tests -->
+                    {% if category.failed > 0 %}
+                    <details>
+                    {% else %}
+                    <details open>
+                    {% endif %}
+                        <summary class="subcategory-summary subcategory-pass">
+                            <span>Passed Tests</span>
+                            <span class="subcategory-count">{{ category.passed }} test{{'s' if category.passed != 1 else '' }}</span>
+                        </summary>
+                        <table>
+                            {{ macros.test_table_head(false) }}
+                            <tbody>
+                                <!-- Passed Tests -->
+                                {% for test in tests %}
+                                    {% if test.category == category.name %}
+                                        {% if test.status == "passed" %}
+                                            {{ macros.test_row(false, test) }}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </details>
+                    {% endif %}
+                </details>
             </div>
             {% endfor %}
         </div>
-        <div id="dependency_scanning">
-            <iframe src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/"></iframe>
         </div>
+        {{ macros.dependency_scanning() }}
     </div>
-        <div class="footer">
-            <p>OpenMRS O3 Continuous Security Testing</p>
-            <p><a href="https://openmrs.atlassian.net/wiki/spaces/docs/pages/940212225/OpenMRS+Security+Test+Implementation+Guideline">How to contribute to this dashboard</a></p>
-            <p>Powered by <a href="https://www.first.org/cvss/v4.0/" target="_blank">CVSS 4.0</a> | 
-            <a href="https://github.com/openmrs/openmrs-contrib-cvss-scanning" target="_blank">GitHub Repository</a> | <a href='/detailed-report.html'>PyTest Report</a></p>
-        </div>
-    </div>
+
+    {{ macros.dashboard_footer() }}
+
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/security_dashboard.js"></script>
 </body>
