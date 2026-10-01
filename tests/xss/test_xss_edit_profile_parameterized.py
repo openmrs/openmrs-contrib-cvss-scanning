@@ -38,6 +38,19 @@ def given_cvss_score_is_calculted_and_printed(request):
 @pytest_bdd.when(parsers.parse('the attacker tries to edit a patient {scenarioString} using a set of potential XSS strings'))
 def test_xss_injection_on_edit_profile_page_parameterized(page:Page,testString,request,page_data):
     scenarioString = request.getfixturevalue('_pytest_bdd_example')['scenarioString']
+
+    # The payloads call prompt(), which opens a native dialog that isn't in the DOM, so detect it via the
+    # dialog event. Playwright otherwise auto-dismisses dialogs without reporting them. beforeunload dialogs
+    # come from the app's navigation guard and must be accepted or later page.goto() calls are aborted.
+    page_data["dialogs"] = []
+    def on_dialog(dialog):
+        if dialog.type == "beforeunload":
+            dialog.accept()
+            return
+        page_data["dialogs"].append(dialog.message)
+        dialog.dismiss()
+    page.on("dialog", on_dialog)
+
     page.goto(page_data["editUrl"])
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.locator(xssEditProfileLocations[scenarioString]).fill(testString)
@@ -47,25 +60,8 @@ def test_xss_injection_on_edit_profile_page_parameterized(page:Page,testString,r
 
 
 @pytest_bdd.then('see if XSS injection was successful')
-def see_if_XSS_injection_was_successful(page,cleanupTestPatient):
+def see_if_XSS_injection_was_successful(page,page_data,cleanupTestPatient):
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
     page.get_by_text("Show more").click()
     page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    #if Cancel and Ok shows up on this page, a dialog has opened up - there is an XSS vulnerability
-    if(page.get_by_text("Cancel").count()!=1 and page.get_by_text("Ok").count()!=1):
-        #trigger test failure
-        assert False
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
+    assert not page_data["dialogs"], f"XSS payload opened a dialog: {page_data['dialogs']}"

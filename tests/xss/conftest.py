@@ -1,7 +1,9 @@
 import pytest
 import pytest_bdd
-from tests.utils import DEFAULT_WAIT_TIME, O3_LOGIN_URL, O3_HOME_URL,createTestPatient
+from tests.utils import DEFAULT_WAIT_TIME, O3_BASE_URL, O3_LOGIN_URL, createTestPatient
 from playwright.sync_api import Page
+
+O3_REST_URL = O3_BASE_URL.removesuffix("/spa") + "/ws/rest/v1"
 
 @pytest.fixture(scope="function")
 def page_data():
@@ -48,38 +50,21 @@ def login(page:Page,page_data):
 
 @pytest_bdd.given('a test patient has been created')
 def verifyTestPatientExists(page:Page,page_data,patient_data):
-    page.goto(O3_HOME_URL)
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page.get_by_label('Search patient',exact=True).click()
-    page.get_by_placeholder('Search for a patient by name or identifier number').fill("Test Patient")
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    if(page.get_by_text("Other").count()>=1):
-        pass
+    # Uses the REST API rather than the patient search UI so the lookup doesn't depend on render timing.
+    # page.request shares the browser's session cookie, so this runs as the logged-in admin.
+    response = page.request.get(f"{O3_REST_URL}/patient", params={"q": "Test Patient", "v": "custom:(uuid)"})
+    assert response.ok, f"Patient search failed: {response.status} {response.text()}"
+    results = response.json()["results"]
+    if results:
+        page_data['patientUuid'] = results[0]["uuid"]
     else:
         createTestPatient(page,family_name="Patient")
-        print(page.url.split("/")[6])
-        patient_data["patient_id"].append(page.url.split("/")[6])
+        page_data['patientUuid'] = page.url.split("/")[6]
+        patient_data["patient_id"].append(page_data['patientUuid'])
         page.wait_for_timeout(DEFAULT_WAIT_TIME)
 
 @pytest_bdd.given('the OpenMRS 3 edit patient page is displayed')
 def navigateToTestPatient(page:Page,page_data):
-    page.goto(O3_HOME_URL)
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    
-    if(page.get_by_placeholder('Search for a patient by name or identifier number').count()<1):
-        page.get_by_label('Search patient',exact=True).click()    
-    page.get_by_placeholder('Search for a patient by name or identifier number').fill("Test Patient")
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-
-    page.get_by_role("button",name="Search").first.click()
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    #find and click actions button
-    child = page.get_by_text("Actions")
-    child.click()
-    #find and click actions button
-    page.wait_for_timeout(DEFAULT_WAIT_TIME/5)
-    child = page.get_by_text("Edit patient details")
-    child.click()
-    page.wait_for_timeout(DEFAULT_WAIT_TIME)
-    page_data['editUrl']=page.url
-
+    page_data['editUrl']=f"{O3_BASE_URL}/patient/{page_data['patientUuid']}/edit"
+    page.goto(page_data['editUrl'])
+    page.locator("#givenName").wait_for()
