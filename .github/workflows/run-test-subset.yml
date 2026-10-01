@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
     # Starting early since OpenMRS takes time to spin up; this allows it to initialize
     # in the background while dependencies are being installed.
@@ -20,7 +20,7 @@ jobs:
       run: docker compose -f docker-compose.yml up -d
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: '3.11'
 
@@ -61,7 +61,7 @@ jobs:
     
     - name: Upload Security Dashboard
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: security-dashboard
         path: |
@@ -72,7 +72,7 @@ jobs:
 
     - name: Upload HTML Report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: security-test-report-html
         path: detailed-report.html
@@ -80,7 +80,7 @@ jobs:
 
     - name: Upload JSON Results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: security-test-report-json
         path: report.json
@@ -88,7 +88,7 @@ jobs:
 
     - name: Upload Test Output
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: security-test-output
         path: test_output.log
@@ -96,12 +96,14 @@ jobs:
 
     - name: Capture Server Logs
       if: always()
-      uses: jwalton/gh-docker-logs@v2
-      with:
-        dest: "./logs"
+      run: |
+        mkdir -p logs
+        for svc in $(docker compose -f docker-compose.yml config --services); do
+          docker compose -f docker-compose.yml logs --no-color --timestamps "$svc" > "logs/${svc}.log"
+        done
 
     - name: Upload Logs as Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: always()
       with:
         name: server-logs
@@ -111,7 +113,7 @@ jobs:
     
     - name: Upload Screenshots
       if: always() && hashFiles('screenshots/**') != ''
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: screenshots
         path: "./screenshots"

@@ -9,15 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
           
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.11'
           
       - name: Download previous test results DB
-        uses: dawidd6/action-download-artifact@v6
+        uses: dawidd6/action-download-artifact@eab87c9830c39eff17e5a6eadb20bfb4bc880477 # v27
         with:
           workflow: security-tests-and-deploy-dashboard.yml
           search_artifacts: true
@@ -26,14 +26,24 @@ jobs:
         continue-on-error: true  # First run won't have a DB artifact yet
         
       - name: Download previous test report.json file
-        uses: dawidd6/action-download-artifact@v6
+        uses: dawidd6/action-download-artifact@eab87c9830c39eff17e5a6eadb20bfb4bc880477 # v27
         with:
           workflow: security-tests-and-deploy-dashboard.yml
           search_artifacts: true
           name: security-test-report-json
           path: .
-        continue-on-error: false       
-          
+        continue-on-error: false
+
+      # The download picks the most recent *successful* run, which may be old if the test workflow has been failing
+      - name: Check that the test report is recent
+        run: |
+          python - <<'PY'
+          import json, sys, time
+          age_hours = (time.time() - json.load(open("report.json"))["created"]) / 3600
+          if age_hours > 36:
+              sys.exit(f"report.json is {age_hours:.0f} hours old; refusing to email stale results")
+          PY
+
       - name: Prepare email body
         run: |
           python scripts/prepare_email_report.py report.json test_results.db
@@ -55,7 +65,7 @@ jobs:
       
       - name: Send mail
         if: steps.check_email.outputs.should_send == 'true' && github.ref == 'refs/heads/main'
-        uses: dawidd6/action-send-mail@v6
+        uses: dawidd6/action-send-mail@67ce3558d613188179559c61d3565140cf389968 # v22
         with:
           #data
           # Required mail server address if not connection_url:
