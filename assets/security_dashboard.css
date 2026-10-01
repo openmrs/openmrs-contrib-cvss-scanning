@@ -398,6 +398,7 @@ iframe{
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
     gap: 20px;
 }
 
@@ -451,4 +452,105 @@ iframe{
 
 .trendline-canvas {
     display:block;
+}
+
+/* Chevron */
+details[open] summary .chevron {
+    transform: rotate(180deg);
+}
+
+.spreadsheet-chevron {
+    font-size: larger;
+    color: red;
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.spreadsheet-chevron.flipped {
+    transform: rotate(180deg);
+    color: green;
+}
+
+/* Sorting bar */
+.sorting-bar {
+    padding: 10px;
+    color: white;
+    text-align: right;
+}
+
+.sorting-bar button {
+    padding: 3px 5px 3px 5px;
+    border-radius: 7px;
+    border: 0px solid black;
+}
+
+.sorting-bar button:active {
+    padding: 3px 5px 3px 5px;
+    border-radius: 7px;
+    background-color: grey;
+    border: 2px solid inset black;
+}
+
+.sorting-bar select {
+    padding: 2px;
+    border-radius: 7px;
+}
+
+.failed-label {
+    color: rgb(97, 0, 0);
+    font-weight: bold;
+}
+
+.passed-label {
+    color: lime;
+    font-weight: bold;
+}
+
+.search-bar {
+    padding: 5px;
+    border-radius: 10px;
+    border-width: 1px;
+    width: 300px;
+}
+
+/* Dashboard Links */
+.dashboard-return-button {
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+.return-link {
+    color: white;
+}
+
+.return-link:hover {
+    color: purple;
+}
+
+.category-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 10px;
+}
+
+/* Spreadsheet Table */
+.th-content {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    user-select: none;
+}
+
+/* Visibility Hierachies */
+.search-invisible {
+    display: none;
+}
+
+.search-visible {
+    display: revert;
+}
+
+.pass-fail-invisible {
+    display: none;
 }

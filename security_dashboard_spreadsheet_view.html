@@ -1,0 +1,6127 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/security_dashboard.css">
+    <link rel="stylesheet" href="assets/pie_chart.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+        function showDiv(id){
+            const divs = document.querySelectorAll("#tabs_div>div");
+            divs.forEach(d=>{d.classList.remove("visible")});
+            document.getElementById(id).classList.add("visible");
+        }
+    </script>
+
+    <title>Spreadsheet View - OpenMRS O3 Security Dashboard</title>
+</head>
+<body onload='showDiv("vulnerability_testing")'>
+    
+    <div class="header">
+        <h1>🔒 OpenMRS O3 Security Dashboard</h1>
+        <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
+        <p class="timestamp-line">Last Updated: 
+        <span class="timestamp">
+            2026-10-01 14:22:09 UTC
+        </span>
+        </p>
+    </div>
+
+
+    
+    <div class = "tabs_buttons">
+        <button class="tabs_buttons-left" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
+        <button class=".tabs_buttons-right" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
+    </div>
+    <div id="tabs_div">
+        <div id ="vulnerability_testing">
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Total Tests</h3>
+                    <p>173</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Passed</h3>
+                    <p class="passed">141</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Failed</h3>
+                    <p class="failed">32</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Duration</h3>
+                    <p>27.9 min</p>
+                </div>
+                
+            </div>
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Failed Tests by Category</h3>
+                    <div class="chart-wrapper">
+                        <div class="chart-container chart-container-failed-tests"></div>
+                        <div class="legend">
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_Data_Integrity_Failures"></div>
+                                Data Integrity Failures: 3.12%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_Mishandling_of_Exceptional_Conditions"></div>
+                                Mishandling of Exceptional Conditions: 3.12%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_Insecure_Design"></div>
+                                Insecure Design: 9.38%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_Session_Management"></div>
+                                Session Management: 9.38%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_Security_Misconfiguration"></div>
+                                Security Misconfiguration: 12.5%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_Memory_Management_Failures"></div>
+                                Memory Management Failures: 25.0%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_XSS"></div>
+                                XSS: 37.5%
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Test Coverage</h3>
+                    <div class="chart-wrapper">
+                        <div class="chart-container chart-container-total-tests"></div>
+                        <div class="legend">
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_other"></div>
+                                Other: 15.61%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_Security_Logging___Alerting_Failures"></div>
+                                Security Logging & Alerting Failures: 6.94%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_Memory_Management_Failures"></div>
+                                Memory Management Failures: 11.56%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_Security_Misconfiguration"></div>
+                                Security Misconfiguration: 18.5%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_XSS"></div>
+                                XSS: 23.12%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_Authentication"></div>
+                                Authentication: 24.28%
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+    <div class="category-bar">
+                <a class="return-link" href="security_dashboard.html">Return to Main Dashboard</a>
+                <!-- Sorting Bar -->
+                <div class="sorting-bar">
+                    <label>Search: </label>
+                    <input id="spreadsheet-search-bar" class="search-bar" type="text" placeholder="Start typing to search">
+                    <select id="searchField">
+                        <option value="">All Fields</option>
+                        <option value="Category">Category</option>
+                        <option value="Test Name">Test Name</option>
+                        <option value="Parameters">Parameters</option>
+                        <option value="Status">Status</option>
+                        <option value="CVSS Score">CVSS Score</option>
+                        <option value="Severity">Severity</option>
+                        <option value="Duration">Duration</option>
+                    </select>
+                    <input id="relevance-checkbox" type="checkbox" checked>
+                    <label for="relevance-checkbox" class="">Sort by Relevance</label>
+                    
+
+                    &#x2022
+
+                    Check/Uncheck to filter results: 
+                    <input id="fail-checkbox" name="Failed" type="checkbox" checked>
+                    <label for="fail-checkbox" class="failed-label">Failed</label>
+
+                    <input id="pass-checkbox" name="Passed" type="checkbox" checked>
+                    <label for="pass-checkbox" class="passed-label">Passed</label>
+                </div>
+            </div>
+
+    <div class="test-results">
+    <table id="spreadsheet-table" class="spreadsheet-table">
+        
+<thead class="sub-details-head">
+    <tr>
+        
+        <th>
+            <div class="th-content">
+                <span>Category</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        
+        <th>
+            <div class="th-content">
+                <span>Test Name</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        <th>
+            <div class="th-content">
+                <span>Parameters</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        
+        <th>
+            <div class="th-content">
+                <span>Status</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        <th>
+            <div class="th-content">
+                <span>CVSS Score (Baseline)</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        <th>
+            <div class="th-content">
+                <span>Severity</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        <th>
+            <div class="th-content">
+                <span>Duration</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+    </tr>
+</thead>
+
+        <tbody>
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Access Control</td>
+    
+    <td class="row-test-name"><strong>Users cannot edit the admin account password</strong></td>
+    
+    <td class="row-params">
+    
+        <p>nonAdminType: clerk</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.29s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Access Control</td>
+    
+    <td class="row-test-name"><strong>Users cannot edit the admin account password</strong></td>
+    
+    <td class="row-params">
+    
+        <p>nonAdminType: technician</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.07s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Access Control</td>
+    
+    <td class="row-test-name"><strong>Users cannot edit the admin account password</strong></td>
+    
+    <td class="row-params">
+    
+        <p>nonAdminType: nurse</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.05s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Access Control</td>
+    
+    <td class="row-test-name"><strong>Users cannot edit the admin account password</strong></td>
+    
+    <td class="row-params">
+    
+        <p>nonAdminType: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.04s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Access Control</td>
+    
+    <td class="row-test-name"><strong>Users can edit their own passwords</strong></td>
+    
+    <td class="row-params">
+    
+        <p>nonAdminType: clerk</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">7.7</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.08s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Access Control</td>
+    
+    <td class="row-test-name"><strong>Users can edit their own passwords</strong></td>
+    
+    <td class="row-params">
+    
+        <p>nonAdminType: technician</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">7.7</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.12s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Access Control</td>
+    
+    <td class="row-test-name"><strong>Users can edit their own passwords</strong></td>
+    
+    <td class="row-params">
+    
+        <p>nonAdminType: nurse</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">7.7</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.05s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Access Control</td>
+    
+    <td class="row-test-name"><strong>Users can edit their own passwords</strong></td>
+    
+    <td class="row-params">
+    
+        <p>nonAdminType: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">7.7</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.05s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: admin</p>
+    
+        <p>password: Admin123</p>
+    
+        <p>cleanup_clear_user_lockout: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.9s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: doctor</p>
+    
+        <p>password: Doctor123</p>
+    
+        <p>cleanup_clear_user_lockout: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">19.65s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: nurse</p>
+    
+        <p>password: Nurse123</p>
+    
+        <p>cleanup_clear_user_lockout: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">19.61s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: clerk</p>
+    
+        <p>password: Clerk123</p>
+    
+        <p>cleanup_clear_user_lockout: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">19.64s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: technician</p>
+    
+        <p>password: Technician123</p>
+    
+        <p>cleanup_clear_user_lockout: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">19.65s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on REST API causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: admin</p>
+    
+        <p>password: Admin123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.35s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on REST API causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: doctor</p>
+    
+        <p>password: Doctor123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.06s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on REST API causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: nurse</p>
+    
+        <p>password: Nurse123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.07s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on REST API causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: clerk</p>
+    
+        <p>password: Clerk123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.06s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on REST API causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: technician</p>
+    
+        <p>password: Technician123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.08s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force password attack via REST API with known admin username</strong></td>
+    
+    <td class="row-params">
+    
+        <p>cleanup_clear_user_lockout: admin</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.1s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force password attack with known admin username</strong></td>
+    
+    <td class="row-params">
+    
+        <p>cleanup_clear_user_lockout: admin</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">21.55s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Correct credentials allows login on REST API</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: admin</p>
+    
+        <p>password: Admin123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.02s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Correct credentials allows login on REST API</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: doctor</p>
+    
+        <p>password: Doctor123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.02s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Correct credentials allows login on REST API</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: nurse</p>
+    
+        <p>password: Nurse123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.02s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Correct credentials allows login on REST API</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: clerk</p>
+    
+        <p>password: Clerk123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.01s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Correct credentials allows login on REST API</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: technician</p>
+    
+        <p>password: Technician123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.02s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Correct credentials allows login on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: admin</p>
+    
+        <p>password: Admin123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">3.4s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Correct credentials allows login on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: doctor</p>
+    
+        <p>password: Doctor123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">3.46s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Correct credentials allows login on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: nurse</p>
+    
+        <p>password: Nurse123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">3.48s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Correct credentials allows login on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: clerk</p>
+    
+        <p>password: Clerk123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">3.46s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Correct credentials allows login on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: technician</p>
+    
+        <p>password: Technician123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">3.43s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on login page is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: admin</p>
+    
+        <p>password: Admin123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">21.77s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on login page is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: doctor</p>
+    
+        <p>password: Doctor123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">21.73s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on login page is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: nurse</p>
+    
+        <p>password: Nurse123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">21.68s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on login page is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: clerk</p>
+    
+        <p>password: Clerk123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">21.69s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on login page is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: technician</p>
+    
+        <p>password: Technician123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">21.66s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on login page is not accessible at 4 minutes and 50 seconds</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: admin</p>
+    
+        <p>password: Admin123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">23.63s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on login page is not accessible at 4 minutes and 50 seconds</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: doctor</p>
+    
+        <p>password: Doctor123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">23.66s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on login page is not accessible at 4 minutes and 50 seconds</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: nurse</p>
+    
+        <p>password: Nurse123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">23.63s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on login page is not accessible at 4 minutes and 50 seconds</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: clerk</p>
+    
+        <p>password: Clerk123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">23.72s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on login page is not accessible at 4 minutes and 50 seconds</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: technician</p>
+    
+        <p>password: Technician123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">23.78s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: admin</p>
+    
+        <p>password: Admin123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.08s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: doctor</p>
+    
+        <p>password: Doctor123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.07s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: nurse</p>
+    
+        <p>password: Nurse123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.07s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: clerk</p>
+    
+        <p>password: Clerk123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.08s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: technician</p>
+    
+        <p>password: Technician123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.11s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is not accessible at 4 minutes and 50 seconds</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: admin</p>
+    
+        <p>password: Admin123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.1s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is not accessible at 4 minutes and 50 seconds</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: doctor</p>
+    
+        <p>password: Doctor123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.13s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is not accessible at 4 minutes and 50 seconds</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: nurse</p>
+    
+        <p>password: Nurse123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.11s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is not accessible at 4 minutes and 50 seconds</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: clerk</p>
+    
+        <p>password: Clerk123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.05s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is not accessible at 4 minutes and 50 seconds</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: technician</p>
+    
+        <p>password: Technician123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.11s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Cryptographic Failures</td>
+    
+    <td class="row-test-name"><strong>The OpenMRS application should not use the default encryption key</strong></td>
+    
+    <td class="row-params">
+    
+        <p>N/A</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.02s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Cryptographic Failures</td>
+    
+    <td class="row-test-name"><strong>The OpenMRS application should not use the default encryption vector</strong></td>
+    
+    <td class="row-params">
+    
+        <p>N/A</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.01s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Data Integrity Failures</td>
+    
+    <td class="row-test-name"><strong>Replace session cookies with another's session</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.6</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                expect(page.get_by_text(&quot;Super User&quot;), message=&quot;Another account, other than Admin, was logged in to&quot;).to_have_count(1)</p><p>AssertionError: Another account, other than Admin, was logged in to</p><p>Expected value: &#x27;1&#x27;</p><p>Actual value: 0</p><p>Call log:</p><p>- Expect &quot;to_have_count&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Super User&quot;)</p><p>9 × locator resolved to 0 elements</p><p>- unexpected value &quot;0&quot;
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">10.32s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Insecure Design</td>
+    
+    <td class="row-test-name"><strong>Appointments should be blocked after reaching max load</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>numberOfPatients: 3</p>
+    
+        <p>maxAppointments: 2</p>
+    
+        <p>service_name: General Medicine service</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">6.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert successful == maxAppointments, (f&quot;{successful} successful appointments of {numberOfPatients} appointment attempts of a max {maxAppointments} appointments.&quot;)</p><p>AssertionError: 3 successful appointments of 3 appointment attempts of a max 2 appointments.</p><p>assert 3 == 2
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">40.31s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 1</p>
+    
+        <p>billing_category: Antenatal care</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">21.6s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">SQL Injection</td>
+    
+    <td class="row-test-name"><strong>SQL injection on first name field of edit patient page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>personNameSQLString: first name</p>
+    
+        <p>testString: hello;CREATE TABLE testingTable (testfield datetime PRIMARY KEY);</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">21.4s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>Valid input for first name field of edit patient page is not blocked by filters</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: first name</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">14.21s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on first name field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: first name</p>
+    
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.81s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Insecure Design</td>
+    
+    <td class="row-test-name"><strong>Appointments should be blocked after reaching max load</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>numberOfPatients: 3</p>
+    
+        <p>maxAppointments: 2</p>
+    
+        <p>service_name: Outpatient Department</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">6.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert successful == maxAppointments, (f&quot;{successful} successful appointments of {numberOfPatients} appointment attempts of a max {maxAppointments} appointments.&quot;)</p><p>AssertionError: 3 successful appointments of 3 appointment attempts of a max 2 appointments.</p><p>assert 3 == 2
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">35.44s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 1</p>
+    
+        <p>billing_category: Orthopedic Service</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.35s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">SQL Injection</td>
+    
+    <td class="row-test-name"><strong>SQL injection on middle name field of edit patient page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>personNameSQLString: middle name</p>
+    
+        <p>testString: hello;CREATE TABLE testingTable (testfield datetime PRIMARY KEY);</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">13.96s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>Valid input for middle name field of edit patient page is not blocked by filters</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: middle name</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">13.82s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on first name field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: first name</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.89s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Insecure Design</td>
+    
+    <td class="row-test-name"><strong>Appointments should be blocked after reaching max load</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>numberOfPatients: 3</p>
+    
+        <p>maxAppointments: 2</p>
+    
+        <p>service_name: Rehabilitation service</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">6.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert successful == maxAppointments, (f&quot;{successful} successful appointments of {numberOfPatients} appointment attempts of a max {maxAppointments} appointments.&quot;)</p><p>AssertionError: 3 successful appointments of 3 appointment attempts of a max 2 appointments.</p><p>assert 3 == 2
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">35.04s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 1</p>
+    
+        <p>billing_category: Nutrition counseling</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.41s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">SQL Injection</td>
+    
+    <td class="row-test-name"><strong>SQL injection on family name field of edit patient page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>personNameSQLString: family name</p>
+    
+        <p>testString: hello;CREATE TABLE testingTable (testfield datetime PRIMARY KEY);</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">14.11s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>Valid input for family name field of edit patient page is not blocked by filters</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: family name</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">14.28s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on first name field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: first name</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.97s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Insecure Design</td>
+    
+    <td class="row-test-name"><strong>Appointments should be blocked after reaching max load</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>numberOfPatients: 2</p>
+    
+        <p>maxAppointments: 2</p>
+    
+        <p>service_name: General Medicine service</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">24.4s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 1</p>
+    
+        <p>billing_category: OPD consultation</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.33s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>Valid input for address 1 field of edit patient page is not blocked by filters</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: address 1</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">13.7s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on middle name field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: middle name</p>
+    
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">16.42s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Insecure Design</td>
+    
+    <td class="row-test-name"><strong>Appointments should be blocked after reaching max load</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>numberOfPatients: 2</p>
+    
+        <p>maxAppointments: 2</p>
+    
+        <p>service_name: Outpatient Department</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">24.26s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 1000000</p>
+    
+        <p>billing_category: Antenatal care</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.44s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>Valid input for address 2 field of edit patient page is not blocked by filters</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: address 2</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">13.84s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on middle name field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: middle name</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.93s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Insecure Design</td>
+    
+    <td class="row-test-name"><strong>Appointments should be blocked after reaching max load</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>numberOfPatients: 2</p>
+    
+        <p>maxAppointments: 2</p>
+    
+        <p>service_name: Rehabilitation service</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">24.39s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 1000000</p>
+    
+        <p>billing_category: Orthopedic Service</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.36s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>Valid input for city field of edit patient page is not blocked by filters</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: city</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">13.82s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on middle name field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: middle name</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">16.0s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 1000000</p>
+    
+        <p>billing_category: Nutrition counseling</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.58s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>Valid input for state field of edit patient page is not blocked by filters</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: state</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">13.77s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on family name field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: family name</p>
+    
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.9s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 1000000</p>
+    
+        <p>billing_category: OPD consultation</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.6s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>Valid input for country field of edit patient page is not blocked by filters</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: country</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">13.73s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on family name field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: family name</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.91s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 2147483647</p>
+    
+        <p>billing_category: Antenatal care</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.95s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>Valid input for postal code field of edit patient page is not blocked by filters</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: postal code</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">13.78s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on family name field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: family name</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.99s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 2147483647</p>
+    
+        <p>billing_category: Orthopedic Service</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.42s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>Valid input for phone number field of edit patient page is not blocked by filters</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: phone number</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.6</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">13.84s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on address 1 field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: address 1</p>
+    
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.94s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 2147483647</p>
+    
+        <p>billing_category: Nutrition counseling</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.44s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on address 1 field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: address 1</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.85s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 2147483647</p>
+    
+        <p>billing_category: OPD consultation</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.45s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on address 1 field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: address 1</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.83s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 2147483648</p>
+    
+        <p>billing_category: Antenatal care</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">10.0</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert quantity_value == quantity, f&quot;Original quantity {quantity} has wrapped around to {quantity_value}&quot;</p><p>AssertionError: Original quantity 2147483648 has wrapped around to -2147483648</p><p>assert -2147483648 == 2147483648
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">20.49s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on address 2 field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: address 2</p>
+    
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.82s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 2147483648</p>
+    
+        <p>billing_category: Orthopedic Service</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">10.0</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert quantity_value == quantity, f&quot;Original quantity {quantity} has wrapped around to {quantity_value}&quot;</p><p>AssertionError: Original quantity 2147483648 has wrapped around to -2147483648</p><p>assert -2147483648 == 2147483648
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">20.36s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on address 2 field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: address 2</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.96s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 2147483648</p>
+    
+        <p>billing_category: Nutrition counseling</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">10.0</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert quantity_value == quantity, f&quot;Original quantity {quantity} has wrapped around to {quantity_value}&quot;</p><p>AssertionError: Original quantity 2147483648 has wrapped around to -2147483648</p><p>assert -2147483648 == 2147483648
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">20.62s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on address 2 field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: address 2</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.88s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 2147483648</p>
+    
+        <p>billing_category: OPD consultation</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">10.0</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert quantity_value == quantity, f&quot;Original quantity {quantity} has wrapped around to {quantity_value}&quot;</p><p>AssertionError: Original quantity 2147483648 has wrapped around to -2147483648</p><p>assert -2147483648 == 2147483648
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">20.96s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on city field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: city</p>
+    
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.96s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 4294967294</p>
+    
+        <p>billing_category: Antenatal care</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">10.0</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert quantity_value == quantity, f&quot;Original quantity {quantity} has wrapped around to {quantity_value}&quot;</p><p>AssertionError: Original quantity 4294967294 has wrapped around to -2</p><p>assert -2 == 4294967294
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">20.62s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on city field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: city</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.95s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 4294967294</p>
+    
+        <p>billing_category: Orthopedic Service</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">10.0</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert quantity_value == quantity, f&quot;Original quantity {quantity} has wrapped around to {quantity_value}&quot;</p><p>AssertionError: Original quantity 4294967294 has wrapped around to -2</p><p>assert -2 == 4294967294
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">20.63s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on city field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: city</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">15.9s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 4294967294</p>
+    
+        <p>billing_category: Nutrition counseling</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">10.0</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert quantity_value == quantity, f&quot;Original quantity {quantity} has wrapped around to {quantity_value}&quot;</p><p>AssertionError: Original quantity 4294967294 has wrapped around to -2</p><p>assert -2 == 4294967294
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">20.5s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on state field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: state</p>
+    
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.Error: Locator.click: Error: strict mode violation: get_by_text(&quot;Actions&quot;) resolved to 2 elements:</p><p>1) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1q:\&quot;]&quot;)</p><p>2) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1u:\&quot;]&quot;)</p><p></p><p>Call log:</p><p>- waiting for get_by_text(&quot;Actions&quot;)
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">12.44s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Memory Management Failures</td>
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 4294967294</p>
+    
+        <p>billing_category: OPD consultation</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">10.0</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert quantity_value == quantity, f&quot;Original quantity {quantity} has wrapped around to {quantity_value}&quot;</p><p>AssertionError: Original quantity 4294967294 has wrapped around to -2</p><p>assert -2 == 4294967294
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">20.26s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on state field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: state</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.Error: Locator.click: Error: strict mode violation: get_by_text(&quot;Actions&quot;) resolved to 2 elements:</p><p>1) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1q:\&quot;]&quot;)</p><p>2) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1u:\&quot;]&quot;)</p><p></p><p>Call log:</p><p>- waiting for get_by_text(&quot;Actions&quot;)
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">6.66s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Mishandling of Exceptional Conditions</td>
+    
+    <td class="row-test-name"><strong>Web server version name and number should not be shown on 404 page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>N/A</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">6.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert page_data[&quot;is_text_on_page&quot;] == False</p><p>assert True == False
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">1.05s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Logging & Alerting Failures</td>
+    
+    <td class="row-test-name"><strong>Server logs should not show failed login attempts with correct credentials</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: admin</p>
+    
+        <p>password: Admin123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">8.35s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Logging & Alerting Failures</td>
+    
+    <td class="row-test-name"><strong>Server logs should not show failed login attempts with correct credentials</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: doctor</p>
+    
+        <p>password: Doctor123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">8.67s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Logging & Alerting Failures</td>
+    
+    <td class="row-test-name"><strong>Server logs should not show failed login attempts with correct credentials</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: nurse</p>
+    
+        <p>password: Nurse123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">8.64s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Logging & Alerting Failures</td>
+    
+    <td class="row-test-name"><strong>Server logs should not show failed login attempts with correct credentials</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: clerk</p>
+    
+        <p>password: Clerk123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">8.66s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Logging & Alerting Failures</td>
+    
+    <td class="row-test-name"><strong>Server logs should not show failed login attempts with correct credentials</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: technician</p>
+    
+        <p>password: Technician123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">8.66s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Logging & Alerting Failures</td>
+    
+    <td class="row-test-name"><strong>Server logs should show failed login attempts</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: admin</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">5.67s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Logging & Alerting Failures</td>
+    
+    <td class="row-test-name"><strong>Server logs should show failed login attempts</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">5.58s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Logging & Alerting Failures</td>
+    
+    <td class="row-test-name"><strong>Server logs should show failed login attempts</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: nurse</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">5.66s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Logging & Alerting Failures</td>
+    
+    <td class="row-test-name"><strong>Server logs should show failed login attempts</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: clerk</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">5.58s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Logging & Alerting Failures</td>
+    
+    <td class="row-test-name"><strong>Server logs should show failed login attempts</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: technician</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">5.62s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Logging & Alerting Failures</td>
+    
+    <td class="row-test-name"><strong>Server logs should show failed login attempts</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: fakeusername1</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">5.57s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Logging & Alerting Failures</td>
+    
+    <td class="row-test-name"><strong>Server logs should show failed login attempts</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: fakeusername2</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">6.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">5.56s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header attribute 'unsafe-eval' should not be used for default-src directive on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>attribute: &#x27;unsafe-eval&#x27;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert attribute not in security_policy_dict[&quot;default-src&quot;]</p><p>assert &quot;&#x27;unsafe-eval&#x27;&quot; not in [&quot;&#x27;self&#x27;&quot;, &quot;&#x27;unsafe-inline&#x27;&quot;, &quot;&#x27;unsafe-eval&#x27;&quot;, &#x27;localhost&#x27;, &#x27;localhost:*&#x27;]
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">0.18s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header attribute 'unsafe-inline' should not be used for default-src directive on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>attribute: &#x27;unsafe-inline&#x27;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert attribute not in security_policy_dict[&quot;default-src&quot;]</p><p>assert &quot;&#x27;unsafe-inline&#x27;&quot; not in [&quot;&#x27;self&#x27;&quot;, &quot;&#x27;unsafe-inline&#x27;&quot;, &quot;&#x27;unsafe-eval&#x27;&quot;, &#x27;localhost&#x27;, &#x27;localhost:*&#x27;]
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">0.18s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header attribute 'unsafe-hash' should not be used for default-src directive on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>attribute: &#x27;unsafe-hash&#x27;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.18s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive default-src should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: default-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.18s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive script-src should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: script-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.18s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive style-src should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: style-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.18s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive connect-src should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: connect-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.18s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive media-src should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: media-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive object-src should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: object-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive frame-src should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: frame-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive worker-src should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: worker-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive manifest-src should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: manifest-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive child-src should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: child-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.18s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive font-src should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: font-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive frame-ancestors should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: frame-ancestors</p>
+    
+        <p>fallback: False</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.18s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive form-action should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: form-action</p>
+    
+        <p>fallback: False</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert is_directive_secure == True</p><p>assert False == True
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive base-uri should be set to 'none' or 'self' on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: base-uri</p>
+    
+        <p>fallback: False</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive default-src should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: default-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive script-src should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: script-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive style-src should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: style-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive connect-src should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: connect-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive media-src should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: media-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive object-src should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: object-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive frame-src should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: frame-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive worker-src should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: worker-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.16s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive manifest-src should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: manifest-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.21s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive child-src should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: child-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.21s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive font-src should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: font-src</p>
+    
+        <p>fallback: True</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive frame-ancestors should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: frame-ancestors</p>
+    
+        <p>fallback: False</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive form-action should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: form-action</p>
+    
+        <p>fallback: False</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert is_directive_secure == True</p><p>assert False == True
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">0.18s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header directive base-uri should not be set to * or http: on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>directive: base-uri</p>
+    
+        <p>fallback: False</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">8.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Security Misconfiguration</td>
+    
+    <td class="row-test-name"><strong>Security header x-content-type-options is set to nosniff on login page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>N/A</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.8</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">0.17s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Session Management</td>
+    
+    <td class="row-test-name"><strong>Session cookie should change when logging out</strong></td>
+    
+    <td class="row-params">
+    
+        <p>N/A</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">9.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert new_cookie[&quot;value&quot;] != old_cookie[&quot;value&quot;]</p><p>AssertionError: assert &#x27;75FD7A203BDFA0B2ED11C6625F72FD98&#x27; != &#x27;75FD7A203BDFA0B2ED11C6625F72FD98&#x27;
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">4.48s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Session Management</td>
+    
+    <td class="row-test-name"><strong>Cookies have HTTPOnly attribute</strong></td>
+    
+    <td class="row-params">
+    
+        <p>N/A</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">2.37s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Session Management</td>
+    
+    <td class="row-test-name"><strong>Session cookie hijacked</strong></td>
+    
+    <td class="row-params">
+    
+        <p>N/A</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">9.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                event = await waiter.result()</p><p>playwright._impl._errors.TimeoutError: Timeout 30000ms exceeded.</p><p>=========================== logs ===========================</p><p>waiting for navigation to &quot;http://localhost/openmrs/spa/login&quot; until &#x27;load&#x27;</p><p>navigated to &quot;http://localhost/openmrs/spa/home&quot;</p><p>navigated to &quot;http://localhost/openmrs/spa/home/service-queues&quot;</p><p>============================================================
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">34.49s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Session Management</td>
+    
+    <td class="row-test-name"><strong>Cookies have SameSite attribute</strong></td>
+    
+    <td class="row-params">
+    
+        <p>N/A</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">5.1</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">2.35s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">Session Management</td>
+    
+    <td class="row-test-name"><strong>Cookies have Secure attribute</strong></td>
+    
+    <td class="row-params">
+    
+        <p>N/A</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">9.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert cookie[&quot;secure&quot;] == True</p><p>assert False == True
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">2.48s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Session Management</td>
+    
+    <td class="row-test-name"><strong>Session cookie can be used by a valid user</strong></td>
+    
+    <td class="row-params">
+    
+        <p>N/A</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">3.09s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on state field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: state</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.Error: Locator.click: Error: strict mode violation: get_by_text(&quot;Actions&quot;) resolved to 2 elements:</p><p>1) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1q:\&quot;]&quot;)</p><p>2) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1u:\&quot;]&quot;)</p><p></p><p>Call log:</p><p>- waiting for get_by_text(&quot;Actions&quot;)
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">6.69s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on country field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: country</p>
+    
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.Error: Locator.click: Error: strict mode violation: get_by_text(&quot;Actions&quot;) resolved to 2 elements:</p><p>1) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1q:\&quot;]&quot;)</p><p>2) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1u:\&quot;]&quot;)</p><p></p><p>Call log:</p><p>- waiting for get_by_text(&quot;Actions&quot;)
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">6.65s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on country field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: country</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.Error: Locator.click: Error: strict mode violation: get_by_text(&quot;Actions&quot;) resolved to 2 elements:</p><p>1) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1q:\&quot;]&quot;)</p><p>2) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1u:\&quot;]&quot;)</p><p></p><p>Call log:</p><p>- waiting for get_by_text(&quot;Actions&quot;)
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">6.73s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on country field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: country</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.Error: Locator.click: Error: strict mode violation: get_by_text(&quot;Actions&quot;) resolved to 2 elements:</p><p>1) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1q:\&quot;]&quot;)</p><p>2) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1u:\&quot;]&quot;)</p><p></p><p>Call log:</p><p>- waiting for get_by_text(&quot;Actions&quot;)
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">6.68s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on postal code field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: postal code</p>
+    
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.Error: Locator.click: Error: strict mode violation: get_by_text(&quot;Actions&quot;) resolved to 2 elements:</p><p>1) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1q:\&quot;]&quot;)</p><p>2) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1u:\&quot;]&quot;)</p><p></p><p>Call log:</p><p>- waiting for get_by_text(&quot;Actions&quot;)
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">6.67s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on postal code field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: postal code</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.Error: Locator.click: Error: strict mode violation: get_by_text(&quot;Actions&quot;) resolved to 2 elements:</p><p>1) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1q:\&quot;]&quot;)</p><p>2) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1u:\&quot;]&quot;)</p><p></p><p>Call log:</p><p>- waiting for get_by_text(&quot;Actions&quot;)
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">6.76s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on postal code field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: postal code</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.Error: Locator.click: Error: strict mode violation: get_by_text(&quot;Actions&quot;) resolved to 2 elements:</p><p>1) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1q:\&quot;]&quot;)</p><p>2) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1u:\&quot;]&quot;)</p><p></p><p>Call log:</p><p>- waiting for get_by_text(&quot;Actions&quot;)
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">6.67s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on phone number field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: phone number</p>
+    
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.Error: Locator.click: Error: strict mode violation: get_by_text(&quot;Actions&quot;) resolved to 2 elements:</p><p>1) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1q:\&quot;]&quot;)</p><p>2) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1u:\&quot;]&quot;)</p><p></p><p>Call log:</p><p>- waiting for get_by_text(&quot;Actions&quot;)
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">6.65s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on phone number field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: phone number</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.Error: Locator.click: Error: strict mode violation: get_by_text(&quot;Actions&quot;) resolved to 2 elements:</p><p>1) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1q:\&quot;]&quot;)</p><p>2) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1u:\&quot;]&quot;)</p><p></p><p>Call log:</p><p>- waiting for get_by_text(&quot;Actions&quot;)
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">6.69s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="fail-row">
+
+
+    
+    <td class="row-category">XSS</td>
+    
+    <td class="row-test-name"><strong>XSS injection on phone number field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: phone number</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
+    <td class="row-cvss">
+        
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.Error: Locator.click: Error: strict mode violation: get_by_text(&quot;Actions&quot;) resolved to 2 elements:</p><p>1) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1q:\&quot;]&quot;)</p><p>2) &lt;span class=&quot;Djpfq9UaeMJs3YDnN8NYKA==&quot;&gt;Actions&lt;/span&gt; aka locator(&quot;[id=\&quot;patient-actions-menu-trigger-:r1u:\&quot;]&quot;)</p><p></p><p>Call log:</p><p>- waiting for get_by_text(&quot;Actions&quot;)
+                </p>
+            </span>
+        </div>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">6.73s</td>
+</tr>
+
+            
+        </tbody>
+    </table>
+</div>
+</div>
+    
+    <div id="dependency_scanning">
+        <iframe src="https://openmrs.github.io/openmrs-contrib-dependency-vulnerability-dashboard/"></iframe>
+    </div>
+
+</div>
+    
+    <div class="footer">
+        <p>OpenMRS O3 Continuous Security Testing</p>
+        <p><a href="https://openmrs.atlassian.net/wiki/spaces/docs/pages/940212225/OpenMRS+Security+Test+Implementation+Guideline">How to contribute to this dashboard</a></p>
+        <p>Powered by <a href="https://www.first.org/cvss/v4.0/" target="_blank">CVSS 4.0</a> | 
+        <a href="https://github.com/openmrs/openmrs-contrib-cvss-scanning" target="_blank">GitHub Repository</a> | <a href='/detailed-report.html'>PyTest Report</a></p>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/security_dashboard_spreadsheet_view.js"></script>
+</body>
+</html>
