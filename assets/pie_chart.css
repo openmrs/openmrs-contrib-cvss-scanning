@@ -1,9 +1,9 @@
 :root {
-  --fail_cat_Data_Integrity_Failures: 5%;
-  --fail_cat_Mishandling_of_Exceptional_Conditions: 10%;
-  --fail_cat_Insecure_Design: 25%;
-  --fail_cat_Session_Management: 40%;
-  --fail_cat_Security_Misconfiguration: 60%;
+  --fail_cat_Data_Integrity_Failures: 6%;
+  --fail_cat_Mishandling_of_Exceptional_Conditions: 12%;
+  --fail_cat_Session_Management: 18%;
+  --fail_cat_Insecure_Design: 35%;
+  --fail_cat_Security_Misconfiguration: 57%;
   --fail_cat_Memory_Management_Failures: 100.0%;
   --coverage_other: 16%;
   --coverage_cat_Security_Logging___Alerting_Failures: 23%;
@@ -15,9 +15,9 @@
 .chart-container-failed-tests {
     background: conic-gradient(yellow 0% var(--fail_cat_Data_Integrity_Failures),
 mediumvioletred var(--fail_cat_Data_Integrity_Failures) var(--fail_cat_Mishandling_of_Exceptional_Conditions),
-olivedrab var(--fail_cat_Mishandling_of_Exceptional_Conditions) var(--fail_cat_Insecure_Design),
-salmon var(--fail_cat_Insecure_Design) var(--fail_cat_Session_Management),
-slateblue var(--fail_cat_Session_Management) var(--fail_cat_Security_Misconfiguration),
+olivedrab var(--fail_cat_Mishandling_of_Exceptional_Conditions) var(--fail_cat_Session_Management),
+salmon var(--fail_cat_Session_Management) var(--fail_cat_Insecure_Design),
+slateblue var(--fail_cat_Insecure_Design) var(--fail_cat_Security_Misconfiguration),
 mediumseagreen var(--fail_cat_Security_Misconfiguration) var(--fail_cat_Memory_Management_Failures)
 
     );
@@ -34,8 +34,8 @@ indigo var(--coverage_cat_XSS) var(--coverage_cat_Authentication)
 }
 .category_color_cat_Data_Integrity_Failures { background: yellow; }
 .category_color_cat_Mishandling_of_Exceptional_Conditions { background: mediumvioletred; }
-.category_color_cat_Insecure_Design { background: olivedrab; }
-.category_color_cat_Session_Management { background: salmon; }
+.category_color_cat_Session_Management { background: olivedrab; }
+.category_color_cat_Insecure_Design { background: salmon; }
 .category_color_cat_Security_Misconfiguration { background: slateblue; }
 .category_color_cat_Memory_Management_Failures { background: mediumseagreen; }
 .category_color_other { background: firebrick; }
