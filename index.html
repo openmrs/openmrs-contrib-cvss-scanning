@@ -27,7 +27,7 @@
         <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
         <p class="timestamp-line">Last Updated: 
         <span class="timestamp">
-            2026-10-14 00:57:47 UTC
+            2026-10-15 00:58:23 UTC
         </span>
         </p>
     </div>
@@ -55,7 +55,7 @@
                 </div>
                 <div class="stat-card">
                     <h3>Duration</h3>
-                    <p>26.1 min</p>
+                    <p>26.2 min</p>
                 </div>
                 
             </div>
@@ -585,7 +585,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.84s</td>
+    <td class="row-duration">20.98s</td>
 </tr>
 
                                         
@@ -632,7 +632,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.96s</td>
+    <td class="row-duration">20.92s</td>
 </tr>
 
                                         
@@ -679,7 +679,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.95s</td>
+    <td class="row-duration">20.9s</td>
 </tr>
 
                                         
@@ -726,7 +726,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.91s</td>
+    <td class="row-duration">20.86s</td>
 </tr>
 
                                         
@@ -773,7 +773,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.85s</td>
+    <td class="row-duration">20.88s</td>
 </tr>
 
                                         
@@ -820,7 +820,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.87s</td>
+    <td class="row-duration">20.88s</td>
 </tr>
 
                                         
@@ -867,7 +867,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.91s</td>
+    <td class="row-duration">20.95s</td>
 </tr>
 
                                         
@@ -1251,7 +1251,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.0s</td>
+    <td class="row-duration">21.95s</td>
 </tr>
 
                                         
@@ -1296,7 +1296,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.95s</td>
+    <td class="row-duration">20.89s</td>
 </tr>
 
                                         
@@ -1341,7 +1341,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.02s</td>
+    <td class="row-duration">20.91s</td>
 </tr>
 
                                         
@@ -1386,7 +1386,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.89s</td>
+    <td class="row-duration">20.91s</td>
 </tr>
 
                                         
@@ -1429,7 +1429,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.89s</td>
+    <td class="row-duration">20.94s</td>
 </tr>
 
                                         
@@ -1472,7 +1472,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.89s</td>
+    <td class="row-duration">21.06s</td>
 </tr>
 
                                         
@@ -1513,7 +1513,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.89s</td>
+    <td class="row-duration">21.01s</td>
 </tr>
 
                                         
@@ -1538,6 +1538,168 @@
         <p>browser_name: chromium</p>
     
         <p>quantity: 1000000</p>
+    
+        <p>billing_category: OPD consultation</p>
+    
+    </td>
+
+    
+    <td class="row-description">On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.99s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 2147483647</p>
+    
+        <p>billing_category: Antenatal care</p>
+    
+    </td>
+
+    
+    <td class="row-description">On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.94s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 2147483647</p>
+    
+        <p>billing_category: Orthopedic Service</p>
+    
+    </td>
+
+    
+    <td class="row-description">On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.95s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 2147483647</p>
+    
+        <p>billing_category: Nutrition counseling</p>
+    
+    </td>
+
+    
+    <td class="row-description">On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">10.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.95s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>quantity: 2147483647</p>
     
         <p>billing_category: OPD consultation</p>
     
@@ -1555,168 +1717,6 @@
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
     <td class="row-duration">20.96s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>quantity: 2147483647</p>
-    
-        <p>billing_category: Antenatal care</p>
-    
-    </td>
-
-    
-    <td class="row-description">On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">10.0</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.88s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>quantity: 2147483647</p>
-    
-        <p>billing_category: Orthopedic Service</p>
-    
-    </td>
-
-    
-    <td class="row-description">On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">10.0</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.92s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>quantity: 2147483647</p>
-    
-        <p>billing_category: Nutrition counseling</p>
-    
-    </td>
-
-    
-    <td class="row-description">On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">10.0</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.95s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>Integer overflow of quantity on billing page</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>quantity: 2147483647</p>
-    
-        <p>billing_category: OPD consultation</p>
-    
-    </td>
-
-    
-    <td class="row-description">On the quantity field of the billing page, a large integer should not cause an integer overflow or wraparound</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">10.0</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.93s</td>
 </tr>
 
                                         
@@ -2484,7 +2484,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
-    <td class="row-duration">0.27s</td>
+    <td class="row-duration">0.28s</td>
 </tr>
 
                                         
@@ -2579,7 +2579,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
-    <td class="row-duration">0.27s</td>
+    <td class="row-duration">0.26s</td>
 </tr>
 
                                         
@@ -2978,7 +2978,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
                                         
@@ -3153,7 +3153,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.27s</td>
+    <td class="row-duration">0.28s</td>
 </tr>
 
                                         
@@ -3223,7 +3223,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
                                         
@@ -3258,7 +3258,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
                                         
@@ -3293,7 +3293,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.27s</td>
+    <td class="row-duration">0.28s</td>
 </tr>
 
                                         
@@ -3328,7 +3328,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
                                         
@@ -3363,7 +3363,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.28s</td>
 </tr>
 
                                         
@@ -3398,7 +3398,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
                                         
@@ -3437,7 +3437,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.28s</td>
 </tr>
 
                                         
@@ -3472,7 +3472,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
                                         
@@ -3542,7 +3542,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
                                         
@@ -3682,7 +3682,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
                                         
@@ -3717,7 +3717,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
                                         
@@ -3787,7 +3787,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.28s</td>
 </tr>
 
                                         
@@ -3857,7 +3857,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
                                         
@@ -3896,7 +3896,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.4s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
                                         
@@ -3930,7 +3930,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
                                         
@@ -4284,7 +4284,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
-    <td class="row-duration">42.06s</td>
+    <td class="row-duration">42.26s</td>
 </tr>
 
                                         
@@ -4339,7 +4339,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
-    <td class="row-duration">36.2s</td>
+    <td class="row-duration">36.23s</td>
 </tr>
 
                                         
@@ -4394,7 +4394,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
-    <td class="row-duration">35.99s</td>
+    <td class="row-duration">36.06s</td>
 </tr>
 
                                         
@@ -4867,7 +4867,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">25.0s</td>
+    <td class="row-duration">25.01s</td>
 </tr>
 
                                         
@@ -4912,7 +4912,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">24.98s</td>
+    <td class="row-duration">24.93s</td>
 </tr>
 
                                         
@@ -4957,7 +4957,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">24.94s</td>
+    <td class="row-duration">24.86s</td>
 </tr>
 
                                         
@@ -5463,7 +5463,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
-    <td class="row-duration">10.94s</td>
+    <td class="row-duration">10.96s</td>
 </tr>
 
                                         
@@ -7239,7 +7239,7 @@ about the login should expire and a new one should be created</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">4.79s</td>
+    <td class="row-duration">4.77s</td>
 </tr>
 
                                         
@@ -7272,7 +7272,7 @@ about the login should expire and a new one should be created</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">2.53s</td>
+    <td class="row-duration">2.5s</td>
 </tr>
 
                                         
@@ -7306,7 +7306,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">4.76s</td>
+    <td class="row-duration">4.75s</td>
 </tr>
 
                                         
@@ -7377,7 +7377,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.14s</td>
+    <td class="row-duration">3.28s</td>
 </tr>
 
                                         
@@ -7597,7 +7597,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.25s</td>
+    <td class="row-duration">0.23s</td>
 </tr>
 
                                         
@@ -7663,7 +7663,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.04s</td>
+    <td class="row-duration">0.03s</td>
 </tr>
 
                                         
@@ -7696,7 +7696,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.04s</td>
+    <td class="row-duration">0.03s</td>
 </tr>
 
                                         
@@ -7729,7 +7729,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.09s</td>
+    <td class="row-duration">0.1s</td>
 </tr>
 
                                         
@@ -7762,7 +7762,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.07s</td>
+    <td class="row-duration">0.06s</td>
 </tr>
 
                                         
@@ -7795,7 +7795,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.05s</td>
+    <td class="row-duration">0.07s</td>
 </tr>
 
                                         
@@ -8378,7 +8378,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.5s</td>
+    <td class="row-duration">22.88s</td>
 </tr>
 
                                         
@@ -8415,7 +8415,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">19.89s</td>
+    <td class="row-duration">19.91s</td>
 </tr>
 
                                         
@@ -8489,7 +8489,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">19.88s</td>
+    <td class="row-duration">19.89s</td>
 </tr>
 
                                         
@@ -8526,7 +8526,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">19.87s</td>
+    <td class="row-duration">19.89s</td>
 </tr>
 
                                         
@@ -8561,7 +8561,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.11s</td>
+    <td class="row-duration">0.08s</td>
 </tr>
 
                                         
@@ -8596,7 +8596,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.12s</td>
+    <td class="row-duration">0.1s</td>
 </tr>
 
                                         
@@ -8666,7 +8666,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.11s</td>
+    <td class="row-duration">0.1s</td>
 </tr>
 
                                         
@@ -8767,7 +8767,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.85s</td>
+    <td class="row-duration">21.83s</td>
 </tr>
 
                                         
@@ -8977,7 +8977,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.7s</td>
+    <td class="row-duration">3.71s</td>
 </tr>
 
                                         
@@ -8998,41 +8998,6 @@ about the login is used to try and regain access</td>
         <p>username: doctor</p>
     
         <p>password: Doctor123</p>
-    
-    </td>
-
-    
-    <td class="row-description">Tests whether a regular user can log in to the webpage</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">9.0</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.66s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>Correct credentials allows login on login page</strong></td>
-    
-    <td class="row-params">
-    
-        <p>username: nurse</p>
-    
-        <p>password: Nurse123</p>
     
     </td>
 
@@ -9065,6 +9030,41 @@ about the login is used to try and regain access</td>
     
     <td class="row-params">
     
+        <p>username: nurse</p>
+    
+        <p>password: Nurse123</p>
+    
+    </td>
+
+    
+    <td class="row-description">Tests whether a regular user can log in to the webpage</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">3.7s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>Correct credentials allows login on login page</strong></td>
+    
+    <td class="row-params">
+    
         <p>username: clerk</p>
     
         <p>password: Clerk123</p>
@@ -9082,7 +9082,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.65s</td>
+    <td class="row-duration">3.69s</td>
 </tr>
 
                                         
@@ -9117,7 +9117,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.65s</td>
+    <td class="row-duration">3.67s</td>
 </tr>
 
                                         
@@ -9152,7 +9152,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.05s</td>
+    <td class="row-duration">22.1s</td>
 </tr>
 
                                         
@@ -9187,7 +9187,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.07s</td>
+    <td class="row-duration">22.12s</td>
 </tr>
 
                                         
@@ -9222,7 +9222,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.03s</td>
+    <td class="row-duration">22.06s</td>
 </tr>
 
                                         
@@ -9257,7 +9257,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.01s</td>
+    <td class="row-duration">22.03s</td>
 </tr>
 
                                         
@@ -9292,7 +9292,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.0s</td>
+    <td class="row-duration">22.02s</td>
 </tr>
 
                                         
@@ -9327,7 +9327,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">23.93s</td>
+    <td class="row-duration">23.95s</td>
 </tr>
 
                                         
@@ -9362,7 +9362,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">23.95s</td>
+    <td class="row-duration">23.96s</td>
 </tr>
 
                                         
@@ -9397,7 +9397,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">23.96s</td>
+    <td class="row-duration">23.93s</td>
 </tr>
 
                                         
@@ -9467,7 +9467,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">23.95s</td>
+    <td class="row-duration">23.96s</td>
 </tr>
 
                                         
@@ -9502,7 +9502,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.1s</td>
+    <td class="row-duration">0.09s</td>
 </tr>
 
                                         
@@ -9607,7 +9607,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.11s</td>
+    <td class="row-duration">0.1s</td>
 </tr>
 
                                         
@@ -9642,7 +9642,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.1s</td>
+    <td class="row-duration">0.08s</td>
 </tr>
 
                                         
@@ -9677,7 +9677,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.07s</td>
+    <td class="row-duration">0.08s</td>
 </tr>
 
                                         
@@ -9712,7 +9712,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.08s</td>
+    <td class="row-duration">0.07s</td>
 </tr>
 
                                         
@@ -9747,7 +9747,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.08s</td>
+    <td class="row-duration">0.07s</td>
 </tr>
 
                                         
@@ -9782,7 +9782,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.08s</td>
+    <td class="row-duration">0.07s</td>
 </tr>
 
                                         
@@ -10952,7 +10952,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.07s</td>
+    <td class="row-duration">22.06s</td>
 </tr>
 
                                         
@@ -11042,7 +11042,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">14.65s</td>
+    <td class="row-duration">14.64s</td>
 </tr>
 
                                         
@@ -11684,7 +11684,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.36s</td>
+    <td class="row-duration">9.04s</td>
 </tr>
 
                                         
@@ -11719,7 +11719,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.95s</td>
+    <td class="row-duration">8.97s</td>
 </tr>
 
                                         
@@ -11754,7 +11754,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.95s</td>
+    <td class="row-duration">8.99s</td>
 </tr>
 
                                         
@@ -11789,7 +11789,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.97s</td>
+    <td class="row-duration">8.99s</td>
 </tr>
 
                                         
@@ -11824,7 +11824,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.98s</td>
+    <td class="row-duration">9.01s</td>
 </tr>
 
                                         
@@ -11857,7 +11857,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.85s</td>
+    <td class="row-duration">5.97s</td>
 </tr>
 
                                         
@@ -11890,7 +11890,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.94s</td>
+    <td class="row-duration">5.97s</td>
 </tr>
 
                                         
@@ -11923,7 +11923,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.88s</td>
+    <td class="row-duration">5.94s</td>
 </tr>
 
                                         
@@ -11956,7 +11956,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.96s</td>
+    <td class="row-duration">5.84s</td>
 </tr>
 
                                         
@@ -11989,7 +11989,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.97s</td>
+    <td class="row-duration">5.86s</td>
 </tr>
 
                                         
@@ -12022,7 +12022,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.95s</td>
+    <td class="row-duration">5.96s</td>
 </tr>
 
                                         
@@ -12055,7 +12055,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.97s</td>
+    <td class="row-duration">5.95s</td>
 </tr>
 
                                         
@@ -12193,7 +12193,7 @@ about the login is used to try and regain access</td>
                                     height="28" 
                                     class="trendline-canvas"
                                     data-labels='["Run 1", "Run 2", "Run 3", "Run 4", "Run 5", "Run 6", "Run 7", "Run 8", "Run 9", "Run 10", "Run 11", "Run 12", "Run 13", "Run 14", "Run 15", "Run 16", "Run 17", "Run 18", "Run 19", "Run 20"]'
-                                    data-history="[0.0, 0.0, 0.0, 0.0, 0.0, 4.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"></canvas>
+                                    data-history="[0.0, 0.0, 0.0, 0.0, 4.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"></canvas>
                             </span>
                             <script>
                                 new_canvas = document.getElementById("canvas_cat_XSS");
@@ -12465,7 +12465,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">9.24s</td>
+    <td class="row-duration">8.5s</td>
 </tr>
 
                                         
@@ -12502,7 +12502,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.73s</td>
+    <td class="row-duration">10.7s</td>
 </tr>
 
                                         
@@ -12543,7 +12543,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.46s</td>
+    <td class="row-duration">8.52s</td>
 </tr>
 
                                         
@@ -12580,7 +12580,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.69s</td>
+    <td class="row-duration">11.16s</td>
 </tr>
 
                                         
@@ -12621,7 +12621,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.42s</td>
+    <td class="row-duration">8.41s</td>
 </tr>
 
                                         
@@ -12658,7 +12658,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.69s</td>
+    <td class="row-duration">10.62s</td>
 </tr>
 
                                         
@@ -12697,7 +12697,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.45s</td>
+    <td class="row-duration">8.54s</td>
 </tr>
 
                                         
@@ -12734,7 +12734,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.58s</td>
+    <td class="row-duration">10.64s</td>
 </tr>
 
                                         
@@ -12773,7 +12773,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.46s</td>
+    <td class="row-duration">8.48s</td>
 </tr>
 
                                         
@@ -12810,7 +12810,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.62s</td>
+    <td class="row-duration">10.67s</td>
 </tr>
 
                                         
@@ -12849,7 +12849,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.44s</td>
+    <td class="row-duration">8.48s</td>
 </tr>
 
                                         
@@ -12886,7 +12886,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.29s</td>
+    <td class="row-duration">11.23s</td>
 </tr>
 
                                         
@@ -12923,7 +12923,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.47s</td>
+    <td class="row-duration">8.52s</td>
 </tr>
 
                                         
@@ -12960,7 +12960,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.65s</td>
+    <td class="row-duration">11.17s</td>
 </tr>
 
                                         
@@ -12997,7 +12997,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.38s</td>
+    <td class="row-duration">8.47s</td>
 </tr>
 
                                         
@@ -13034,7 +13034,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.61s</td>
+    <td class="row-duration">11.18s</td>
 </tr>
 
                                         
@@ -13071,7 +13071,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.46s</td>
+    <td class="row-duration">8.54s</td>
 </tr>
 
                                         
@@ -13108,7 +13108,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.65s</td>
+    <td class="row-duration">10.74s</td>
 </tr>
 
                                         
@@ -13145,7 +13145,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.47s</td>
+    <td class="row-duration">8.5s</td>
 </tr>
 
                                         
@@ -13182,7 +13182,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.74s</td>
+    <td class="row-duration">10.79s</td>
 </tr>
 
                                         
@@ -13205,123 +13205,6 @@ about the login is used to try and regain access</td>
         <p>browser_name: chromium</p>
     
         <p>scenarioString: address 1</p>
-    
-        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
-    
-    </td>
-
-    
-    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">4.4</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.65s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>XSS injection on address 1 field of edit patient page, parameterized</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>scenarioString: address 1</p>
-    
-        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
-    
-    </td>
-
-    
-    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">4.4</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.62s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>XSS injection on address 2 field of edit patient page, parameterized</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>scenarioString: address 2</p>
-    
-        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
-    
-    </td>
-
-    
-    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">4.4</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.66s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>XSS injection on address 2 field of edit patient page, parameterized</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>scenarioString: address 2</p>
     
         <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
     
@@ -13354,6 +13237,45 @@ about the login is used to try and regain access</td>
 
 
     
+    <td class="row-test-name"><strong>XSS injection on address 1 field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: address 1</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">10.67s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
     <td class="row-test-name"><strong>XSS injection on address 2 field of edit patient page, parameterized</strong></td>
     
     <td class="row-params">
@@ -13362,7 +13284,7 @@ about the login is used to try and regain access</td>
     
         <p>scenarioString: address 2</p>
     
-        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
     
     </td>
 
@@ -13393,6 +13315,84 @@ about the login is used to try and regain access</td>
 
 
     
+    <td class="row-test-name"><strong>XSS injection on address 2 field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: address 2</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">10.73s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>XSS injection on address 2 field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: address 2</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">10.65s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
     <td class="row-test-name"><strong>XSS injection on city field of edit patient page, parameterized</strong></td>
     
     <td class="row-params">
@@ -13400,6 +13400,123 @@ about the login is used to try and regain access</td>
         <p>browser_name: chromium</p>
     
         <p>scenarioString: city</p>
+    
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">10.61s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>XSS injection on city field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: city</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">10.69s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>XSS injection on city field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: city</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">10.65s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>XSS injection on state field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: state</p>
     
         <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
     
@@ -13432,84 +13549,6 @@ about the login is used to try and regain access</td>
 
 
     
-    <td class="row-test-name"><strong>XSS injection on city field of edit patient page, parameterized</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>scenarioString: city</p>
-    
-        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
-    
-    </td>
-
-    
-    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">4.4</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.72s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>XSS injection on city field of edit patient page, parameterized</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>scenarioString: city</p>
-    
-        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
-    
-    </td>
-
-    
-    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">4.4</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.67s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
     <td class="row-test-name"><strong>XSS injection on state field of edit patient page, parameterized</strong></td>
     
     <td class="row-params">
@@ -13517,258 +13556,6 @@ about the login is used to try and regain access</td>
         <p>browser_name: chromium</p>
     
         <p>scenarioString: state</p>
-    
-        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
-    
-    </td>
-
-    
-    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">4.4</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.7s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>XSS injection on state field of edit patient page, parameterized</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>scenarioString: state</p>
-    
-        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
-    
-    </td>
-
-    
-    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">4.4</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.13s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>XSS injection on state field of edit patient page, parameterized</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>scenarioString: state</p>
-    
-        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
-    
-    </td>
-
-    
-    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">4.4</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.57s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>XSS injection on country field of edit patient page, parameterized</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>scenarioString: country</p>
-    
-        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
-    
-    </td>
-
-    
-    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">4.4</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.67s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>XSS injection on country field of edit patient page, parameterized</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>scenarioString: country</p>
     
         <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
     
@@ -13792,6 +13579,219 @@ about the login is used to try and regain access</td>
                                     
                                 
                                     
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>XSS injection on state field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: state</p>
+    
+        <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">10.63s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>XSS injection on country field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: country</p>
+    
+        <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">11.13s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>XSS injection on country field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: country</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
+    
+    </td>
+
+    
+    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">10.65s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
                                         
                                             
 
@@ -13822,7 +13822,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.6s</td>
+    <td class="row-duration">11.13s</td>
 </tr>
 
                                         
@@ -13845,6 +13845,43 @@ about the login is used to try and regain access</td>
         <p>scenarioString: postal code</p>
     
         <p>testString: &lt;img src/onerror=prompt(&#x27;XSS&#x27;)</p>
+    
+    </td>
+
+    
+    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">4.4</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
+    <td class="row-duration">10.66s</td>
+</tr>
+
+                                        
+                                    
+                                
+                                    
+                                        
+                                            
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-test-name"><strong>XSS injection on postal code field of edit patient page, parameterized</strong></td>
+    
+    <td class="row-params">
+    
+        <p>browser_name: chromium</p>
+    
+        <p>scenarioString: postal code</p>
+    
+        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
     
     </td>
 
@@ -13881,43 +13918,6 @@ about the login is used to try and regain access</td>
     
         <p>scenarioString: postal code</p>
     
-        <p>testString: &lt;img src=x onerror=prompt(&quot;XSS&quot;)&gt;</p>
-    
-    </td>
-
-    
-    <td class="row-description">A parameterized test to try several potential XSS injection strings on the <scenarioString> field of the edit patient page.</td>
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">4.4</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.09s</td>
-</tr>
-
-                                        
-                                    
-                                
-                                    
-                                        
-                                            
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-test-name"><strong>XSS injection on postal code field of edit patient page, parameterized</strong></td>
-    
-    <td class="row-params">
-    
-        <p>browser_name: chromium</p>
-    
-        <p>scenarioString: postal code</p>
-    
         <p>testString: &lt;svg onload=prompt(&quot;XSS&quot;)&gt;</p>
     
     </td>
@@ -13933,7 +13933,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.6s</td>
+    <td class="row-duration">11.14s</td>
 </tr>
 
                                         
@@ -13970,7 +13970,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.12s</td>
+    <td class="row-duration">10.69s</td>
 </tr>
 
                                         
@@ -14007,7 +14007,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.15s</td>
+    <td class="row-duration">10.63s</td>
 </tr>
 
                                         
@@ -14044,7 +14044,7 @@ about the login is used to try and regain access</td>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.19s</td>
+    <td class="row-duration">10.66s</td>
 </tr>
 
                                         
