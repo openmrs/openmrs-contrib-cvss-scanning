@@ -7,14 +7,114 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    padding: 20px;
+    /* leave room for the fixed 3rem Carbon header */
+    padding: calc(3rem + 20px) 20px 20px;
     width:100%;
     height:100%;
+    /* undo Carbon's base typography until the rest of the page is migrated */
+    font-size: 16px;
+    line-height: normal;
+    color: #000000;
+    letter-spacing: normal;
+}
+
+h1, h2, h3, h4, p {
+    line-height: normal;
+}
+
+h1, b, strong {
+    font-weight: 700;
+}
+
+p {
+    font-size: inherit;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
+}
+
+/* Top navigation bar (Carbon UI shell header) */
+.top-nav.bx--header {
+    background-color: #005d5d;
+    border-bottom-color: #004144;
+    /* IBM Plex Sans is bundled with the Carbon CSS */
+    font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+    padding: 0 16px;
+}
+
+.top-nav .bx--header__name,
+.top-nav .bx--header__menu-item,
+.top-nav .bx--header__action {
+    color: #ffffff;
+}
+
+/* spacing from the proposed UI; padding is 2px smaller to allow for
+   Carbon's 2px transparent focus border on these elements */
+.top-nav .bx--header__name {
+    font-weight: 400;
+    padding: 0 6px;
+    gap: 8px;
+}
+
+.top-nav .bx--header__menu-item {
+    padding: 0 14px;
+}
+
+.top-nav .bx--header__name--prefix {
+    font-weight: 600;
+}
+
+.top-nav .top-nav__product {
+    opacity: 0.85;
+}
+
+/* right-align the links and keep them visible on small screens */
+.top-nav .top-nav__links {
+    display: block;
+    margin-left: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+}
+
+.top-nav .top-nav__links::-webkit-scrollbar {
+    display: none;
+}
+
+.top-nav .top-nav__links::before {
+    display: none;
+}
+
+.top-nav .bx--header__global {
+    flex: 0 0 auto;
+}
+
+.top-nav .top-nav__github {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.top-nav .bx--header__menu-item:hover,
+.top-nav .bx--header__action:hover {
+    background-color: #004144;
+    color: #ffffff;
+}
+
+.top-nav .bx--header__menu-item[aria-current="page"] {
+    background-color: #004144;
+}
+
+.top-nav .bx--header__menu-item[aria-current="page"]::after {
+    border-bottom-color: #ffffff;
+}
+
+/* outline icon: Carbon fills header action icons by default */
+.top-nav .bx--header__action svg {
+    fill: none;
+    stroke: #ffffff;
 }
 
 .header {

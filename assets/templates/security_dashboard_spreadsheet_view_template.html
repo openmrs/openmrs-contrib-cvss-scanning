@@ -7,6 +7,8 @@
     <title>Spreadsheet View - OpenMRS O3 Security Dashboard</title>
 </head>
 <body onload='showDiv("vulnerability_testing")'>
+    {{ macros.top_nav('spreadsheet') }}
+
     {{ macros.dashboard_header(current_time) }}
 
     {{ macros.dashboard_stats(summary_data, pie_chart_data) }}
