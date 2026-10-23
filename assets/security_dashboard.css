@@ -349,16 +349,47 @@ tr:hover {
     color:#696969;
 }
 
+/* Footer */
 .footer {
-    text-align: center;
-    color: white;
-    margin-top: 30px;
-    font-size: 14px;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+    margin: 30px -20px -20px;
 }
 
-.footer a {
-    color: white;
+.footer__content {
+    max-width: 1584px;
+    margin: 0 auto;
+    padding: 24px clamp(16px, 3vw, 32px);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 14px;
+    letter-spacing: 0.16px;
+}
+
+.footer__title {
+    color: #525252;
+}
+
+.footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.footer .bx--link {
+    color: #005d5d;
     text-decoration: underline;
+}
+
+.footer .bx--link:hover {
+    color: #004144;
+}
+
+.footer .bx--link:focus {
+    outline-color: #005d5d;
 }
 
 .cat-trend-label {
