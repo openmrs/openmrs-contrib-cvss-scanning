@@ -1,9 +1,9 @@
 :root {
-  --fail_cat_Data_Integrity_Failures: 5%;
-  --fail_cat_Mishandling_of_Exceptional_Conditions: 10%;
-  --fail_cat_Session_Management: 21%;
-  --fail_cat_Insecure_Design: 37%;
-  --fail_cat_Security_Misconfiguration: 58%;
+  --fail_cat_Data_Integrity_Failures: 6%;
+  --fail_cat_Mishandling_of_Exceptional_Conditions: 12%;
+  --fail_cat_Session_Management: 18%;
+  --fail_cat_Insecure_Design: 35%;
+  --fail_cat_Security_Misconfiguration: 57%;
   --fail_cat_Memory_Management_Failures: 100.0%;
   --coverage_other: 16%;
   --coverage_cat_Security_Logging___Alerting_Failures: 23%;
