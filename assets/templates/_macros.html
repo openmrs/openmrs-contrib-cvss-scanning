@@ -12,6 +12,16 @@
             divs.forEach(d=>{d.classList.remove("visible")});
             document.getElementById(id).classList.add("visible");
         }
+        function selectTab(button){
+            const tabs = button.parentElement.querySelectorAll(".tab");
+            tabs.forEach(t=>{
+                t.classList.remove("tab--selected");
+                t.setAttribute("aria-selected", "false");
+            });
+            button.classList.add("tab--selected");
+            button.setAttribute("aria-selected", "true");
+            showDiv(button.dataset.target);
+        }
     </script>
 {%endmacro%}
 
@@ -50,15 +60,22 @@
     </header>
 {%endmacro%}
 
-{%macro dashboard_header(current_time) %}
-    <div class="header">
-        <h1>🔒 OpenMRS O3 Security Dashboard</h1>
-        <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
-        <p class="timestamp-line">Last Updated: 
-        <span class="timestamp">
-            {{ current_time }}
-        </span>
-        </p>
+{%macro dashboard_header(current_time, action_label='Spreadsheet view', action_href='security_dashboard_spreadsheet_view.html') %}
+    <div class="page-header">
+        <div class="page-header__intro">
+            <h1 class="page-header__title">O3 Security Dashboard</h1>
+            <p class="page-header__subtitle">Continuous security testing with CVSS vulnerability scoring</p>
+        </div>
+        <div class="page-header__meta">
+            <p class="page-header__updated">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 1a7 7 0 1 0 7 7 7.008 7.008 0 0 0-7-7zm0 13a6 6 0 1 1 6-6 6.007 6.007 0 0 1-6 6z"/><path d="M10.293 11 7.5 8.207V3.5h1v4.293L11 10.293 10.293 11z"/></svg>
+                <span>Updated <span class="page-header__timestamp">{{ current_time }}</span></span>
+            </p>
+            <a class="bx--btn bx--btn--tertiary page-header__action" href="{{ action_href }}">
+                {{ action_label }}
+                <svg class="bx--btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8.5 3 7.8 3.7l3.8 3.8H2v1h9.6l-3.8 3.8.7.7 5-5z"/></svg>
+            </a>
+        </div>
     </div>
 {%endmacro%}
 
@@ -120,9 +137,9 @@
 {%endmacro%}
 
 {%macro dashboard_stats(summary_data, pie_chart_data) %}
-    <div class = "tabs_buttons">
-        <button class="tabs_buttons-left" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
-        <button class=".tabs_buttons-right" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
+    <div class="tabs" role="tablist" aria-label="Dashboard sections">
+        <button class="tab tab--selected" role="tab" aria-selected="true" data-target="vulnerability_testing" onclick="selectTab(this)">Vulnerability tests</button>
+        <button class="tab" role="tab" aria-selected="false" data-target="dependency_scanning" onclick="selectTab(this)">Dependency scanning</button>
     </div>
     <div id="tabs_div">
         <div id ="vulnerability_testing">
