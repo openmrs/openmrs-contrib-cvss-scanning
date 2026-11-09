@@ -16,6 +16,16 @@
             divs.forEach(d=>{d.classList.remove("visible")});
             document.getElementById(id).classList.add("visible");
         }
+        function selectTab(button){
+            const tabs = button.parentElement.querySelectorAll(".tab");
+            tabs.forEach(t=>{
+                t.classList.remove("tab--selected");
+                t.setAttribute("aria-selected", "false");
+            });
+            button.classList.add("tab--selected");
+            button.setAttribute("aria-selected", "true");
+            showDiv(button.dataset.target);
+        }
     </script>
 
     <title>Spreadsheet View - OpenMRS O3 Security Dashboard</title>
@@ -56,24 +66,31 @@
 
 
     
-    <div class="header">
-        <h1>🔒 OpenMRS O3 Security Dashboard</h1>
-        <p>Continuous Security Testing with CVSS Vulnerability Scoring</p>
-        <p class="timestamp-line">Last Updated: 
-        <span class="timestamp">
-            2026-11-09 00:51:35 UTC
-        </span>
-        </p>
+    <div class="page-header">
+        <div class="page-header__intro">
+            <h1 class="page-header__title">O3 Security Dashboard</h1>
+            <p class="page-header__subtitle">Continuous security testing with CVSS vulnerability scoring</p>
+        </div>
+        <div class="page-header__meta">
+            <p class="page-header__updated">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 1a7 7 0 1 0 7 7 7.008 7.008 0 0 0-7-7zm0 13a6 6 0 1 1 6-6 6.007 6.007 0 0 1-6 6z"/><path d="M10.293 11 7.5 8.207V3.5h1v4.293L11 10.293 10.293 11z"/></svg>
+                <span>Updated <span class="page-header__timestamp">2026-11-09 16:52:07 UTC</span></span>
+            </p>
+            <a class="bx--btn bx--btn--tertiary page-header__action" href="./">
+                Dashboard view
+                <svg class="bx--btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8.5 3 7.8 3.7l3.8 3.8H2v1h9.6l-3.8 3.8.7.7 5-5z"/></svg>
+            </a>
+        </div>
     </div>
 
 
     
-    <div class = "tabs_buttons">
-        <button class="tabs_buttons-left" onclick='showDiv("vulnerability_testing")'><b>Vulnerability Tests</b></button>
-        <button class=".tabs_buttons-right" onclick='showDiv("dependency_scanning")'><b>Dependency Scanning</b></button>
+    <div class="tabs" role="tablist" aria-label="Dashboard sections">
+        <button id="tab-vulnerability-testing" class="tab tab--selected" role="tab" aria-selected="true" aria-controls="vulnerability_testing" data-target="vulnerability_testing" onclick="selectTab(this)">Vulnerability tests</button>
+        <button id="tab-dependency-scanning" class="tab" role="tab" aria-selected="false" aria-controls="dependency_scanning" data-target="dependency_scanning" onclick="selectTab(this)">Dependency scanning</button>
     </div>
     <div id="tabs_div">
-        <div id ="vulnerability_testing">
+        <div id ="vulnerability_testing" role="tabpanel" aria-labelledby="tab-vulnerability-testing">
             <div class="stats">
                 <div class="stat-card">
                     <h3>Total Tests</h3>
@@ -81,15 +98,15 @@
                 </div>
                 <div class="stat-card">
                     <h3>Passed</h3>
-                    <p class="passed">155</p>
+                    <p class="passed">107</p>
                 </div>
                 <div class="stat-card">
                     <h3>Failed</h3>
-                    <p class="failed">18</p>
+                    <p class="failed">63</p>
                 </div>
                 <div class="stat-card">
                     <h3>Duration</h3>
-                    <p>27.0 min</p>
+                    <p>45.0 min</p>
                 </div>
                 
             </div>
@@ -102,32 +119,37 @@
                             
                             <div class="legend-item">
                                 <div class="legend-color category_color_cat_Data_Integrity_Failures"></div>
-                                Data Integrity Failures: 5.56%
+                                Data Integrity Failures: 1.59%
                             </div>
                             
                             <div class="legend-item">
                                 <div class="legend-color category_color_cat_Mishandling_of_Exceptional_Conditions"></div>
-                                Mishandling of Exceptional Conditions: 5.56%
-                            </div>
-                            
-                            <div class="legend-item">
-                                <div class="legend-color category_color_cat_Session_Management"></div>
-                                Session Management: 5.56%
+                                Mishandling of Exceptional Conditions: 1.59%
                             </div>
                             
                             <div class="legend-item">
                                 <div class="legend-color category_color_cat_Insecure_Design"></div>
-                                Insecure Design: 16.67%
+                                Insecure Design: 4.76%
                             </div>
                             
                             <div class="legend-item">
                                 <div class="legend-color category_color_cat_Security_Misconfiguration"></div>
-                                Security Misconfiguration: 22.22%
+                                Security Misconfiguration: 6.35%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_Session_Management"></div>
+                                Session Management: 9.52%
                             </div>
                             
                             <div class="legend-item">
                                 <div class="legend-color category_color_cat_Memory_Management_Failures"></div>
-                                Memory Management Failures: 44.44%
+                                Memory Management Failures: 12.7%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_XSS"></div>
+                                XSS: 63.49%
                             </div>
                             
                         </div>
@@ -287,7 +309,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.31s</td>
+    <td class="row-duration">0.25s</td>
 </tr>
 
             
@@ -377,7 +399,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.04s</td>
+    <td class="row-duration">0.03s</td>
 </tr>
 
             
@@ -407,7 +429,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.12s</td>
+    <td class="row-duration">0.1s</td>
 </tr>
 
             
@@ -437,7 +459,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.1s</td>
+    <td class="row-duration">0.05s</td>
 </tr>
 
             
@@ -467,7 +489,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.08s</td>
+    <td class="row-duration">0.06s</td>
 </tr>
 
             
@@ -497,7 +519,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.07s</td>
+    <td class="row-duration">0.06s</td>
 </tr>
 
             
@@ -531,7 +553,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.24s</td>
+    <td class="row-duration">20.44s</td>
 </tr>
 
             
@@ -565,7 +587,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.13s</td>
+    <td class="row-duration">19.91s</td>
 </tr>
 
             
@@ -599,7 +621,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.14s</td>
+    <td class="row-duration">19.93s</td>
 </tr>
 
             
@@ -633,7 +655,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.13s</td>
+    <td class="row-duration">19.91s</td>
 </tr>
 
             
@@ -667,7 +689,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.12s</td>
+    <td class="row-duration">19.91s</td>
 </tr>
 
             
@@ -699,7 +721,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.13s</td>
+    <td class="row-duration">0.08s</td>
 </tr>
 
             
@@ -731,7 +753,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.14s</td>
+    <td class="row-duration">0.1s</td>
 </tr>
 
             
@@ -763,7 +785,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.13s</td>
+    <td class="row-duration">0.08s</td>
 </tr>
 
             
@@ -795,7 +817,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.13s</td>
+    <td class="row-duration">0.09s</td>
 </tr>
 
             
@@ -827,7 +849,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.13s</td>
+    <td class="row-duration">0.08s</td>
 </tr>
 
             
@@ -857,7 +879,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.11s</td>
+    <td class="row-duration">0.07s</td>
 </tr>
 
             
@@ -887,7 +909,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.03s</td>
+    <td class="row-duration">21.79s</td>
 </tr>
 
             
@@ -919,7 +941,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.03s</td>
+    <td class="row-duration">0.02s</td>
 </tr>
 
             
@@ -983,7 +1005,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.04s</td>
+    <td class="row-duration">0.02s</td>
 </tr>
 
             
@@ -1015,7 +1037,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.03s</td>
+    <td class="row-duration">0.02s</td>
 </tr>
 
             
@@ -1047,7 +1069,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.03s</td>
+    <td class="row-duration">0.02s</td>
 </tr>
 
             
@@ -1079,7 +1101,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.83s</td>
+    <td class="row-duration">3.7s</td>
 </tr>
 
             
@@ -1111,7 +1133,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.89s</td>
+    <td class="row-duration">3.71s</td>
 </tr>
 
             
@@ -1143,7 +1165,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.85s</td>
+    <td class="row-duration">3.69s</td>
 </tr>
 
             
@@ -1175,7 +1197,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.81s</td>
+    <td class="row-duration">3.67s</td>
 </tr>
 
             
@@ -1207,7 +1229,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.81s</td>
+    <td class="row-duration">3.65s</td>
 </tr>
 
             
@@ -1239,7 +1261,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.42s</td>
+    <td class="row-duration">22.08s</td>
 </tr>
 
             
@@ -1271,7 +1293,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.32s</td>
+    <td class="row-duration">22.07s</td>
 </tr>
 
             
@@ -1303,7 +1325,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.32s</td>
+    <td class="row-duration">22.07s</td>
 </tr>
 
             
@@ -1335,7 +1357,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.25s</td>
+    <td class="row-duration">22.04s</td>
 </tr>
 
             
@@ -1367,7 +1389,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.3s</td>
+    <td class="row-duration">22.04s</td>
 </tr>
 
             
@@ -1399,7 +1421,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">24.26s</td>
+    <td class="row-duration">23.97s</td>
 </tr>
 
             
@@ -1431,7 +1453,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">24.18s</td>
+    <td class="row-duration">24.0s</td>
 </tr>
 
             
@@ -1463,7 +1485,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">24.2s</td>
+    <td class="row-duration">23.98s</td>
 </tr>
 
             
@@ -1495,7 +1517,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">24.27s</td>
+    <td class="row-duration">24.03s</td>
 </tr>
 
             
@@ -1527,7 +1549,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">24.16s</td>
+    <td class="row-duration">23.99s</td>
 </tr>
 
             
@@ -1547,134 +1569,6 @@
         <p>username: admin</p>
     
         <p>password: Admin123</p>
-    
-    </td>
-
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">9.0</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.11s</td>
-</tr>
-
-            
-                
-                
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-category">Authentication</td>
-    
-    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
-    
-    <td class="row-params">
-    
-        <p>username: doctor</p>
-    
-        <p>password: Doctor123</p>
-    
-    </td>
-
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">9.0</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.1s</td>
-</tr>
-
-            
-                
-                
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-category">Authentication</td>
-    
-    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
-    
-    <td class="row-params">
-    
-        <p>username: nurse</p>
-    
-        <p>password: Nurse123</p>
-    
-    </td>
-
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">9.0</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.1s</td>
-</tr>
-
-            
-                
-                
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-category">Authentication</td>
-    
-    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
-    
-    <td class="row-params">
-    
-        <p>username: clerk</p>
-    
-        <p>password: Clerk123</p>
-    
-    </td>
-
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">9.0</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.11s</td>
-</tr>
-
-            
-                
-                
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-category">Authentication</td>
-    
-    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
-    
-    <td class="row-params">
-    
-        <p>username: technician</p>
-    
-        <p>password: Technician123</p>
     
     </td>
 
@@ -1700,13 +1594,13 @@
     
     <td class="row-category">Authentication</td>
     
-    <td class="row-test-name"><strong>Lockout on REST API is not accessible at 4 minutes and 50 seconds</strong></td>
+    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
     
     <td class="row-params">
     
-        <p>username: admin</p>
+        <p>username: doctor</p>
     
-        <p>password: Admin123</p>
+        <p>password: Doctor123</p>
     
     </td>
 
@@ -1715,11 +1609,107 @@
     <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">9.2</span>
+        <span class="cvss-score-pass">9.0</span>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.09s</td>
+    <td class="row-duration">0.08s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: nurse</p>
+    
+        <p>password: Nurse123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.08s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: clerk</p>
+    
+        <p>password: Clerk123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.08s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is accessible after 5 minutes</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: technician</p>
+    
+        <p>password: Technician123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.0</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.08s</td>
 </tr>
 
             
@@ -1736,9 +1726,9 @@
     
     <td class="row-params">
     
-        <p>username: doctor</p>
+        <p>username: admin</p>
     
-        <p>password: Doctor123</p>
+        <p>password: Admin123</p>
     
     </td>
 
@@ -1768,6 +1758,38 @@
     
     <td class="row-params">
     
+        <p>username: doctor</p>
+    
+        <p>password: Doctor123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.08s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Lockout on REST API is not accessible at 4 minutes and 50 seconds</strong></td>
+    
+    <td class="row-params">
+    
         <p>username: nurse</p>
     
         <p>password: Nurse123</p>
@@ -1783,7 +1805,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.11s</td>
+    <td class="row-duration">0.08s</td>
 </tr>
 
             
@@ -1815,7 +1837,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.1s</td>
+    <td class="row-duration">0.07s</td>
 </tr>
 
             
@@ -1847,7 +1869,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.1s</td>
+    <td class="row-duration">0.08s</td>
 </tr>
 
             
@@ -1907,7 +1929,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.02s</td>
+    <td class="row-duration">0.01s</td>
 </tr>
 
             
@@ -1938,14 +1960,14 @@
             <span class="tooltiptext">
                 <p><u>Recorded Errors</u></p>
                 <p>
-                expect(page.get_by_text(&quot;Super User&quot;), message=&quot;Another account, other than Admin, was logged in to&quot;).to_have_count(1)</p><p>AssertionError: Another account, other than Admin, was logged in to</p><p>Expected value: &#x27;1&#x27;</p><p>Actual value: 0</p><p>Call log:</p><p>- Expect &quot;to_have_count&quot; with timeout 5000ms</p><p>- waiting for get_by_text(&quot;Super User&quot;)</p><p>9 × locator resolved to 0 elements</p><p>- unexpected value &quot;0&quot;
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Page.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for locator(&quot;text=Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
                 </p>
             </span>
         </div>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
-    <td class="row-duration">11.18s</td>
+    <td class="row-duration">32.66s</td>
 </tr>
 
             
@@ -1989,7 +2011,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
-    <td class="row-duration">42.94s</td>
+    <td class="row-duration">42.34s</td>
 </tr>
 
             
@@ -2023,7 +2045,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.23s</td>
+    <td class="row-duration">22.01s</td>
 </tr>
 
             
@@ -2050,21 +2072,21 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
         <span class="cvss-score-pass">9.2</span>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.62s</td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2082,21 +2104,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">8.6</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.6</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">9.61s</td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2116,14 +2146,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.83s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.61s</td>
 </tr>
 
             
@@ -2167,7 +2205,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
-    <td class="row-duration">37.41s</td>
+    <td class="row-duration">37.47s</td>
 </tr>
 
             
@@ -2201,7 +2239,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.6s</td>
+    <td class="row-duration">22.1s</td>
 </tr>
 
             
@@ -2228,21 +2266,21 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
         <span class="cvss-score-pass">9.2</span>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">15.8s</td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2260,21 +2298,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">8.6</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.6</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">9.5s</td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2294,14 +2340,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.89s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
@@ -2345,7 +2399,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
-    <td class="row-duration">37.41s</td>
+    <td class="row-duration">37.39s</td>
 </tr>
 
             
@@ -2379,7 +2433,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.46s</td>
+    <td class="row-duration">22.01s</td>
 </tr>
 
             
@@ -2406,21 +2460,21 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
         <span class="cvss-score-pass">9.2</span>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">15.32s</td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2438,21 +2492,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">8.6</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.6</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">9.63s</td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">31.62s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2472,14 +2534,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.92s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.6s</td>
 </tr>
 
             
@@ -2515,7 +2585,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">25.84s</td>
+    <td class="row-duration">26.18s</td>
 </tr>
 
             
@@ -2549,14 +2619,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.44s</td>
+    <td class="row-duration">22.06s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2574,21 +2644,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">8.6</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.6</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">9.24s</td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2608,14 +2686,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.99s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
@@ -2651,7 +2737,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">25.93s</td>
+    <td class="row-duration">26.15s</td>
 </tr>
 
             
@@ -2685,14 +2771,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.49s</td>
+    <td class="row-duration">22.02s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2710,21 +2796,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">8.6</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.6</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">9.62s</td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2744,14 +2838,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.8s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
@@ -2787,7 +2889,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">25.81s</td>
+    <td class="row-duration">26.18s</td>
 </tr>
 
             
@@ -2821,14 +2923,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.52s</td>
+    <td class="row-duration">22.04s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2846,21 +2948,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">8.6</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.6</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">9.64s</td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">31.61s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2880,14 +2990,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.94s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.61s</td>
 </tr>
 
             
@@ -2921,14 +3039,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.44s</td>
+    <td class="row-duration">22.12s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2946,21 +3064,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">8.6</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.6</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">9.09s</td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">31.61s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -2980,14 +3106,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.75s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.6s</td>
 </tr>
 
             
@@ -3021,14 +3155,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.42s</td>
+    <td class="row-duration">22.01s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3046,21 +3180,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">8.6</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.6</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">9.07s</td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">31.61s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3080,14 +3222,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.81s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
@@ -3121,14 +3271,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.41s</td>
+    <td class="row-duration">22.02s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3146,21 +3296,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">8.6</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.6</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">9.1s</td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3180,14 +3338,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.79s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
@@ -3221,14 +3387,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.4s</td>
+    <td class="row-duration">22.0s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3246,21 +3412,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">8.6</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">8.6</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">9.64s</td>
+    <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3280,14 +3454,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.39s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
@@ -3321,14 +3503,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.42s</td>
+    <td class="row-duration">22.0s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3348,14 +3530,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.3s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.57s</td>
 </tr>
 
             
@@ -3389,14 +3579,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.37s</td>
+    <td class="row-duration">21.97s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3416,14 +3606,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.8s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
@@ -3465,14 +3663,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">21.36s</td>
+    <td class="row-duration">21.98s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3492,14 +3690,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.86s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.57s</td>
 </tr>
 
             
@@ -3541,14 +3747,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">21.37s</td>
+    <td class="row-duration">22.03s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3568,14 +3774,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.74s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.57s</td>
 </tr>
 
             
@@ -3617,14 +3831,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">21.32s</td>
+    <td class="row-duration">21.99s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3644,14 +3858,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.83s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.6s</td>
 </tr>
 
             
@@ -3693,14 +3915,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">21.33s</td>
+    <td class="row-duration">21.97s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3720,14 +3942,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.27s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.6s</td>
 </tr>
 
             
@@ -3769,14 +3999,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">21.19s</td>
+    <td class="row-duration">21.99s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3796,14 +4026,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.88s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.57s</td>
 </tr>
 
             
@@ -3845,14 +4083,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">21.11s</td>
+    <td class="row-duration">21.92s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3872,14 +4110,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.32s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.6s</td>
 </tr>
 
             
@@ -3921,14 +4167,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">21.01s</td>
+    <td class="row-duration">21.95s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -3948,14 +4194,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.74s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
@@ -3997,14 +4251,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.94s</td>
+    <td class="row-duration">22.01s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -4024,14 +4278,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.69s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
@@ -4069,7 +4331,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
-    <td class="row-duration">1.09s</td>
+    <td class="row-duration">1.08s</td>
 </tr>
 
             
@@ -4101,7 +4363,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.3s</td>
+    <td class="row-duration">9.86s</td>
 </tr>
 
             
@@ -4133,7 +4395,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">9.0s</td>
+    <td class="row-duration">9.29s</td>
 </tr>
 
             
@@ -4165,7 +4427,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.99s</td>
+    <td class="row-duration">9.0s</td>
 </tr>
 
             
@@ -4229,7 +4491,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.98s</td>
+    <td class="row-duration">9.02s</td>
 </tr>
 
             
@@ -4289,7 +4551,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.91s</td>
+    <td class="row-duration">6.02s</td>
 </tr>
 
             
@@ -4319,7 +4581,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.96s</td>
+    <td class="row-duration">5.97s</td>
 </tr>
 
             
@@ -4349,7 +4611,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">6.0s</td>
+    <td class="row-duration">5.98s</td>
 </tr>
 
             
@@ -4379,7 +4641,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.95s</td>
+    <td class="row-duration">5.87s</td>
 </tr>
 
             
@@ -4409,7 +4671,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.93s</td>
+    <td class="row-duration">5.99s</td>
 </tr>
 
             
@@ -4439,7 +4701,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.87s</td>
+    <td class="row-duration">5.88s</td>
 </tr>
 
             
@@ -4477,7 +4739,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
-    <td class="row-duration">0.29s</td>
+    <td class="row-duration">0.28s</td>
 </tr>
 
             
@@ -4515,7 +4777,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -4545,7 +4807,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -4577,7 +4839,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -4609,7 +4871,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.29s</td>
+    <td class="row-duration">0.28s</td>
 </tr>
 
             
@@ -4641,7 +4903,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -4673,7 +4935,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.29s</td>
 </tr>
 
             
@@ -4769,7 +5031,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -4833,7 +5095,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.29s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -4865,7 +5127,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.26s</td>
 </tr>
 
             
@@ -4897,7 +5159,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.26s</td>
 </tr>
 
             
@@ -4929,7 +5191,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -5001,7 +5263,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -5065,7 +5327,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -5097,7 +5359,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -5161,7 +5423,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.29s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -5193,7 +5455,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -5225,7 +5487,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -5257,7 +5519,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -5289,7 +5551,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.29s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -5321,7 +5583,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.29s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -5353,7 +5615,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.28s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -5487,14 +5749,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">0.29s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5510,21 +5772,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">9.2</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">9.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Page.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for locator(&quot;text=Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">4.83s</td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">31.54s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5540,21 +5810,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">9.2</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">9.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Page.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for locator(&quot;text=Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">2.52s</td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">31.55s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5570,21 +5848,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">9.2</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">9.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Page.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for locator(&quot;text=Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">4.8s</td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">31.56s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5600,14 +5886,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">5.1</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">5.1</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Page.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for locator(&quot;text=Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">2.54s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.55s</td>
 </tr>
 
             
@@ -5638,21 +5932,21 @@
             <span class="tooltiptext">
                 <p><u>Recorded Errors</u></p>
                 <p>
-                assert cookie[&quot;secure&quot;] == True</p><p>assert False == True
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Page.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for locator(&quot;text=Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
                 </p>
             </span>
         </div>
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">2.53s</td>
+    <td class="row-duration">31.53s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5668,21 +5962,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">9.2</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">9.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Page.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for locator(&quot;text=Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.3s</td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">31.54s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5702,21 +6004,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.16s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5736,21 +6046,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.7s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5770,21 +6088,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.76s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5804,21 +6130,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.15s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5838,21 +6172,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.67s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5872,21 +6214,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.66s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.59s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5906,21 +6256,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.69s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.6s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5940,21 +6298,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.77s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5974,21 +6340,29 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.28s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.58s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -6008,14 +6382,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">4.4</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">4.4</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                raise rewrite_error(error, f&quot;{parsed_st[&#x27;apiName&#x27;]}: {error}&quot;) from None</p><p>playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.</p><p>Call log:</p><p>- waiting for get_by_text(&quot;Outpatient Clinic&quot;)</p><p>- locator resolved to &lt;span&gt;Outpatient Clinic&lt;/span&gt;</p><p>- attempting click action</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 20ms</p><p>2 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 100ms</p><p>58 × waiting for element to be visible, enabled and stable</p><p>- element is visible, enabled and stable</p><p>- scrolling into view if needed</p><p>- done scrolling</p><p>- element is outside of the viewport</p><p>- retrying click action</p><p>- waiting 500ms
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.77s</td>
+    <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
+    <td class="row-duration">31.66s</td>
 </tr>
 
             
