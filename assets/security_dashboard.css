@@ -132,11 +132,6 @@ p {
     font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
 }
 
-.header h1 {
-    color: #2d3748;
-    margin-bottom: 10px;
-   font-size: 32px;
-}
 
 .page-header__intro {
     /* let the title/subtitle wrap */
