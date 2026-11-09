@@ -5,7 +5,7 @@
 }
 body {
     font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
-    background: #f4f4f4;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     /* leave room for the fixed 3rem Carbon header */
     padding: calc(3rem + 20px) 20px 20px;
