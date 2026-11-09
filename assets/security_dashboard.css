@@ -117,23 +117,85 @@ p {
     stroke: #ffffff;
 }
 
-.header {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* Page header */
+.page-header {
+    background: #ffffff;
+    /* full width, flush under the top nav */
+    margin: -20px -20px 0;
+    padding: 20px 32px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 24px;
+    font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
 }
 
-.header h1 {
-    color: #2d3748;
-    margin-bottom: 10px;
-    font-size: 32px;
+.page-header__intro {
+    /* let the title/subtitle wrap */
+    min-width: 0;
 }
 
-.header p {
-    color: #718096;
-    font-size: 15px;
+.page-header__title {
+    color: #161616;
+    font-weight: 600;
+    font-size: 2rem;
+    line-height: 1.25;
+    letter-spacing: 0;
+    margin: 0 0 6px;
+}
+
+.page-header__subtitle {
+    color: #525252;
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.page-header__meta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-left: auto;
+}
+
+.page-header__updated {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #525252;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    white-space: nowrap;
+}
+
+.page-header__updated svg {
+    flex: 0 0 auto;
+    color: #6f6f6f;
+}
+
+.page-header__timestamp {
+    color: #161616;
+}
+
+/* teal action button */
+.page-header__action.bx--btn--tertiary {
+    border-color: #005d5d;
+    color: #005d5d;
+}
+
+.page-header__action.bx--btn--tertiary:hover,
+.page-header__action.bx--btn--tertiary:focus {
+    background-color: #005d5d;
+    border-color: #005d5d;
+    color: #ffffff;
+    box-shadow: none;
+}
+
+.page-header__action .bx--btn__icon {
+    fill: currentColor;
 }
 
 .stats {
@@ -420,32 +482,46 @@ tr:hover {
     visibility: visible;
     display:block;
 }
-.tabs_buttons{
-    width:100%;
-    display:flex;
-    justify-content: center;
-    padding-bottom:20px;
+/* Tabs */
+.tabs {
+    display: flex;
+    align-items: stretch;
+    /* continue the white band from the header */
+    background: #ffffff;
+    margin: 0 -20px 20px;
+    padding: 0 32px;
+    border-bottom: 1px solid #e0e0e0;
+    font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
 }
-.tabs_buttons button{
-    border-radius: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    background-color:white;
-    color:black;
-    width:50%;
-    height:50px;
+
+.tabs .tab {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    color: #525252;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: color 70ms, border-color 70ms, background-color 70ms;
 }
-.tabs_buttons-left {
-    margin-right:5px;
+
+.tabs .tab:hover {
+    color: #161616;
+    border-bottom-color: #c6c6c6;
 }
-.tabs_buttons-right {
-    margin-left:5px;
+
+.tabs .tab:focus-visible {
+    outline: 2px solid #005d5d;
+    outline-offset: -2px;
 }
-.tabs_buttons button:hover{
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    background-color:#edf2f7;
-    color:black;
-    width:50%;
-    height:50px;
+
+.tabs .tab--selected {
+    color: #161616;
+    font-weight: 600;
+    border-bottom-color: #005d5d;
 }
 iframe{
     width:100%;
@@ -493,15 +569,6 @@ iframe{
 
 .category-header .failed {
     color:#e53e3e;
-}
-
-.timestamp-line {
-    margin-top: 5px;
-}
-
-.timestamp {
-    color: black;
-    font-weight: bold;
 }
 
 .severity-critical {
@@ -684,4 +751,51 @@ details[open] summary .chevron {
 
 .pass-fail-invisible {
     display: none;
+}
+
+/* tablet */
+@media (max-width: 900px) {
+    .page-header__meta {
+        margin-left: 0;
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* mobile */
+@media (max-width: 672px) {
+    .page-header {
+        padding: 16px 16px 20px;
+    }
+
+    .page-header__title {
+        font-size: 1.5rem;
+    }
+
+    .page-header__subtitle {
+        font-size: 0.9375rem;
+    }
+
+    .page-header__meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .page-header__updated {
+        white-space: normal;
+    }
+
+    .page-header__action {
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .tabs {
+        padding: 0 16px;
+    }
+
+    .tabs .tab {
+        padding: 14px 12px;
+    }
 }
