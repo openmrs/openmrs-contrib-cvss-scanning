@@ -320,10 +320,6 @@ p {
     background: #b28600;
 }
 
-.stats:first-child .severity-dot {
-    display: none;
-}
-
 #vulnerability_testing > .stats:nth-child(2) .stat-card {
     display: flex;
     flex-direction: column;
