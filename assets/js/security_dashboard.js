@@ -4,7 +4,9 @@ let detailsEls = document.getElementsByClassName("details-category");
 let openButton = document.getElementById("open-categories");
 let closeButton = document.getElementById("close-categories");
 let sortCategoryDropdown = document.getElementById("category-sorting-options");
-let ascnDescDropdown = document.getElementById("category-ascn-desc-options");
+let sortDirectionButton = document.getElementById("category-sort-direction");
+let categorySearch = document.getElementById("category-search");
+let categoriesEmpty = document.getElementById("categories-empty");
 
 function setDetailsOpen(bool) {
     for (i = 0; i < detailsEls.length; i++) {
@@ -14,87 +16,62 @@ function setDetailsOpen(bool) {
 
 function sortDetailsPanel(sortBy, isDescending) {
 
-    const testResultsWrappers = Array.from(document.getElementsByClassName("test-results"));
+    const panels = Array.from(document.getElementsByClassName("categories__item"));
 
-    const panels = [];
-
-    for (let i = 0; i < testResultsWrappers.length; i++) {
-        const currentTestResultWrapper = testResultsWrappers[i];
-        const categoryTitleEl = currentTestResultWrapper.getElementsByClassName("category-title-text")[0];
-        
-        // category name
-        let categoryTitleText = categoryTitleEl.textContent;
-
-        // pass count
-        let passCount = currentTestResultWrapper.getElementsByClassName("pass-count")[0];
-        let passCountText = passCount.textContent;
-
-        // fail count
-        let failCount = currentTestResultWrapper.getElementsByClassName("fail-count")[0];
-        let failCountText = failCount.textContent;
-
-        // total tests
-        let totalTests = currentTestResultWrapper.getElementsByClassName("total-tests")[0];
-        let totalTestsText = totalTests.textContent;
-
-        // max cvss
-        let maxCVSS = currentTestResultWrapper.getElementsByClassName("max-cvss-score-text")[0];
-        let maxCVSSText = "";
-
-        // if all passing tests
-        if (maxCVSS == undefined) {
-            maxCVSSText = "0.0";
-        } else {
-            maxCVSSText = maxCVSS.textContent;
-        }
-
-        categoryTitleText = categoryTitleText.trim();
-        passCountText = passCountText.trim();
-        failCountText = failCountText.trim();
-        totalTestsText = totalTestsText.trim();
-        maxCVSSText = maxCVSSText.trim();
-    
-        //sortable
-        panels.push({
-            currentTestResultWrapper: currentTestResultWrapper,
-            categoryTitleText: categoryTitleText,
-            passCount: passCountText,
-            failCount: failCountText,
-            totalTests: totalTestsText,
-            maxCVSS: maxCVSSText,
-        });
-    }
+    if (panels.length === 0) return;
 
     // sort by
     const sortByMap = {
-        "alpha": "categoryTitleText",
-        "fail": "failCount",
-        "pass": "passCount",
-        "tests": "totalTests",
-        "max-cvss": "maxCVSS",
+        "alpha": "name",
+        "fail": "failed",
+        "pass": "passed",
+        "tests": "total",
+        "max-cvss": "maxCvss",
     };
 
     const sortKey = sortByMap[sortBy];
 
     panels.sort(function (a,b) {
-        const result = a[sortKey].localeCompare(b[sortKey], undefined, {
+        const result = a.dataset[sortKey].localeCompare(b.dataset[sortKey], undefined, {
             numeric: true,
             sensitivity: 'base',
         });
 
         return isDescending ? -result : result;
     });
-    
-    if (panels.length === 0) return;
 
     const fragment = document.createDocumentFragment();
 
     for (let i = 0; i < panels.length; i++) {
-        fragment.appendChild(panels[i].currentTestResultWrapper);
+        fragment.appendChild(panels[i]);
     }
 
     const parent = document.getElementById("categories");
     parent.appendChild(fragment);
+}
+
+function filterCategories(query) {
+
+    const panels = document.getElementsByClassName("categories__item");
+    const normalizedQuery = query.trim().toLowerCase();
+    let visibleCount = 0;
+
+    for (let i = 0; i < panels.length; i++) {
+        // data-search holds the category name and all of its test names
+        const isMatch = normalizedQuery === "" || panels[i].dataset.search.includes(normalizedQuery);
+        panels[i].hidden = !isMatch;
+
+        if (isMatch) {
+            visibleCount++;
+        }
+    }
+
+    categoriesEmpty.hidden = visibleCount > 0;
+    categoriesEmpty.textContent = "No categories match “" + query.trim() + "”.";
+}
+
+function isSortDescending() {
+    return sortDirectionButton.dataset.descending === "true";
 }
 
 openButton.addEventListener('click', () => {
@@ -106,20 +83,21 @@ closeButton.addEventListener('click', () => {
 });
 
 sortCategoryDropdown.addEventListener('change', (e) => {
-    
-    let value = e.target.value;
-    let isDescending = ascnDescDropdown.value == "desc";
-
-    sortDetailsPanel(value, isDescending);
-
+    sortDetailsPanel(e.target.value, isSortDescending());
 });
 
-ascnDescDropdown.addEventListener('change', (e) => {
-    
-    let value = sortCategoryDropdown.value;
-    let isDescending = e.target.value == "desc";
+sortDirectionButton.addEventListener('click', () => {
+    const isDescending = !isSortDescending();
 
-    sortDetailsPanel(value, isDescending);
+    sortDirectionButton.dataset.descending = isDescending;
+    sortDirectionButton.setAttribute("aria-label", "Sort direction: " + (isDescending ? "descending" : "ascending"));
+    sortDirectionButton.getElementsByClassName("categories__direction-label")[0].textContent = isDescending ? "Desc" : "Asc";
+
+    sortDetailsPanel(sortCategoryDropdown.value, isDescending);
+});
+
+categorySearch.addEventListener('input', (e) => {
+    filterCategories(e.target.value);
 });
 
 /* Table sorting */

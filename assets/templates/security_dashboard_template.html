@@ -14,191 +14,119 @@
     
     {{ macros.dashboard_stats(summary_data, pie_chart_data) }}
 
-            <div class="category-bar">
-                <a class="return-link" href="security_dashboard_spreadsheet_view.html">Go to Spreadsheet View</a>
-                <!-- Sorting Bar -->
-                <div class="sorting-bar">
-                    <button id="open-categories">Open All Categories</button>
-                    &#x2022
-                    <button id="close-categories">Close All Categories</button>
-                    &#x2022
-                    <label for="category-sorting-options">Sort Category By</label>
-                    <select id="category-sorting-options" name="category-sorting-options">
-                        <option value="fail"># of Failing</option>
-                        <option value="pass"># of Passing</option>
-                        <option value="tests"># of Tests</option>
-                        <option value="max-cvss">Max CVSS</option>
-                        <option value="alpha">Alphabetical</option>
-                    </select>
-                    <select id="category-ascn-desc-options">
-                        <option value="ascn">Ascending</option>
-                        <option value="desc">Descending</option>
-                    </select>
+            <section class="categories" aria-labelledby="categories-title">
+                <div class="categories__intro">
+                    <h2 id="categories-title" class="categories__title">Test categories</h2>
+                    <p class="categories__subtitle">Expand a category to see failing tests with their baseline CVSS score.</p>
                 </div>
-            </div>
 
-            <div id="categories">
+                <div class="categories__toolbar">
+                    <label class="categories__search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+                        <span class="bx--assistive-text">Search categories and tests</span>
+                        <input id="category-search" type="search" placeholder="Search categories or tests" autocomplete="off">
+                    </label>
+                    <label class="categories__sort" for="category-sorting-options">Sort by
+                        <select id="category-sorting-options" name="category-sorting-options">
+                            <option value="fail">Failing tests</option>
+                            <option value="pass">Passing tests</option>
+                            <option value="tests">Total tests</option>
+                            <option value="max-cvss">Max CVSS</option>
+                            <option value="alpha">Alphabetical</option>
+                        </select>
+                    </label>
+                    <button id="category-sort-direction" class="categories__direction" type="button" data-descending="true" aria-label="Sort direction: descending">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/></svg>
+                        <span class="categories__direction-label">Desc</span>
+                    </button>
+                    <button id="open-categories" class="categories__action" type="button">Expand all</button>
+                    <button id="close-categories" class="categories__action" type="button">Collapse all</button>
+                </div>
 
-            <!-- Test Results -->
-            {% for category in categories %}
-            <div class="test-results">
-                {% if category.failed > 0 %}
-                <details open class="details-category">
-                {% else %}
-                <details class="details-category">
-                {% endif %}
-                    <summary class="category-header">
-                        <span class="category-title">
-                            <span>
-                                {{ category.icon }}
-                            </span>
-                            <span class="category-title-text">
-                                {{ category.name }}
-                            </span>
-                        </span>
-                        <span class="category-meta">
-                            {% if category.failed > 0 %}
-                            <span class="{{ category.max_severity_class }} max-cvss">
-                            Highest CVSS: 
-                            <span class="max-cvss-score-text">
-                                {{ category.max_cvss }}
-                            </span> — {{ category.max_severity}}</span>
-                            {% endif %}
-                            <span class="cat-trend-wrapper">
-                                <span class="cat-trend-label">Max CVSS trend:</span>
-                                
-                                <span class="improvement-badge {{ category.improvement_class }}">
-                                    {{ category.improvement_symbol }}
-                                    {{ category.improvement_number }}
-                                    {{ category.improvement_arrow }}
-                                </span>
-                                <canvas 
-                                    id="canvas_{{ category.id }}" 
-                                    width="100" 
-                                    height="28" 
-                                    class="trendline-canvas"
-                                    data-labels='{{ category.labels | tojson | e }}'
-                                    data-history="{{ category.history | tojson }}"></canvas>
-                            </span>
-                            <script>
-                                new_canvas = document.getElementById("canvas_{{ category.id }}");
-                                labels = JSON.parse(new_canvas.dataset.labels);
-                                history_data = JSON.parse(new_canvas.dataset.history);
+                <div class="categories__scroll">
+                    <div class="categories__table">
+                        <div class="categories__row categories__row--head" aria-hidden="true">
+                            <span></span>
+                            <span>Category</span>
+                            <span>Max CVSS</span>
+                            <span>Pass / fail</span>
+                            <span class="categories__cell--end">Tests</span>
+                        </div>
 
-                                new Chart(new_canvas, {
-                                    type: "line",
-                                    data: {
-                                        labels: labels,
-                                        datasets: [{
-                                            data: history_data,
-                                            borderColor: "#e53e3e",
-                                            borderWidth: 1.5,
-                                            pointRadius: 1.5,
-                                            fill: false,
-                                            tension: 0.3
-                                        }]
-                                    },
-                                    options: {
-                                        plugins: { legend: { display: false }, tooltip: {
-                                            callbacks: {
-                                                title: function(items) { return items[0].label; },
-                                                label: function(item) { return "Max CVSS: " + item.parsed.y.toFixed(1); }
-                                            }
-                                        } },
-                                        scales: {
-                                            x: { display: false },
-                                            y: { display: false, min: 0, max: 10 }
-                                        },
-                                        animation: false
-                                    }
-                                });
-                            </script>
-                            
-                            <!-- color based on passing / failing count -->
+                        <div id="categories">
+                        {% for category in categories %}
+                            {% set category_tests = tests | selectattr("category", "equalto", category.name) | list %}
+                            <div class="categories__item"
+                                data-name="{{ category.name | e }}"
+                                data-passed="{{ category.passed }}"
+                                data-failed="{{ category.failed }}"
+                                data-total="{{ category.total }}"
+                                data-max-cvss="{{ category.max_cvss if category.failed > 0 else 0 }}"
+                                data-search="{{ ([category.name] + (category_tests | map(attribute='name') | list)) | join(' ') | lower | e }}">
+                                <details class="details-category"{% if category.failed > 0 %} open{% endif %}>
+                                    <summary class="categories__row categories__summary">
+                                        <span class="categories__chevron">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6"/></svg>
+                                        </span>
+                                        <span class="categories__name">
+                                            {% if category.failed > 0 %}
+                                            <svg width="20" height="20" viewBox="0 0 24 24" role="img" aria-label="Failing" focusable="false"><circle cx="12" cy="12" r="10" fill="#da1e28"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/></svg>
+                                            {% else %}
+                                            <svg width="20" height="20" viewBox="0 0 24 24" role="img" aria-label="All passing" focusable="false"><circle cx="12" cy="12" r="10" fill="#24a148"/><path d="M7.5 12.5l3 3 6-6.5" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                            {% endif %}
+                                            <span>{{ category.name }}</span>
+                                        </span>
+                                        <span class="categories__cvss">
+                                            {% if category.failed > 0 %}
+                                            <span class="categories__mono">{{ '%.1f' % category.max_cvss }}</span>
+                                            <span class="categories__tag categories__tag--{{ category.max_severity | lower }}">{{ category.max_severity | capitalize }}</span>
+                                            {% else %}
+                                            <span class="categories__muted">No open findings</span>
+                                            {% endif %}
+                                        </span>
+                                        <span class="categories__progress">
+                                            <span class="categories__bar">
+                                                <span class="categories__bar-pass" style="width: {{ (100 * category.passed / category.total) if category.total else 0 }}%"></span>
+                                                <span class="categories__bar-fail" style="width: {{ (100 * category.failed / category.total) if category.total else 0 }}%"></span>
+                                            </span>
+                                            <span class="categories__progress-label">{{ category.passed }} passed · {{ category.failed }} failed</span>
+                                        </span>
+                                        <span class="categories__mono categories__cell--end">{{ category.total }}</span>
+                                    </summary>
 
-                            {% if category.passed > 0 %}
-                            <span class="category-header passed">
-                            {% else %}
-                            <span class="category-header">
-                            {% endif %}
-                                <span class="pass-count">
-                                    {{ category.passed }}
-                                </span>
-                                &nbsp;passed
-                            </span>
-
-                            &nbsp;/&nbsp;
-                            
-                            {% if category.failed > 0 %}
-                            <span class="category-header failed">
-                            {% else %}
-                            <span class="category-header">
-                            {% endif %}
-                                <span class="fail-count">
-                                    {{ category.failed }}
-                                </span>
-                                &nbsp;failed
-                            </span>
-
-                            &nbsp;·&nbsp;
-                            <span class="total-tests">
-                                {{ category.total }}
-                            </span> test{{ 's' if cat_total != 1 else '' }}
-                            <span class="chevron">▼</span>
-                        </span>
-                    </summary>
-
-                    {% if category.failed > 0 %}
-                    <details open>
-                        <summary class="subcategory-summary subcategory-fail">
-                            <span>Failed Tests</span>
-                            <span class="subcategory-count">{{ category.failed }} test{{'s' if category.failed != 1 else '' }}</span>
-                        </summary>
-                        <table>
-                            {{ macros.test_table_head(false) }}
-                            <tbody>
-                                <!-- Failed Tests-->
-                                {% for test in tests %}
-                                    {% if test.category == category.name %}
-                                        {% if test.status== "failed" %}    
-                                            {{ macros.test_row(true, test) }}
+                                    <div class="categories__body">
+                                        {% if category.failed > 0 %}
+                                        <div class="categories__failed">
+                                            <h3 class="categories__body-title">Failed tests ({{ category.failed }})</h3>
+                                            <table>
+                                                {{ macros.category_table_head() }}
+                                                <tbody>
+                                                    {% for test in category_tests if test.status == "failed" %}
+                                                        {{ macros.category_test_row(test) }}
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                         {% endif %}
-                                    {% endif %}
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </details>
-                    {% endif %}
-                    {% if category.passed > 0 %}
-                    <!-- leave the details open if there are no failed tests -->
-                    {% if category.failed > 0 %}
-                    <details>
-                    {% else %}
-                    <details open>
-                    {% endif %}
-                        <summary class="subcategory-summary subcategory-pass">
-                            <span>Passed Tests</span>
-                            <span class="subcategory-count">{{ category.passed }} test{{'s' if category.passed != 1 else '' }}</span>
-                        </summary>
-                        <table>
-                            {{ macros.test_table_head(false) }}
-                            <tbody>
-                                <!-- Passed Tests -->
-                                {% for test in tests %}
-                                    {% if test.category == category.name %}
-                                        {% if test.status == "passed" %}
-                                            {{ macros.test_row(false, test) }}
+                                        {% if category.passed > 0 %}
+                                        <div class="categories__passed">
+                                            <span class="categories__passed-label">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="#24a148"/><path d="M7.5 12.5l3 3 6-6.5" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                                                {{ category.passed }} passed test{{ 's' if category.passed != 1 else '' }} in this category
+                                            </span>
+                                            <a class="bx--link" href="detailed-report.html">View in PyTest report</a>
+                                        </div>
                                         {% endif %}
-                                    {% endif %}
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </details>
-                    {% endif %}
-                </details>
-            </div>
-            {% endfor %}
-        </div>
+                                    </div>
+                                </details>
+                            </div>
+                        {% endfor %}
+                        </div>
+
+                        <p id="categories-empty" class="categories__empty" hidden></p>
+                    </div>
+                </div>
+            </section>
         </div>
         {{ macros.dependency_scanning() }}
     </div>
