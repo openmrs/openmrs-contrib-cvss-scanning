@@ -49,6 +49,7 @@
                             <span></span>
                             <span>Category</span>
                             <span>Max CVSS</span>
+                            <span>CVSS trend</span>
                             <span>Pass / fail</span>
                             <span class="categories__cell--end">Tests</span>
                         </div>
@@ -83,6 +84,18 @@
                                             {% else %}
                                             <span class="categories__muted">No open findings</span>
                                             {% endif %}
+                                        </span>
+                                        <span class="categories__trend">
+                                            <span class="categories__mono improvement-badge {{ category.improvement_class }}">{{ category.improvement_number }} {{ category.improvement_arrow }}</span>
+                                            <canvas
+                                                id="canvas_{{ category.id }}"
+                                                width="100"
+                                                height="28"
+                                                class="trendline-canvas"
+                                                aria-label="Max CVSS trend for {{ category.name | e }}"
+                                                role="img"
+                                                data-labels='{{ category.labels | tojson | e }}'
+                                                data-history="{{ category.history | tojson }}"></canvas>
                                         </span>
                                         <span class="categories__progress">
                                             <span class="categories__bar">

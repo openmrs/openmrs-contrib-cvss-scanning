@@ -460,12 +460,12 @@ p {
 }
 
 .categories__table {
-    min-width: 760px;
+    min-width: 920px;
 }
 
 .categories__row {
     display: grid;
-    grid-template-columns: 48px minmax(240px, 3fr) 140px minmax(200px, 2fr) 96px;
+    grid-template-columns: 48px minmax(240px, 3fr) 140px 160px minmax(200px, 2fr) 96px;
     align-items: center;
     font-size: 14px;
 }
@@ -547,6 +547,34 @@ p {
 
 .categories__cvss .categories__mono {
     width: 32px;
+}
+
+.categories__trend {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.categories__trend .improvement-badge {
+    min-width: 40px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.improvement-positive {
+    color: #0e6027;
+}
+
+.improvement-negative {
+    color: #a2191f;
+}
+
+.improvement-neutral {
+    color: #525252;
+}
+
+.trendline-canvas {
+    display: block;
 }
 
 .categories__muted {

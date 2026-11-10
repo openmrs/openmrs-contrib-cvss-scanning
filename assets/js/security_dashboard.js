@@ -109,3 +109,39 @@ for (let i = 0; i < sortableTables.length; i++) {
 
 let allChevrons = document.getElementsByClassName("spreadsheet-chevron");
 resetChevrons(allChevrons);
+
+/* Max CVSS trend sparklines */
+let trendlineCanvases = document.getElementsByClassName("trendline-canvas");
+
+for (let i = 0; i < trendlineCanvases.length; i++) {
+    const canvas = trendlineCanvases[i];
+
+    new Chart(canvas, {
+        type: "line",
+        data: {
+            labels: JSON.parse(canvas.dataset.labels),
+            datasets: [{
+                data: JSON.parse(canvas.dataset.history),
+                borderColor: "#da1e28",
+                borderWidth: 1.5,
+                pointRadius: 1.5,
+                fill: false,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: false,
+            plugins: { legend: { display: false }, tooltip: {
+                callbacks: {
+                    title: function(items) { return items[0].label; },
+                    label: function(item) { return "Max CVSS: " + item.parsed.y.toFixed(1); }
+                }
+            } },
+            scales: {
+                x: { display: false },
+                y: { display: false, min: 0, max: 10 }
+            },
+            animation: false
+        }
+    });
+}
