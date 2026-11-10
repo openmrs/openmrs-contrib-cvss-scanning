@@ -147,20 +147,42 @@
                 <div class="stat-card">
                     <h3>Total Tests</h3>
                     <p>{{ summary_data.total }}</p>
+                    <span>{{ summary_data.category_count }} categories · {{ summary_data.duration }} min run</span>
                 </div>
                 <div class="stat-card">
                     <h3>Passed</h3>
                     <p class="passed">{{ summary_data.passed }}</p>
+                    <div class="pass-rate" aria-label="{{ summary_data.pass_rate }} percent pass rate">
+                        <span style="width: {{ summary_data.pass_rate }}%"></span>
+                    </div>
+                    <span>{{ summary_data.pass_rate }}% pass rate</span>
                 </div>
                 <div class="stat-card">
                     <h3>Failed</h3>
                     <p class="failed">{{ summary_data.failed }}</p>
+                    <span>across {{ summary_data.failed_category_count }} categories</span>
                 </div>
-                <div class="stat-card">
-                    <h3>Duration</h3>
-                    <p>{{ summary_data.duration }} min</p>
+                <div class="stat-card stat-card--findings">
+                    <h3>Open findings by severity</h3>
+                    <div class="severity-summary">
+                        {% set findings_total = summary_data.severity_counts.CRITICAL + summary_data.severity_counts.HIGH + summary_data.severity_counts.MEDIUM %}
+                        <span>
+                            <label>Critical</label>
+                            <span class="severity-bar"><i style="width: {{ (100 * summary_data.severity_counts.CRITICAL / findings_total) if findings_total else 0 }}%"></i></span>
+                            <strong>{{ summary_data.severity_counts.CRITICAL }}</strong>
+                        </span>
+                        <span>
+                            <label>High</label>
+                            <span class="severity-bar"><i style="width: {{ (100 * summary_data.severity_counts.HIGH / findings_total) if findings_total else 0 }}%"></i></span>
+                            <strong>{{ summary_data.severity_counts.HIGH }}</strong>
+                        </span>
+                        <span>
+                            <label>Medium</label>
+                            <span class="severity-bar"><i style="width: {{ (100 * summary_data.severity_counts.MEDIUM / findings_total) if findings_total else 0 }}%"></i></span>
+                            <strong>{{ summary_data.severity_counts.MEDIUM }}</strong>
+                        </span>
+                    </div>
                 </div>
-                
             </div>
             <div class="stats">
                 <div class="stat-card">

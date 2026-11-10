@@ -21,6 +21,14 @@ summary_data : dict = {
     "passed" : 0,
     "total" : 0,
     "duration" : 0,
+    "pass_rate" : 0,
+    "category_count" : 0,
+    "failed_category_count" : 0,
+    "severity_counts" : {
+        "CRITICAL": 0,
+        "HIGH": 0,
+        "MEDIUM": 0,
+    },
 }
 tests = []
 current_time = None
@@ -189,6 +197,16 @@ def prepare_data():
     # convert and round duration
     summary_data["duration"] = summary_data["duration"] / 60
     summary_data["duration"] = round(summary_data["duration"], 1)
+    summary_data["pass_rate"] = round(
+        100 * summary_data["passed"] / summary_data["total"], 1
+    ) if summary_data["total"] else 0
+    summary_data["severity_counts"] = {
+        severity: sum(
+            1 for test in tests
+            if test["status"] == "failed" and test["severity"] == severity
+        )
+        for severity in ("CRITICAL", "HIGH", "MEDIUM")
+    }
     
     # get categories
     for test in tests:
@@ -217,6 +235,11 @@ def prepare_data():
             new_category["id"] = "cat_" + re.sub(r'[^a-zA-Z_]', '_', category)
             
             categories.append(new_category)
+
+    summary_data["category_count"] = len(categories)
+    summary_data["failed_category_count"] = len({
+        test["category"] for test in tests if test["status"] == "failed"
+    })
 
     # get category stats
     for category in categories:
