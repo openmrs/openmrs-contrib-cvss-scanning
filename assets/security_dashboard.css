@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     /* leave room for the fixed 3rem Carbon header */
@@ -132,6 +132,7 @@ p {
     font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
 }
 
+
 .page-header__intro {
     /* let the title/subtitle wrap */
     min-width: 0;
@@ -200,39 +201,134 @@ p {
 
 .stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 16px;
     margin-bottom: 20px;
 }
 
-.stat-card {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.stats:first-child {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px;
+    background: #e0e0e0;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 0;
 }
 
-.stat-card h3 {
-    color: #718096;
-    font-size: 14px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    font-weight: 600;
+.stats:first-child .stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 120px;
+    padding: 16px;
+    background: #ffffff;
 }
 
-.stat-card p {
-    color: #2d3748;
-    font-size: 32px;
-    font-weight: bold;
+.stats:first-child .stat-card h3 {
+    margin: 0;
+    color: #525252;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: none;
 }
 
-.stat-card .passed {
-    color: #38a169;
+.stats:first-child .stat-card p {
+    margin: 0;
+    color: #161616;
+    font-size: 42px;
+    font-weight: 300;
+    line-height: 50px;
 }
 
-.stat-card .failed {
-    color: #e53e3e;
+.stats:first-child .stat-card .passed {
+    color: #0e6027;
 }
+
+.stats:first-child .stat-card .failed {
+    color: #a2191f;
+}
+
+.stats:first-child .stat-card span {
+    color: #525252;
+    font-size: 12px;
+}
+
+.stats:first-child .stat-card:nth-child(2) .pass-rate {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+}
+
+.stats:first-child .pass-rate span {
+    display: block;
+    height: 4px;
+    background: #24a148;
+}
+
+.stats:first-child .stat-card:nth-child(4) {
+    gap: 12px;
+}
+
+.stats:first-child .severity-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    color: #161616;
+    font-size: 12px;
+}
+
+.stats:first-child .severity-summary span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stats:first-child .severity-summary label {
+    display: block;
+    width: 72px;
+}
+
+.stats:first-child .severity-summary strong {
+    width: 20px;
+    color: #161616;
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 400;
+    text-align: right;
+}
+
+.stats:first-child .severity-bar {
+    flex: 1;
+    height: 8px;
+    background: #f4f4f4;
+}
+
+.stats:first-child .severity-bar i {
+    display: block;
+    height: 8px;
+}
+
+.stats:first-child .severity-summary span:nth-child(1) .severity-bar i {
+    background: #a2191f;
+}
+
+.stats:first-child .severity-summary span:nth-child(2) .severity-bar i {
+    background: #ba4e00;
+}
+
+.stats:first-child .severity-summary span:nth-child(3) .severity-bar i {
+    background: #b28600;
+}
+
+#vulnerability_testing > .stats:nth-child(2) .stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+}
+
 
 .test-results {
     background: white;

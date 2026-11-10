@@ -74,7 +74,7 @@
         <div class="page-header__meta">
             <p class="page-header__updated">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 1a7 7 0 1 0 7 7 7.008 7.008 0 0 0-7-7zm0 13a6 6 0 1 1 6-6 6.007 6.007 0 0 1-6 6z"/><path d="M10.293 11 7.5 8.207V3.5h1v4.293L11 10.293 10.293 11z"/></svg>
-                <span>Updated <span class="page-header__timestamp">2026-11-10 00:46:52 UTC</span></span>
+                <span>Updated <span class="page-header__timestamp">2026-11-10 02:55:23 UTC</span></span>
             </p>
             <a class="bx--btn bx--btn--tertiary page-header__action" href="./">
                 Dashboard view
@@ -95,20 +95,42 @@
                 <div class="stat-card">
                     <h3>Total Tests</h3>
                     <p>173</p>
+                    <span>12 categories · 25.4 min run</span>
                 </div>
                 <div class="stat-card">
                     <h3>Passed</h3>
-                    <p class="passed">155</p>
+                    <p class="passed">153</p>
+                    <div class="pass-rate" aria-label="88.4 percent pass rate">
+                        <span style="width: 88.4%"></span>
+                    </div>
+                    <span>88.4% pass rate</span>
                 </div>
                 <div class="stat-card">
                     <h3>Failed</h3>
-                    <p class="failed">18</p>
+                    <p class="failed">20</p>
+                    <span>across 6 categories</span>
                 </div>
-                <div class="stat-card">
-                    <h3>Duration</h3>
-                    <p>26.0 min</p>
+                <div class="stat-card stat-card--findings">
+                    <h3>Open findings by severity</h3>
+                    <div class="severity-summary">
+                        
+                        <span>
+                            <label>Critical</label>
+                            <span class="severity-bar"><i style="width: 55.0%"></i></span>
+                            <strong>11</strong>
+                        </span>
+                        <span>
+                            <label>High</label>
+                            <span class="severity-bar"><i style="width: 25.0%"></i></span>
+                            <strong>5</strong>
+                        </span>
+                        <span>
+                            <label>Medium</label>
+                            <span class="severity-bar"><i style="width: 20.0%"></i></span>
+                            <strong>4</strong>
+                        </span>
+                    </div>
                 </div>
-                
             </div>
             <div class="stats">
                 <div class="stat-card">
@@ -119,32 +141,32 @@
                             
                             <div class="legend-item">
                                 <div class="legend-color category_color_cat_Data_Integrity_Failures"></div>
-                                Data Integrity Failures: 5.56%
+                                Data Integrity Failures: 5.0%
                             </div>
                             
                             <div class="legend-item">
                                 <div class="legend-color category_color_cat_Mishandling_of_Exceptional_Conditions"></div>
-                                Mishandling of Exceptional Conditions: 5.56%
-                            </div>
-                            
-                            <div class="legend-item">
-                                <div class="legend-color category_color_cat_Session_Management"></div>
-                                Session Management: 5.56%
+                                Mishandling of Exceptional Conditions: 5.0%
                             </div>
                             
                             <div class="legend-item">
                                 <div class="legend-color category_color_cat_Insecure_Design"></div>
-                                Insecure Design: 16.67%
+                                Insecure Design: 15.0%
+                            </div>
+                            
+                            <div class="legend-item">
+                                <div class="legend-color category_color_cat_Session_Management"></div>
+                                Session Management: 15.0%
                             </div>
                             
                             <div class="legend-item">
                                 <div class="legend-color category_color_cat_Security_Misconfiguration"></div>
-                                Security Misconfiguration: 22.22%
+                                Security Misconfiguration: 20.0%
                             </div>
                             
                             <div class="legend-item">
                                 <div class="legend-color category_color_cat_Memory_Management_Failures"></div>
-                                Memory Management Failures: 44.44%
+                                Memory Management Failures: 40.0%
                             </div>
                             
                         </div>
@@ -304,7 +326,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.2s</td>
+    <td class="row-duration">0.17s</td>
 </tr>
 
             
@@ -334,7 +356,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.05s</td>
+    <td class="row-duration">0.03s</td>
 </tr>
 
             
@@ -394,7 +416,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.04s</td>
+    <td class="row-duration">0.02s</td>
 </tr>
 
             
@@ -424,7 +446,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.09s</td>
+    <td class="row-duration">0.07s</td>
 </tr>
 
             
@@ -454,7 +476,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.06s</td>
+    <td class="row-duration">0.05s</td>
 </tr>
 
             
@@ -514,6 +536,240 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
+    <td class="row-duration">0.05s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: admin</p>
+    
+        <p>password: Admin123</p>
+    
+        <p>cleanup_clear_user_lockout: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">20.04s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: doctor</p>
+    
+        <p>password: Doctor123</p>
+    
+        <p>cleanup_clear_user_lockout: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">19.67s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: nurse</p>
+    
+        <p>password: Nurse123</p>
+    
+        <p>cleanup_clear_user_lockout: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">19.68s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: clerk</p>
+    
+        <p>password: Clerk123</p>
+    
+        <p>cleanup_clear_user_lockout: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">19.65s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: technician</p>
+    
+        <p>password: Technician123</p>
+    
+        <p>cleanup_clear_user_lockout: doctor</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">19.64s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on REST API causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: admin</p>
+    
+        <p>password: Admin123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
+    <td class="row-duration">0.05s</td>
+</tr>
+
+            
+                
+                
+
+<tr class="pass-row">
+
+
+    
+    <td class="row-category">Authentication</td>
+    
+    <td class="row-test-name"><strong>Brute force attack on REST API causes lockout</strong></td>
+    
+    <td class="row-params">
+    
+        <p>username: doctor</p>
+    
+        <p>password: Doctor123</p>
+    
+    </td>
+
+    
+
+    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-cvss">
+        
+        <span class="cvss-score-pass">9.2</span>
+        
+    </td>
+    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
     <td class="row-duration">0.06s</td>
 </tr>
 
@@ -527,240 +783,6 @@
     
     <td class="row-category">Authentication</td>
     
-    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
-    
-    <td class="row-params">
-    
-        <p>username: admin</p>
-    
-        <p>password: Admin123</p>
-    
-        <p>cleanup_clear_user_lockout: doctor</p>
-    
-    </td>
-
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">9.2</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.35s</td>
-</tr>
-
-            
-                
-                
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-category">Authentication</td>
-    
-    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
-    
-    <td class="row-params">
-    
-        <p>username: doctor</p>
-    
-        <p>password: Doctor123</p>
-    
-        <p>cleanup_clear_user_lockout: doctor</p>
-    
-    </td>
-
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">9.2</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">19.86s</td>
-</tr>
-
-            
-                
-                
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-category">Authentication</td>
-    
-    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
-    
-    <td class="row-params">
-    
-        <p>username: nurse</p>
-    
-        <p>password: Nurse123</p>
-    
-        <p>cleanup_clear_user_lockout: doctor</p>
-    
-    </td>
-
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">9.2</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">19.86s</td>
-</tr>
-
-            
-                
-                
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-category">Authentication</td>
-    
-    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
-    
-    <td class="row-params">
-    
-        <p>username: clerk</p>
-    
-        <p>password: Clerk123</p>
-    
-        <p>cleanup_clear_user_lockout: doctor</p>
-    
-    </td>
-
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">9.2</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">19.85s</td>
-</tr>
-
-            
-                
-                
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-category">Authentication</td>
-    
-    <td class="row-test-name"><strong>Brute force attack on login page causes lockout</strong></td>
-    
-    <td class="row-params">
-    
-        <p>username: technician</p>
-    
-        <p>password: Technician123</p>
-    
-        <p>cleanup_clear_user_lockout: doctor</p>
-    
-    </td>
-
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">9.2</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">19.87s</td>
-</tr>
-
-            
-                
-                
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-category">Authentication</td>
-    
-    <td class="row-test-name"><strong>Brute force attack on REST API causes lockout</strong></td>
-    
-    <td class="row-params">
-    
-        <p>username: admin</p>
-    
-        <p>password: Admin123</p>
-    
-    </td>
-
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">9.2</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.09s</td>
-</tr>
-
-            
-                
-                
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-category">Authentication</td>
-    
-    <td class="row-test-name"><strong>Brute force attack on REST API causes lockout</strong></td>
-    
-    <td class="row-params">
-    
-        <p>username: doctor</p>
-    
-        <p>password: Doctor123</p>
-    
-    </td>
-
-    
-
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
-    <td class="row-cvss">
-        
-        <span class="cvss-score-pass">9.2</span>
-        
-    </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.11s</td>
-</tr>
-
-            
-                
-                
-
-<tr class="pass-row">
-
-
-    
-    <td class="row-category">Authentication</td>
-    
     <td class="row-test-name"><strong>Brute force attack on REST API causes lockout</strong></td>
     
     <td class="row-params">
@@ -780,7 +802,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.1s</td>
+    <td class="row-duration">0.06s</td>
 </tr>
 
             
@@ -812,7 +834,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.09s</td>
+    <td class="row-duration">0.05s</td>
 </tr>
 
             
@@ -844,7 +866,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.08s</td>
+    <td class="row-duration">0.05s</td>
 </tr>
 
             
@@ -874,7 +896,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.08s</td>
+    <td class="row-duration">0.05s</td>
 </tr>
 
             
@@ -904,7 +926,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.79s</td>
+    <td class="row-duration">21.59s</td>
 </tr>
 
             
@@ -968,7 +990,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.03s</td>
+    <td class="row-duration">0.02s</td>
 </tr>
 
             
@@ -1000,7 +1022,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.03s</td>
+    <td class="row-duration">0.02s</td>
 </tr>
 
             
@@ -1064,7 +1086,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.02s</td>
+    <td class="row-duration">0.01s</td>
 </tr>
 
             
@@ -1096,7 +1118,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.64s</td>
+    <td class="row-duration">3.49s</td>
 </tr>
 
             
@@ -1128,7 +1150,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.63s</td>
+    <td class="row-duration">3.47s</td>
 </tr>
 
             
@@ -1160,7 +1182,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.65s</td>
+    <td class="row-duration">3.49s</td>
 </tr>
 
             
@@ -1192,7 +1214,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.64s</td>
+    <td class="row-duration">3.48s</td>
 </tr>
 
             
@@ -1224,7 +1246,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.66s</td>
+    <td class="row-duration">3.46s</td>
 </tr>
 
             
@@ -1256,7 +1278,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.05s</td>
+    <td class="row-duration">21.77s</td>
 </tr>
 
             
@@ -1288,7 +1310,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.02s</td>
+    <td class="row-duration">21.77s</td>
 </tr>
 
             
@@ -1320,7 +1342,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.05s</td>
+    <td class="row-duration">21.75s</td>
 </tr>
 
             
@@ -1352,7 +1374,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.0s</td>
+    <td class="row-duration">21.78s</td>
 </tr>
 
             
@@ -1384,7 +1406,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.0s</td>
+    <td class="row-duration">21.77s</td>
 </tr>
 
             
@@ -1416,7 +1438,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">23.96s</td>
+    <td class="row-duration">23.69s</td>
 </tr>
 
             
@@ -1448,7 +1470,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">23.94s</td>
+    <td class="row-duration">23.73s</td>
 </tr>
 
             
@@ -1480,7 +1502,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">23.94s</td>
+    <td class="row-duration">23.72s</td>
 </tr>
 
             
@@ -1512,7 +1534,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">23.96s</td>
+    <td class="row-duration">23.75s</td>
 </tr>
 
             
@@ -1544,7 +1566,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">23.95s</td>
+    <td class="row-duration">23.72s</td>
 </tr>
 
             
@@ -1576,7 +1598,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.09s</td>
+    <td class="row-duration">0.08s</td>
 </tr>
 
             
@@ -1608,7 +1630,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.1s</td>
+    <td class="row-duration">0.07s</td>
 </tr>
 
             
@@ -1640,7 +1662,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.09s</td>
+    <td class="row-duration">0.07s</td>
 </tr>
 
             
@@ -1672,7 +1694,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.09s</td>
+    <td class="row-duration">0.08s</td>
 </tr>
 
             
@@ -1800,7 +1822,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.07s</td>
+    <td class="row-duration">0.06s</td>
 </tr>
 
             
@@ -1832,7 +1854,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.08s</td>
+    <td class="row-duration">0.06s</td>
 </tr>
 
             
@@ -1894,7 +1916,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.02s</td>
+    <td class="row-duration">0.01s</td>
 </tr>
 
             
@@ -1924,7 +1946,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">0.01s</td>
+    <td class="row-duration">0.02s</td>
 </tr>
 
             
@@ -1962,7 +1984,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
-    <td class="row-duration">10.92s</td>
+    <td class="row-duration">10.6s</td>
 </tr>
 
             
@@ -2006,7 +2028,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
-    <td class="row-duration">41.63s</td>
+    <td class="row-duration">39.34s</td>
 </tr>
 
             
@@ -2040,7 +2062,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">21.94s</td>
+    <td class="row-duration">21.5s</td>
 </tr>
 
             
@@ -2074,7 +2096,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">22.14s</td>
+    <td class="row-duration">21.33s</td>
 </tr>
 
             
@@ -2106,7 +2128,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.48s</td>
+    <td class="row-duration">7.99s</td>
 </tr>
 
             
@@ -2140,7 +2162,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.68s</td>
+    <td class="row-duration">10.12s</td>
 </tr>
 
             
@@ -2184,7 +2206,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
-    <td class="row-duration">36.07s</td>
+    <td class="row-duration">34.95s</td>
 </tr>
 
             
@@ -2218,7 +2240,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.91s</td>
+    <td class="row-duration">20.4s</td>
 </tr>
 
             
@@ -2252,7 +2274,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">14.62s</td>
+    <td class="row-duration">13.95s</td>
 </tr>
 
             
@@ -2284,7 +2306,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.43s</td>
+    <td class="row-duration">7.71s</td>
 </tr>
 
             
@@ -2318,7 +2340,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.6s</td>
+    <td class="row-duration">9.8s</td>
 </tr>
 
             
@@ -2362,7 +2384,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
-    <td class="row-duration">35.81s</td>
+    <td class="row-duration">34.63s</td>
 </tr>
 
             
@@ -2396,7 +2418,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.9s</td>
+    <td class="row-duration">20.43s</td>
 </tr>
 
             
@@ -2430,7 +2452,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">14.58s</td>
+    <td class="row-duration">13.94s</td>
 </tr>
 
             
@@ -2462,7 +2484,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.41s</td>
+    <td class="row-duration">7.76s</td>
 </tr>
 
             
@@ -2496,7 +2518,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.05s</td>
+    <td class="row-duration">9.93s</td>
 </tr>
 
             
@@ -2532,7 +2554,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">24.94s</td>
+    <td class="row-duration">24.16s</td>
 </tr>
 
             
@@ -2566,7 +2588,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.86s</td>
+    <td class="row-duration">20.34s</td>
 </tr>
 
             
@@ -2598,7 +2620,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.38s</td>
+    <td class="row-duration">7.92s</td>
 </tr>
 
             
@@ -2632,7 +2654,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.56s</td>
+    <td class="row-duration">9.87s</td>
 </tr>
 
             
@@ -2668,7 +2690,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">24.81s</td>
+    <td class="row-duration">24.04s</td>
 </tr>
 
             
@@ -2702,7 +2724,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.84s</td>
+    <td class="row-duration">20.37s</td>
 </tr>
 
             
@@ -2734,7 +2756,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.39s</td>
+    <td class="row-duration">7.72s</td>
 </tr>
 
             
@@ -2768,7 +2790,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.59s</td>
+    <td class="row-duration">9.9s</td>
 </tr>
 
             
@@ -2804,7 +2826,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">24.79s</td>
+    <td class="row-duration">23.97s</td>
 </tr>
 
             
@@ -2838,7 +2860,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.82s</td>
+    <td class="row-duration">20.39s</td>
 </tr>
 
             
@@ -2870,7 +2892,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.42s</td>
+    <td class="row-duration">7.76s</td>
 </tr>
 
             
@@ -2904,7 +2926,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.55s</td>
+    <td class="row-duration">9.75s</td>
 </tr>
 
             
@@ -2938,7 +2960,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.87s</td>
+    <td class="row-duration">20.32s</td>
 </tr>
 
             
@@ -2970,7 +2992,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.42s</td>
+    <td class="row-duration">7.64s</td>
 </tr>
 
             
@@ -3004,7 +3026,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.61s</td>
+    <td class="row-duration">9.77s</td>
 </tr>
 
             
@@ -3038,7 +3060,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.82s</td>
+    <td class="row-duration">20.28s</td>
 </tr>
 
             
@@ -3070,7 +3092,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.32s</td>
+    <td class="row-duration">7.55s</td>
 </tr>
 
             
@@ -3104,7 +3126,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.56s</td>
+    <td class="row-duration">9.8s</td>
 </tr>
 
             
@@ -3138,7 +3160,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.84s</td>
+    <td class="row-duration">20.33s</td>
 </tr>
 
             
@@ -3170,7 +3192,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.38s</td>
+    <td class="row-duration">7.66s</td>
 </tr>
 
             
@@ -3204,7 +3226,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.54s</td>
+    <td class="row-duration">9.82s</td>
 </tr>
 
             
@@ -3238,7 +3260,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.85s</td>
+    <td class="row-duration">20.41s</td>
 </tr>
 
             
@@ -3270,7 +3292,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">8.42s</td>
+    <td class="row-duration">7.72s</td>
 </tr>
 
             
@@ -3304,7 +3326,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.57s</td>
+    <td class="row-duration">9.77s</td>
 </tr>
 
             
@@ -3338,7 +3360,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.87s</td>
+    <td class="row-duration">20.38s</td>
 </tr>
 
             
@@ -3372,7 +3394,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.57s</td>
+    <td class="row-duration">9.91s</td>
 </tr>
 
             
@@ -3406,7 +3428,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">20.88s</td>
+    <td class="row-duration">20.29s</td>
 </tr>
 
             
@@ -3440,7 +3462,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.58s</td>
+    <td class="row-duration">9.81s</td>
 </tr>
 
             
@@ -3482,7 +3504,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.86s</td>
+    <td class="row-duration">20.35s</td>
 </tr>
 
             
@@ -3516,7 +3538,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.56s</td>
+    <td class="row-duration">9.93s</td>
 </tr>
 
             
@@ -3558,7 +3580,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.89s</td>
+    <td class="row-duration">20.43s</td>
 </tr>
 
             
@@ -3592,7 +3614,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.58s</td>
+    <td class="row-duration">9.96s</td>
 </tr>
 
             
@@ -3634,7 +3656,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.82s</td>
+    <td class="row-duration">20.4s</td>
 </tr>
 
             
@@ -3668,7 +3690,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.58s</td>
+    <td class="row-duration">9.77s</td>
 </tr>
 
             
@@ -3710,7 +3732,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.84s</td>
+    <td class="row-duration">20.27s</td>
 </tr>
 
             
@@ -3744,7 +3766,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.54s</td>
+    <td class="row-duration">9.88s</td>
 </tr>
 
             
@@ -3786,7 +3808,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.84s</td>
+    <td class="row-duration">20.38s</td>
 </tr>
 
             
@@ -3820,7 +3842,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.55s</td>
+    <td class="row-duration">10.12s</td>
 </tr>
 
             
@@ -3862,7 +3884,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.84s</td>
+    <td class="row-duration">20.27s</td>
 </tr>
 
             
@@ -3896,7 +3918,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.55s</td>
+    <td class="row-duration">9.69s</td>
 </tr>
 
             
@@ -3938,7 +3960,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.81s</td>
+    <td class="row-duration">20.32s</td>
 </tr>
 
             
@@ -3972,7 +3994,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.66s</td>
+    <td class="row-duration">9.74s</td>
 </tr>
 
             
@@ -4014,7 +4036,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">20.86s</td>
+    <td class="row-duration">20.29s</td>
 </tr>
 
             
@@ -4048,7 +4070,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.52s</td>
+    <td class="row-duration">9.72s</td>
 </tr>
 
             
@@ -4086,7 +4108,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-medium">MEDIUM</span></td>
-    <td class="row-duration">1.08s</td>
+    <td class="row-duration">1.06s</td>
 </tr>
 
             
@@ -4118,7 +4140,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.17s</td>
+    <td class="row-duration">8.12s</td>
 </tr>
 
             
@@ -4150,7 +4172,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.92s</td>
+    <td class="row-duration">8.62s</td>
 </tr>
 
             
@@ -4182,7 +4204,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.92s</td>
+    <td class="row-duration">8.61s</td>
 </tr>
 
             
@@ -4214,7 +4236,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.94s</td>
+    <td class="row-duration">8.62s</td>
 </tr>
 
             
@@ -4246,7 +4268,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">8.94s</td>
+    <td class="row-duration">8.66s</td>
 </tr>
 
             
@@ -4276,7 +4298,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.92s</td>
+    <td class="row-duration">5.56s</td>
 </tr>
 
             
@@ -4306,7 +4328,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.93s</td>
+    <td class="row-duration">5.67s</td>
 </tr>
 
             
@@ -4336,7 +4358,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.93s</td>
+    <td class="row-duration">5.57s</td>
 </tr>
 
             
@@ -4366,7 +4388,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.94s</td>
+    <td class="row-duration">5.56s</td>
 </tr>
 
             
@@ -4396,7 +4418,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.92s</td>
+    <td class="row-duration">5.56s</td>
 </tr>
 
             
@@ -4426,7 +4448,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.94s</td>
+    <td class="row-duration">5.57s</td>
 </tr>
 
             
@@ -4456,7 +4478,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">5.82s</td>
+    <td class="row-duration">5.55s</td>
 </tr>
 
             
@@ -4494,7 +4516,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
-    <td class="row-duration">0.27s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -4532,7 +4554,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.2s</td>
 </tr>
 
             
@@ -4562,7 +4584,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.25s</td>
+    <td class="row-duration">0.19s</td>
 </tr>
 
             
@@ -4594,7 +4616,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.27s</td>
 </tr>
 
             
@@ -4626,7 +4648,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.17s</td>
 </tr>
 
             
@@ -4658,7 +4680,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.25s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -4690,7 +4712,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.25s</td>
+    <td class="row-duration">0.17s</td>
 </tr>
 
             
@@ -4722,7 +4744,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.27s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -4754,7 +4776,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -4786,7 +4808,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -4818,7 +4840,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.21s</td>
 </tr>
 
             
@@ -4850,7 +4872,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.27s</td>
+    <td class="row-duration">0.17s</td>
 </tr>
 
             
@@ -4882,7 +4904,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.17s</td>
 </tr>
 
             
@@ -4914,7 +4936,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -4946,7 +4968,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.25s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -4986,7 +5008,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -5018,7 +5040,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.25s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -5050,7 +5072,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -5082,7 +5104,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -5114,7 +5136,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -5146,7 +5168,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.27s</td>
+    <td class="row-duration">0.19s</td>
 </tr>
 
             
@@ -5178,7 +5200,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.22s</td>
 </tr>
 
             
@@ -5210,7 +5232,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.28s</td>
 </tr>
 
             
@@ -5242,7 +5264,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -5274,7 +5296,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.19s</td>
 </tr>
 
             
@@ -5306,7 +5328,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -5338,7 +5360,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -5370,7 +5392,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.2s</td>
 </tr>
 
             
@@ -5402,7 +5424,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.27s</td>
+    <td class="row-duration">0.19s</td>
 </tr>
 
             
@@ -5442,7 +5464,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-high">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.17s</td>
 </tr>
 
             
@@ -5474,7 +5496,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">HIGH</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.18s</td>
 </tr>
 
             
@@ -5504,14 +5526,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">0.26s</td>
+    <td class="row-duration">0.2s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5527,14 +5549,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">9.2</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">9.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                assert new_cookie[&quot;value&quot;] != old_cookie[&quot;value&quot;]</p><p>AssertionError: assert &#x27;C41BB25DF4573C0F16A90D8CB4F2B37D&#x27; != &#x27;C41BB25DF4573C0F16A90D8CB4F2B37D&#x27;
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">4.77s</td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">4.52s</td>
 </tr>
 
             
@@ -5564,14 +5594,14 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">2.51s</td>
+    <td class="row-duration">2.37s</td>
 </tr>
 
             
                 
                 
 
-<tr class="pass-row">
+<tr class="fail-row">
 
 
     
@@ -5587,14 +5617,22 @@
 
     
 
-    <td class="row-status"><span class="status-badge status-pass">PASS</span></td>
+    <td class="row-status"><span class="status-badge status-fail">FAIL</span></td>
     <td class="row-cvss">
         
-        <span class="cvss-score-pass">9.2</span>
+        <div class="tooltip">
+            <span class="cvss-score-fail">9.2</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                event = await waiter.result()</p><p>playwright._impl._errors.TimeoutError: Timeout 30000ms exceeded.</p><p>=========================== logs ===========================</p><p>waiting for navigation to &quot;http://localhost/openmrs/spa/login&quot; until &#x27;load&#x27;</p><p>navigated to &quot;http://localhost/openmrs/spa/home&quot;</p><p>navigated to &quot;http://localhost/openmrs/spa/home/service-queues&quot;</p><p>============================================================
+                </p>
+            </span>
+        </div>
         
     </td>
-    <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">4.78s</td>
+    <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
+    <td class="row-duration">34.46s</td>
 </tr>
 
             
@@ -5624,7 +5662,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">2.52s</td>
+    <td class="row-duration">2.35s</td>
 </tr>
 
             
@@ -5662,7 +5700,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-critical">CRITICAL</span></td>
-    <td class="row-duration">2.49s</td>
+    <td class="row-duration">2.35s</td>
 </tr>
 
             
@@ -5692,7 +5730,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">CRITICAL</span></td>
-    <td class="row-duration">3.23s</td>
+    <td class="row-duration">2.98s</td>
 </tr>
 
             
@@ -5726,7 +5764,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.57s</td>
+    <td class="row-duration">9.78s</td>
 </tr>
 
             
@@ -5760,7 +5798,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.54s</td>
+    <td class="row-duration">9.71s</td>
 </tr>
 
             
@@ -5794,7 +5832,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.62s</td>
+    <td class="row-duration">9.77s</td>
 </tr>
 
             
@@ -5828,7 +5866,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.54s</td>
+    <td class="row-duration">9.78s</td>
 </tr>
 
             
@@ -5862,7 +5900,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.57s</td>
+    <td class="row-duration">9.69s</td>
 </tr>
 
             
@@ -5896,7 +5934,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.61s</td>
+    <td class="row-duration">9.99s</td>
 </tr>
 
             
@@ -5930,7 +5968,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.59s</td>
+    <td class="row-duration">9.71s</td>
 </tr>
 
             
@@ -5964,7 +6002,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">11.04s</td>
+    <td class="row-duration">9.78s</td>
 </tr>
 
             
@@ -5998,7 +6036,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.54s</td>
+    <td class="row-duration">9.81s</td>
 </tr>
 
             
@@ -6032,7 +6070,7 @@
         
     </td>
     <td class="row-severity"><span class="severity-badge severity-none">MEDIUM</span></td>
-    <td class="row-duration">10.64s</td>
+    <td class="row-duration">9.83s</td>
 </tr>
 
             
