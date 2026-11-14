@@ -63,7 +63,7 @@
                                 data-failed="{{ category.failed }}"
                                 data-total="{{ category.total }}"
                                 data-max-cvss="{{ category.max_cvss if category.failed > 0 else 0 }}"
-                                data-search="{{ ([category.name] + (category_tests | selectattr('status', 'equalto', 'failed') | map(attribute='name') | list)) | join(' ') | lower | e }}"
+                                data-search="{{ ([category.name] + (category_tests | selectattr('status', 'equalto', 'failed') | map(attribute='name') | list)) | join(' ') | lower | e }}">
                                 <details class="details-category"{% if category.failed > 0 %} open{% endif %}>
                                     <summary class="categories__row categories__summary">
                                         <span class="categories__chevron">
