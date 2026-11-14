@@ -65,7 +65,11 @@ function getTableRows(tableBody) {
 
         // status
         let statusEl = currentRow.getElementsByClassName("row-status")[0];
-        let statusText = statusEl.textContent;
+        let statusText = "";
+
+        if (statusEl != null) {
+            statusText = statusEl.textContent;
+        }
 
         // CVSS
         let cvssEl = currentRow.getElementsByClassName("row-cvss")[0];
@@ -132,6 +136,10 @@ function sortTableRows(tableBody, sortByField, isAscending, relevanceRank) {
             "Status": "statusText",
             "CVSS Score (Baseline)": "cvssText",
             "Duration": "durationText",
+            // main dashboard category tables
+            "Test": "testNameText",
+            "Expected": "descriptionText",
+            "CVSS": "cvssText",
         };
 
         const sortKey = sortByMap[sortByField];

@@ -280,3 +280,40 @@
     </tr>
 </thead>
 {%endmacro%}
+
+{# failed tests table inside a category on the main dashboard #}
+{%macro category_table_head() %}
+<thead class="sub-details-head">
+    <tr>
+        {% for label in ["Test", "Parameters", "Expected", "CVSS", "Severity", "Duration"] %}
+        <th{% if label == "Duration" %} class="categories__cell--end"{% endif %}>
+            <div class="th-content">
+                <span>{{ label }}</span>
+                <span class="spreadsheet-chevron">▼</span>
+            </div>
+        </th>
+        {% endfor %}
+    </tr>
+</thead>
+{%endmacro%}
+
+{%macro category_test_row(test) %}
+<tr class="fail-row">
+    <td class="row-test-name">{{ test.name }}</td>
+    <td class="row-params">{{ test.params | join(' · ') }}</td>
+    <td class="row-description">{{ test.description }}</td>
+    <td class="row-cvss">
+        <div class="tooltip">
+            <span class="cvss-score-fail">{{ '%.1f' % test.cvss_score if test.cvss_score is number else test.cvss_score }}</span>
+            <span class="tooltiptext">
+                <p><u>Recorded Errors</u></p>
+                <p>
+                {{ "</p><p>".join(test.errors) }}
+                </p>
+            </span>
+        </div>
+    </td>
+    <td class="row-severity"><span class="categories__tag categories__tag--{{ test.severity | lower }}">{{ test.severity | capitalize }}</span></td>
+    <td class="row-duration categories__cell--end">{{ test.duration }}</td>
+</tr>
+{%endmacro%}
