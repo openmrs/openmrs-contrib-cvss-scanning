@@ -57,7 +57,7 @@ function filterCategories(query) {
     let visibleCount = 0;
 
     for (let i = 0; i < panels.length; i++) {
-        // data-search holds the category name and all of its test names
+        // data-search holds the category name and the names of its failed tests
         const isMatch = normalizedQuery === "" || panels[i].dataset.search.includes(normalizedQuery);
         panels[i].hidden = !isMatch;
 
