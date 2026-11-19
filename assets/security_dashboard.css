@@ -320,6 +320,10 @@ p {
     background: #b28600;
 }
 
+#vulnerability_testing > .stats:nth-child(2) {
+    margin-top: 16px;
+}
+
 #vulnerability_testing > .stats:nth-child(2) .stat-card {
     display: flex;
     flex-direction: column;
@@ -972,42 +976,113 @@ iframe{
   background-color: #6c757d;
 }
 
-/* Pie Chart */
+/* Donut charts (Carbon Charts style) */
+
+#vulnerability_testing > .stats:nth-child(2) .chart-card {
+    gap: 24px;
+}
+
+.chart-card__title {
+    margin: 0;
+    color: #161616;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    letter-spacing: 0.16px;
+}
 
 .chart-wrapper {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
-    gap: 20px;
+    gap: 32px;
 }
 
 .chart-container {
     position: relative;
-    width: 150px;
-    height: 150px;
+    flex: none;
+    width: 176px;
+    height: 176px;
     border-radius: 50%;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    background: #e0e0e0;
+}
+
+.chart-center {
+    position: absolute;
+    inset: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #ffffff;
+}
+
+.chart-center__value {
+    color: #161616;
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 40px;
+}
+
+.chart-center__label {
+    color: #525252;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.32px;
 }
 
 .legend {
     display: flex;
+    flex: 1 1 220px;
     flex-direction: column;
-    gap: 10px;
-    height: 120px;
-    overflow-y: scroll;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .legend-item {
-    display: flex;
+    display: grid;
+    grid-template-columns: 12px minmax(0, 1fr) auto 56px;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
+    color: #161616;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.32px;
+}
+
+.legend-item:last-child {
+    border-bottom: none;
 }
 
 .legend-color {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
+    width: 12px;
+    height: 12px;
+}
+
+.legend-label {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.legend-value,
+.legend-percent {
+    font-family: "IBM Plex Mono", monospace;
+    text-align: right;
+}
+
+.legend-percent {
+    color: #525252;
+}
+
+.chart-empty {
+    color: #525252;
+    font-size: 14px;
 }
 
 /* Improvement badges */
