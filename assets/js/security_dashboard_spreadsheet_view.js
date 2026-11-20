@@ -17,6 +17,26 @@ let spreadsheetSearchBar = document.getElementById("spreadsheet-search-bar");
 let searchFieldSelect = document.getElementById("searchField");
 let sortByRelevanceCheckbox = document.getElementById("relevance-checkbox");
 
+// row count / empty state
+let spreadsheetCount = document.getElementById("spreadsheet-count");
+let spreadsheetEmpty = document.getElementById("spreadsheet-empty");
+
+function updateVisibleCount() {
+    const rows = tableBody.getElementsByTagName("tr");
+    let visibleCount = 0;
+
+    for (let i = 0; i < rows.length; i++) {
+        const isHidden = rows[i].classList.contains("search-invisible") || rows[i].classList.contains("pass-fail-invisible");
+
+        if (!isHidden) {
+            visibleCount++;
+        }
+    }
+
+    spreadsheetCount.textContent = "Showing " + visibleCount + " of " + rows.length + " tests";
+    spreadsheetEmpty.hidden = visibleCount > 0;
+}
+
 function searchByField(searchText, searchField) {
 
     // collect all rows and their cells in an object
@@ -28,6 +48,7 @@ function searchByField(searchText, searchField) {
             rows[i].currentRow.classList.remove("search-invisible");
         }
 
+        updateVisibleCount();
         return;
     }
 
@@ -92,6 +113,8 @@ function searchByField(searchText, searchField) {
     if (sortByRelevanceCheckbox.checked) {
         sortTableRows(tableBody, "Relevance", true, relevanceRank);
     }
+
+    updateVisibleCount();
 }
 
 tableHead.addEventListener('click', (e) => {
@@ -108,6 +131,8 @@ function setPassFailRowsDisplay(e, rows) {
             rows[i].classList.add("pass-fail-invisible");
         }
     }
+
+    updateVisibleCount();
 }
 
 passCheckbox.addEventListener('change', (e) => {
