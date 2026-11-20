@@ -94,32 +94,21 @@
 {%endmacro%}
 
 {%macro test_row(isFailing, test, isSpreadsheet=false) %}
-{% if isFailing %}
-<tr class="fail-row">
-{% else %}
-<tr class="pass-row">
-{% endif %}
-
+<tr class="{{ 'fail-row' if isFailing else 'pass-row' }}">
     {% if isSpreadsheet %}
     <td class="row-category">{{ test.category }}</td>
     {% endif %}
-    <td class="row-test-name"><strong>{{test.name}}</strong></td>
-    
-    <td class="row-params">
-    {% for param in test.params %}
-        <p>{{ param }}</p>
-    {% endfor %}
-    </td>
-
+    <td class="row-test-name">{{ test.name }}</td>
+    <td class="row-params">{{ test.params | join(' · ') }}</td>
     {% if isSpreadsheet == false %}
     <td class="row-description">{{ test.description }}</td>
     {% endif %}
-
-    <td class="row-status"><span class="status-badge {{ test.status_class }}">{{ "PASS" if test.status == "passed" else "FAIL" }}</span></td>
+    <td class="row-status"><span class="categories__tag categories__tag--{{ 'fail' if isFailing else 'pass' }}">{{ "Failed" if isFailing else "Passed" }}</span></td>
     <td class="row-cvss">
+        {% set cvss = '%.1f' % test.cvss_score if test.cvss_score is number else test.cvss_score %}
         {% if isFailing %}
         <div class="tooltip">
-            <span class="cvss-score-fail">{{ test.cvss_score }}</span>
+            <span class="cvss-score-fail">{{ cvss }}</span>
             <span class="tooltiptext">
                 <p><u>Recorded Errors</u></p>
                 <p>
@@ -128,11 +117,11 @@
             </span>
         </div>
         {% else %}
-        <span class="cvss-score-pass">{{ test.cvss_score }}</span>
+        <span class="cvss-score-pass">{{ cvss }}</span>
         {% endif %}
     </td>
-    <td class="row-severity"><span class="severity-badge {{ test.severity_class }}">{{ test.severity }}</span></td>
-    <td class="row-duration">{{ test.duration }}</td>
+    <td class="row-severity"><span class="categories__tag{% if isFailing %} categories__tag--{{ test.severity | lower }}{% endif %}">{{ test.severity | capitalize }}</span></td>
+    <td class="row-duration categories__cell--end">{{ test.duration }}</td>
 </tr>
 {%endmacro%}
 
@@ -223,60 +212,20 @@
 {%endmacro%}
 
 {%macro test_table_head(isSpreadsheet) %}
+{% set labels = ["Test Name", "Parameters", "Description", "Status", "CVSS Score (Baseline)", "Severity", "Duration"] %}
+{% if isSpreadsheet %}
+{% set labels = ["Category", "Test Name", "Parameters", "Status", "CVSS Score (Baseline)", "Severity", "Duration"] %}
+{% endif %}
 <thead class="sub-details-head">
     <tr>
-        {% if isSpreadsheet == true %}
-        <th>
+        {% for label in labels %}
+        <th{% if label == "Duration" %} class="categories__cell--end"{% endif %}>
             <div class="th-content">
-                <span>Category</span>
+                <span>{{ label }}</span>
                 <span class="spreadsheet-chevron">▼</span>
             </div>
         </th>
-        {% endif %}
-        <th>
-            <div class="th-content">
-                <span>Test Name</span>
-                <span class="spreadsheet-chevron">▼</span>
-            </div>
-        </th>
-        <th>
-            <div class="th-content">
-                <span>Parameters</span>
-                <span class="spreadsheet-chevron">▼</span>
-            </div>
-        </th>
-        {% if isSpreadsheet == false %}
-        <th>
-            <div class="th-content">
-                <span>Description</span>
-                <span class="spreadsheet-chevron">▼</span>
-            </div>
-        </th>
-        {% endif %}
-        <th>
-            <div class="th-content">
-                <span>Status</span>
-                <span class="spreadsheet-chevron">▼</span>
-            </div>
-        </th>
-        <th>
-            <div class="th-content">
-                <span>CVSS Score (Baseline)</span>
-                <span class="spreadsheet-chevron">▼</span>
-            </div>
-        </th>
-        <th>
-            <div class="th-content">
-                <span>Severity</span>
-                <span class="spreadsheet-chevron">▼</span>
-            </div>
-        </th>
-        <th>
-            <div class="th-content">
-                <span>Duration</span>
-                <span class="spreadsheet-chevron">▼</span>
-            </div>
-        </th>
+        {% endfor %}
     </tr>
 </thead>
 {%endmacro%}
