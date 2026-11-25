@@ -103,7 +103,7 @@
     {% if isSpreadsheet == false %}
     <td class="row-description">{{ test.description }}</td>
     {% endif %}
-    <td class="row-status"><span class="categories__tag categories__tag--{{ 'fail' if isFailing else 'pass' }}">{{ "Failed" if isFailing else "Passed" }}</span></td>
+    <td class="row-status"><span class="categories__tag categories__tag--{{ 'pass' if test.status == 'passed' else 'fail' }}">{{ "Passed" if test.status == "passed" else "Failed" }}</span></td>
     <td class="row-cvss">
         {% set cvss = '%.1f' % test.cvss_score if test.cvss_score is number else test.cvss_score %}
         {% if isFailing %}
