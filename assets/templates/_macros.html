@@ -174,35 +174,38 @@
                 </div>
             </div>
             <div class="stats">
-                <div class="stat-card">
-                    <h3>Failed Tests by Category</h3>
-                    <div class="chart-wrapper">
-                        <div class="chart-container chart-container-failed-tests"></div>
-                        <div class="legend">
-                            {% for category in pie_chart_data.failed.percents %}
-                            <div class="legend-item">
-                                <div class="legend-color category_color_{{ category[2] }}"></div>
-                                {{ category[0] }}: {{ category[1] }}%
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <h3>Test Coverage</h3>
-                    <div class="chart-wrapper">
-                        <div class="chart-container chart-container-total-tests"></div>
-                        <div class="legend">
-                            {% for category in pie_chart_data.coverage.percents %}
-                            <div class="legend-item">
-                                <div class="legend-color category_color_{{ category[2] }}"></div>
-                                {{ category[0] }}: {{ category[1] }}%
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
+                {{ donut_chart("Failed tests by category", "failed-tests", pie_chart_data.failed.percents, summary_data.failed, "Failed", "No failing tests") }}
+                {{ donut_chart("Test coverage by category", "total-tests", pie_chart_data.coverage.percents, summary_data.total, "Tests", "No tests found") }}
+            </div>
+{%endmacro%}
+
+{# Carbon-style donut chart; slices come from assets/pie_chart.css #}
+{%macro donut_chart(title, chart_id, percents, total, total_label, empty_text) %}
+    <div class="stat-card chart-card">
+        <h3 class="chart-card__title">{{ title }}</h3>
+        {% if percents %}
+        <div class="chart-wrapper">
+            <div class="chart-container chart-container-{{ chart_id }}" role="img" aria-label="{{ title }}: {% for category in percents %}{{ category[0] }} {{ category[3] }} ({{ category[1] }}%){{ ', ' if not loop.last else '' }}{% endfor %}">
+                <div class="chart-center" aria-hidden="true">
+                    <span class="chart-center__value">{{ total }}</span>
+                    <span class="chart-center__label">{{ total_label }}</span>
                 </div>
             </div>
+            <ul class="legend" aria-hidden="true">
+                {% for category in percents %}
+                <li class="legend-item">
+                    <span class="legend-color category_color_{{ category[2] }}"></span>
+                    <span class="legend-label" title="{{ category[0] }}">{{ category[0] }}</span>
+                    <span class="legend-value">{{ category[3] }}</span>
+                    <span class="legend-percent">{{ category[1] }}%</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% else %}
+        <p class="chart-empty">{{ empty_text }}</p>
+        {% endif %}
+    </div>
 {%endmacro%}
 
 {%macro dependency_scanning() %}
