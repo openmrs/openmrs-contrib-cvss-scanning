@@ -196,7 +196,7 @@
         <h3 class="chart-card__title">{{ title }}</h3>
         {% if percents %}
         <div class="chart-wrapper">
-            <div class="chart-container chart-container-{{ chart_id }}" role="img" aria-label="{{ title }}: {% for category in percents %}{{ category[0] }} {{ category[1] }}%{{ ', ' if not loop.last else '' }}{% endfor %}">
+            <div class="chart-container chart-container-{{ chart_id }}" role="img" aria-label="{{ title }}: {% for category in percents %}{{ category[0] }} {{ category[3] }} ({{ category[1] }}%){{ ', ' if not loop.last else '' }}{% endfor %}">
                 <div class="chart-center" aria-hidden="true">
                     <span class="chart-center__value">{{ total }}</span>
                     <span class="chart-center__label">{{ total_label }}</span>
