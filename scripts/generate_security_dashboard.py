@@ -39,23 +39,6 @@ pie_chart_data = {
     "category_colors": {},
 }
 
-def get_severity_class(severity, status="failed"):
-    colors = {
-        'CRITICAL': 'severity-critical',
-        'HIGH': 'severity-high',
-        'MEDIUM': 'severity-medium',
-        'LOW': 'severity-low',
-        'NONE': 'severity-none',
-        'UNKNOWN': 'severity-unknown',
-    }
-    
-    color = colors.get('NONE')
-    
-    if status != "passed":
-        color = colors.get(severity, '.severity-unknown')
-    
-    return color
-
 def extract_relevant_test_data():
 
     report = None
@@ -86,10 +69,8 @@ def extract_relevant_test_data():
             'category':         "",
             'description':      "",
             'status':           "",
-            'status_class':     "",
             'cvss_score':       "",
             'severity':         "",
-            'severity_class':   "",
             'duration':         "",
             'params':           {},
             'errors':           "",
@@ -100,11 +81,9 @@ def extract_relevant_test_data():
         new_test["category"] = test.get("feature", "Could not find in report.")
         new_test['description'] = test.get("scenario_description", "Could not find in report.")
         new_test['status'] = test.get("outcome", "Could not find in report.")
-        new_test['status_class'] = "status-pass" if new_test['status'] == "passed" else "status-fail"
         
         new_test['cvss_score'] = test.get("cvss_score", "Could not find in report.")
         new_test['severity'] = test.get("severity", "Could not find in report.")
-        new_test['severity_class'] = get_severity_class(new_test['severity'], new_test['status'])
         
         # parameter list
         params_dict : dict = test.get("params", {})
@@ -259,8 +238,6 @@ def prepare_data():
                         category["max_cvss"] = test["cvss_score"]
         
         category["max_severity"] = get_cvss_severity(category["max_cvss"])
-        
-        category["max_severity_class"] = get_severity_class(category["max_severity"])
         
         category["icon"] = '✅' if category["failed"] == 0 else ('❌' if category["passed"] == 0 else '⚠️')
     

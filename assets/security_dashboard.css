@@ -618,6 +618,16 @@ p {
     color: #0043ce;
 }
 
+.categories__tag--fail {
+    background: #ffd7d9;
+    color: #a2191f;
+}
+
+.categories__tag--pass {
+    background: #a7f0ba;
+    color: #0e6027;
+}
+
 .categories__progress {
     display: flex;
     flex-direction: column;
@@ -750,14 +760,6 @@ p {
     text-align: center;
 }
 
-.test-results {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
 table {
     width: 100%;
     border-collapse: collapse;
@@ -789,33 +791,6 @@ tr:hover {
 
 .parameters {
     width: 200px;
-}
-
-.status-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.status-pass {
-    background: #c6f6d5;
-    color: #22543d;
-}
-
-.status-fail {
-    background: #fed7d7;
-    color: #742a2a;
-}
-
-.severity-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    color: white;
 }
 
 .cvss-score-fail {
@@ -957,25 +932,6 @@ iframe{
     visibility: visible;
 }
 
-.severity-critical {
-  background-color: #dc3545;
-}
-.severity-high {
-  background-color: #fd7e14;
-}
-.severity-medium {
-  background-color: #ffc107;
-}
-.severity-low {
-  background-color: #28a745;
-}
-.severity-none {
-  background-color: #6c757d;
-}
-.severity-unknown {
-  background-color: #6c757d;
-}
-
 /* Donut charts (Carbon Charts style) */
 
 #vulnerability_testing > .stats:nth-child(2) .chart-card {
@@ -1100,67 +1056,63 @@ iframe{
     color: green;
 }
 
-/* Sorting bar */
-.sorting-bar {
-    padding: 10px;
-    color: #161616;
-    text-align: right;
+/* Spreadsheet view */
+.spreadsheet__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    min-height: 48px;
+    padding: 0 16px;
 }
 
-.sorting-bar button {
-    padding: 3px 5px 3px 5px;
-    border-radius: 7px;
-    border: 0px solid black;
-}
-
-.sorting-bar button:active {
-    padding: 3px 5px 3px 5px;
-    border-radius: 7px;
-    background-color: grey;
-    border: 2px solid inset black;
-}
-
-.sorting-bar select {
-    padding: 2px;
-    border-radius: 7px;
-}
-
-.failed-label {
-    color: rgb(97, 0, 0);
-    font-weight: bold;
-}
-
-.passed-label {
-    color: lime;
-    font-weight: bold;
-}
-
-.search-bar {
-    padding: 5px;
-    border-radius: 10px;
-    border-width: 1px;
-    width: 300px;
-}
-
-/* Dashboard Links */
-.dashboard-return-button {
-    text-align: center;
-    padding-bottom: 20px;
-}
-
-.return-link {
-    color: #0f62fe;
-}
-
-.return-link:hover {
-    color: #0043ce;
-}
-
-.category-bar {
+.spreadsheet__checkbox {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding-left: 10px;
+    gap: 8px;
+    color: #161616;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.spreadsheet__checkbox input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: #161616;
+    cursor: pointer;
+}
+
+.spreadsheet__checkbox input:focus-visible {
+    outline: 2px solid #0f62fe;
+    outline-offset: 1px;
+}
+
+.spreadsheet__table {
+    min-width: 920px;
+}
+
+.spreadsheet .row-category {
+    min-width: 160px;
+    color: #525252;
+}
+
+.spreadsheet .row-status,
+.spreadsheet .row-severity {
+    white-space: nowrap;
+}
+
+.spreadsheet .row-cvss .cvss-score-pass {
+    color: #6f6f6f;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 14px;
+}
+
+.spreadsheet__count {
+    padding: 12px 16px;
+    border-top: 1px solid #e0e0e0;
+    color: #525252;
+    font-size: 12px;
 }
 
 /* Spreadsheet Table */
@@ -1228,5 +1180,14 @@ iframe{
 
     .tabs .tab {
         padding: 14px 12px;
+    }
+
+    .spreadsheet .categories__sort {
+        flex: 1 1 100%;
+        padding-right: 16px;
+    }
+
+    .spreadsheet .categories__sort select {
+        flex: 1;
     }
 }
