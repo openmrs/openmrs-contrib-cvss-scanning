@@ -1,11 +1,11 @@
-.chart-container-failed-tests { background: conic-gradient(#6929c4 0% 44.44%, #1192e8 44.44% 66.66%, #005d5d 66.66% 83.33%, #9f1853 83.33% 88.89%, #fa4d56 88.89% 94.45%, #570408 94.45% 100%); }
+.chart-container-failed-tests { background: conic-gradient(#6929c4 0% 40.0%, #1192e8 40.0% 60.0%, #005d5d 60.0% 75.0%, #9f1853 75.0% 90.0%, #fa4d56 90.0% 95.0%, #570408 95.0% 100%); }
 .chart-container-total-tests { background: conic-gradient(#198038 0% 24.28%, #002d9c 24.28% 47.4%, #1192e8 47.4% 65.9%, #6929c4 65.9% 77.46%, #ee538b 77.46% 84.4%, #b28600 84.4% 100%); }
 .category_color_cat_Memory_Management_Failures { background: #6929c4; }
 .category_color_cat_Security_Misconfiguration { background: #1192e8; }
 .category_color_cat_Insecure_Design { background: #005d5d; }
-.category_color_cat_Data_Integrity_Failures { background: #9f1853; }
-.category_color_cat_Mishandling_of_Exceptional_Conditions { background: #fa4d56; }
-.category_color_cat_Session_Management { background: #570408; }
+.category_color_cat_Session_Management { background: #9f1853; }
+.category_color_cat_Data_Integrity_Failures { background: #fa4d56; }
+.category_color_cat_Mishandling_of_Exceptional_Conditions { background: #570408; }
 .category_color_cat_Authentication { background: #198038; }
 .category_color_cat_XSS { background: #002d9c; }
 .category_color_cat_Security_Logging___Alerting_Failures { background: #ee538b; }
