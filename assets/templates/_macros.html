@@ -94,7 +94,7 @@
 {%endmacro%}
 
 {%macro test_row(isFailing, test, isSpreadsheet=false) %}
-<tr class="{{ 'fail-row' if isFailing else 'pass-row' }}">
+<tr class="{{ 'pass-row' if test.status == 'passed' else 'fail-row' }}">
     {% if isSpreadsheet %}
     <td class="row-category">{{ test.category }}</td>
     {% endif %}
