@@ -1,12 +1,12 @@
-.chart-container-failed-tests { background: conic-gradient(#6929c4 0% 40.0%, #1192e8 40.0% 60.0%, #005d5d 60.0% 75.0%, #9f1853 75.0% 90.0%, #fa4d56 90.0% 95.0%, #570408 95.0% 100%); }
-.chart-container-total-tests { background: conic-gradient(#198038 0% 24.28%, #002d9c 24.28% 47.4%, #1192e8 47.4% 65.9%, #6929c4 65.9% 77.46%, #ee538b 77.46% 84.4%, #b28600 84.4% 100%); }
-.category_color_cat_Memory_Management_Failures { background: #6929c4; }
-.category_color_cat_Security_Misconfiguration { background: #1192e8; }
-.category_color_cat_Insecure_Design { background: #005d5d; }
-.category_color_cat_Session_Management { background: #9f1853; }
-.category_color_cat_Data_Integrity_Failures { background: #fa4d56; }
-.category_color_cat_Mishandling_of_Exceptional_Conditions { background: #570408; }
-.category_color_cat_Authentication { background: #198038; }
-.category_color_cat_XSS { background: #002d9c; }
-.category_color_cat_Security_Logging___Alerting_Failures { background: #ee538b; }
+.chart-container-failed-tests { background: conic-gradient(#6929c4 0% 34.19%, #1192e8 34.19% 59.83%, #005d5d 59.83% 76.92%, #9f1853 76.92% 87.18%, #fa4d56 87.18% 92.31%, #570408 92.31% 95.73%, #198038 95.73% 98.29%, #002d9c 98.29% 99.14%, #ee538b 99.14% 100%); }
+.chart-container-total-tests { background: conic-gradient(#1192e8 0% 24.28%, #6929c4 24.28% 47.4%, #570408 47.4% 65.9%, #005d5d 65.9% 77.46%, #9f1853 77.46% 84.4%, #b28600 84.4% 100%); }
+.category_color_cat_XSS { background: #6929c4; }
+.category_color_cat_Authentication { background: #1192e8; }
+.category_color_cat_Memory_Management_Failures { background: #005d5d; }
+.category_color_cat_Security_Logging___Alerting_Failures { background: #9f1853; }
+.category_color_cat_Insecure_Design { background: #fa4d56; }
+.category_color_cat_Security_Misconfiguration { background: #570408; }
+.category_color_cat_Session_Management { background: #198038; }
+.category_color_cat_Data_Integrity_Failures { background: #002d9c; }
+.category_color_cat_Mishandling_of_Exceptional_Conditions { background: #ee538b; }
 .category_color_other { background: #b28600; }
